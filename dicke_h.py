@@ -9,8 +9,8 @@ import numpy as np
 from scipy.integrate import odeint, ode
 
 from scipy import constants
-from scipy.sparse import csr_matrix, dok_matrix
-from qutip import Qobj
+from scipy.sparse import *
+from qutip import Qobj, spre, spost
 from qutip.solver import Result
 
 from ops_h import *
@@ -440,7 +440,88 @@ class Dicke(object):
             ik = self.density_dict[(j, m, m1)]
             k = nds * (ik[0] + ik[1])
             return k
+
+    def _get_element_flat(self, jmm):
+        """
+        Get the (l) index for given tuple (j, m, m1) from the flattened block diagonal matrix.
+        """
+
+        i, k = self._get_element(jmm)
+        l = nds * i + k
         
+        return l
+ 
+    def jmm1_dictionary(self):
+        """
+        A dictionary with keys: (i,k) and values: (j, m, m1) of a block-diagonal matrix in the |j, m> <j, m1| basis. 
+        """
+        N = self.N
+        nds = num_dicke_states(N)
+        num_ladders = num_dicke_ladders(N)
+
+        dict_jmm1 = {}
+        
+        # loop in the allowed matrix elements
+        for k in range(0, num_ladders):
+                j = 0.5 * N - k
+                mmax = int(2 * j + 1)
+                for i in range(0, mmax):
+                    m = j - i
+                    for i1 in range(0, mmax):
+                        m1 = j - i1
+                        jmm1 = (j, m, m1)
+                        row_column = self._get_element(jmm1)
+                        dict_jmm1['{}'.format(row_column)] = jmm1
+
+        return dict_jmm1
+
+    def jmm1_list(self):
+        """
+        A list of lists with elements (j, m, m1) of a block-diagonal matrix in the |j, m> <j, m1| basis. 
+        """        
+        N = self.N
+        num_ladders = num_dicke_ladders(N)
+        jmm1_list = []
+
+        # loop in the allowed matrix elements
+        for k in range(0, num_ladders):
+                j = 0.5 * N - k
+                mmax = int(2 * j + 1)
+                for i in range(0, mmax):
+                    m = j - i
+                    for i1 in range(0, mmax):
+                        m1 = j - i1
+                        jmm1_list.append((j, m, m1))
+
+        return jmm1_list
+
+    def jmm1_flat(self):
+        """
+        A dictionary with keys: (l) and values: (j, m, m1) for a block-diagonal flattened matrix in the |j, m> <j, m1| basis. 
+        """
+        N = self.N
+        nds = num_dicke_states(N)
+        rho = np.zeros((nds, nds))
+        num_ladders = num_dicke_ladders(N)
+        
+        jmm1_flat = {}
+        
+        # loop in the allowed matrix elements
+        for k in range(0, num_ladders):
+                j = 0.5 * N - k
+                mmax = int(2 * j + 1)
+                for i in range(0, mmax):
+                    m = j - i
+                    for i1 in range(0, mmax):
+                        m1 = j - i1
+                        jmm1 = (j, m, m1)
+                        row_column = self._get_element(jmm1)
+                        i,k = row_column
+                        l = nds * i  + k
+                        jmm1_flat['{}'.format(l)] = jmm1
+
+        return jmm1_flat
+
     def css_plus(self):
         """
         Loads the coherent spin state (CSS), |+>, into the reduced density matrix rho(j,m,m'). 
@@ -451,17 +532,19 @@ class Dicke(object):
         rho = np.zeros((nds, nds))
         num_ladders = num_dicke_ladders(N)
 
-        jj = 0.5 * N
-        mmax = (2 * jj + 1)
-        for ii in range(1, int(mmax + 1)):
-            mm = jj + 1 - ii
-            for ll in range(1, int(mmax + 1)):
-                mm1 = jj + 1 - ll
-                row_column = self._get_element((jj, mm, mm1))
-                if mm == mm1 :
-                    rho[row_column] = energy_degeneracy(N,mm)/(2**N)
-                else :
-                    rho[row_column] = np.sqrt(energy_degeneracy(N,mm)) * np.sqrt(energy_degeneracy(N,mm1)) /(2**N)
+        # loop in the allowed matrix elements        
+        for k in range(0, num_ladders):
+                j = 0.5 * N - k
+                mmax = int(2 * j + 1)
+                for i in range(0, mmax):
+                    m = j - i
+                    for i1 in range(0, mmax):
+                        m1 = j - i1
+                        row_column = self._get_element((j, m, m1))
+                        if mm == mm1 :
+                            rho[row_column] = energy_degeneracy(N, m)/(2**N)
+                        else :
+                            rho[row_column] = np.sqrt(energy_degeneracy(N,m)) * np.sqrt(energy_degeneracy(N,m1)) /(2**N)
         return Qobj(rho)
 
     def css_minus(self):
@@ -471,51 +554,51 @@ class Dicke(object):
         N = self.N
 
         nds = num_dicke_states(N)
-        rho = np.zeros((nds,nds))
+        rho = np.zeros((nds, nds))
         num_ladders = num_dicke_ladders(N)
 
-        jj = 0.5 * N
-        mmax = (2 * jj + 1)
-        for ii in range(1, int(mmax + 1)):
-            mm = jj + 1 - ii
-            sign_mm = (-1)**(mm + N/2)
-            for ll in range(1, int(mmax + 1)):
-                mm1 = jj + 1 - ll
-                row_column = self._get_element((jj, mm, mm1))
-                sign_mm1 = (-1)**(mm1 + N/2)
-                if mm == mm1 :
-                    rho[row_column] = energy_degeneracy(N,mm)/(2**N)
-                else :
-                    rho[row_column] = sign_mm * sign_mm1 * np.sqrt(energy_degeneracy(N,mm)) * np.sqrt(energy_degeneracy(N,mm1)) /(2**N)
+        # loop in the allowed matrix elements        
+        for k in range(0, num_ladders):
+                j = 0.5 * N - k
+                mmax = int(2 * j + 1)
+                for i in range(0, mmax):
+                    m = j - i
+                    sign_m = (-1)**(m + N/2)
+                    for i1 in range(0, mmax):
+                        m1 = j - i1
+                        row_column = self._get_element((j, m, m1))
+                        sign_m1 = (-1)**(m1 + N/2)
+                        if m == m1 :
+                            rho[row_column] = energy_degeneracy(N, m)/(2**N)
+                        else :
+                            rho[row_column] = sign_m * sign_m1 * np.sqrt(energy_degeneracy(N, m)) * np.sqrt(energy_degeneracy(N, m1)) /(2**N)
         return Qobj(rho)
 
     def css_ab(self, a, b):
         """
-        Loads the separable spin state |ab>= Prod_i^N( a|0>_i + b|1>_i) into the reduced density matrix rho(j,m,m'). 
+        Loads the separable spin state |->= Prod_i^N(|1>_i - |0>_i) into the reduced density matrix rho(j,m,m'). 
         """
         N = self.N
 
         nds = num_dicke_states(N)
-        rho = np.zeros((nds,nds))
+        rho = np.zeros((nds, nds))
         num_ladders = num_dicke_ladders(N)
 
-        norm_ab = a * np.conj(a) + b * np.conj(b)
-        tol = 10**6
-        norm_ab = np.round(norm_ab*tol)/tol
-        if norm_ab != 1:
-            print("Warning: the state is not normalized")
-
-        jj = 0.5 * N
-        mmax = (2 * jj + 1)
-        for ii in range(1, int(mmax + 1)):
-            mm = jj + 1 - ii
-            for ll in range(1, int(mmax + 1)):
-                mm1 = jj + 1 - ll
-                row_column = self._get_element((jj, mm, mm1))
-                if mm == mm1 :
-                    rho[row_column] = energy_degeneracy(N,mm)/(2**N)
-                else :
-                    rho[row_column] = np.sqrt(energy_degeneracy(N,mm)) * np.sqrt(energy_degeneracy(N,mm1)) /(2**N)
+        # loop in the allowed matrix elements        
+        for k in range(0, num_ladders):
+                j = 0.5 * N - k
+                mmax = int(2 * j + 1)
+                for i in range(0, mmax):
+                    m = j - i
+                    sign_m = (-1)**(m + N/2)
+                    for i1 in range(0, mmax):
+                        m1 = j - i1
+                        row_column = self._get_element((j, m, m1))
+                        sign_m1 = (-1)**(m1 + N/2)
+                        if m == m1 :
+                            rho[row_column] = energy_degeneracy(N, m)/(2**N)
+                        else :
+                            rho[row_column] = sign_m * sign_m1 * np.sqrt(energy_degeneracy(N, m)) * np.sqrt(energy_degeneracy(N, m1)) /(2**N)
         return Qobj(rho)    
     
     def ghz(self):
@@ -597,6 +680,51 @@ class Dicke(object):
 
         return Qobj(rho)
 
+    def thermal_new(self, temperature):
+        """
+        Gives the thermal state density matrix at the absolute temperature T.
+        It is defined for N two-level systems.
+        The Hamiltonian is H = hbar * omega_0 * (Jz**n_exp).
+        For temperature = 0, the thermal state is the ground state. 
+
+        Parameters
+        ----------
+        temperature: float
+            The absolute temperature in Kelvin. 
+        Returns
+        -------
+        rho_thermal: matrix array
+            A square matrix of dimensions (nds, nds), with nds = num_dicke_states(N).
+            The thermal populations are the matrix elements on the main diagonal
+        """
+        
+        N = self.N        
+        hamiltonian = self.hamiltonian
+                    
+        if temperature == 0:
+            ground_state = self.dicke( N/2, - N/2)
+            return ground_state
+        
+        nds = num_dicke_states(N)
+        num_ladders = num_dicke_ladders(N)
+
+        rho_thermal = np.zeros((nds,nds))
+
+        s = 0
+        for k in range(1, int(num_ladders + 1)):
+            j = 0.5 * N + 1 - k
+            mmax = (2 * j + 1)
+            for i in range(1, int(mmax + 1)):
+                m = j + 1 - i
+                x = (hamiltonian[s,s] / temperature) * (constants.hbar / constants.Boltzmann)
+                rho_thermal[s,s] = np.exp( - x ) * state_degeneracy(N, j)
+                s = s + 1
+        zeta = self.partition_function(temperature)
+
+        rho = rho_thermal/zeta
+
+        return Qobj(rho)
+
     def partition_function(self, temperature):
         """
         Gives the partition function for the system at a given temperature if the Hamiltonian is diagonal.
@@ -638,57 +766,36 @@ class Dicke(object):
                 
         return float(zeta)
 
-    def mean_light_field(self, j, m):
-        """
-        The coefficient is defined by <j, m|J^+ J^-|j, m>
-
-        Parameters
-        ----------
-        j: float
-            The total spin z-component m for the Dicke state |j, m>
-
-        m: float
-            The total spin j for the Dicke state |j, m>
-
-        Returns
-        -------
-        y: float
-            The light field average value
-        """
-        y = (j + m) * (j - m + 1)    
-        return y
-
 
 class Pisolve(object):
     """
-    Permutationally Invariant Quantum Solver
+    Permutationally Invariant Quantum Solver class. 
     """
     def __init__(self, dicke_system):
+        #dicke_system is the name of the object from the Dicke class. 
+        #dicke_system is used to inherit some of the properties of that object.
+        #properties inherited from dicke_system:
         self.N = dicke_system.N
         self.hamiltonian = dicke_system.hamiltonian
-
         self.emission = dicke_system.emission
         self.loss = dicke_system.loss
         self.dephasing = dicke_system.dephasing
         self.pumping = dicke_system.pumping
         self.collective_pumping = dicke_system.collective_pumping
         self.collective_dephasing = dicke_system.collective_dephasing
-
         self.nds = dicke_system.nds
         self.dshape = dicke_system.dshape
-
+        #new properties:
         self.blocks = get_blocks(self.N)
         self.density_dict = dict()
         
         self.tau_functions = [self.tau3, self.tau2, self.tau4,
                               self.tau5, self.tau1, self.tau6,
                               self.tau7, self.tau8, self.tau9]
-        
         self.tau_dict = {x.__name__:{} for x in self.tau_functions}
-
         self.generate_dict()
 
-# fast diagonal solver
+        #properties used only by the fast diagonal solver
         self.Mdiag = {}
         self.sparse_Mdiag = None
 
@@ -803,6 +910,315 @@ class Pisolve(object):
         
         return rdot
 
+    def _get_element_flat(self, jmm):
+        """
+        Get the (l) index for given tuple (j, m, m1) from the flattened block diagonal matrix.
+        """
+        N = self.N
+        nds = num_dicke_states(N)
+
+        i, k = self._get_element(jmm)
+        l = nds * i + k
+        
+        return l
+
+    def jmm1_flat(self):
+        """
+        A dictionary with keys: (l) and values: (j, m, m1) for a block-diagonal flattened matrix in the |j, m> <j, m1| basis. 
+        l is the position of the flattened matrix element. 
+
+        """
+        N = self.N
+        nds = num_dicke_states(N)
+        rho = np.zeros((nds, nds))
+        num_ladders = num_dicke_ladders(N)
+        
+        jmm1_flat = {}
+        
+        # loop in the allowed matrix elements
+        for k in range(0, num_ladders):
+                j = 0.5 * N - k
+                mmax = int(2 * j + 1)
+                for i in range(0, mmax):
+                    m = j - i
+                    for i1 in range(0, mmax):
+                        m1 = j - i1
+                        jmm1 = (j, m, m1)
+                        row_column = self._get_element(jmm1)
+                        i,k = row_column
+                        l = nds * i  + k
+                        jmm1_flat['{}'.format(l)] = jmm1
+
+        return jmm1_flat
+
+    def lindblad_dense(self):
+        """
+        Build the Lindbladian superoperator of the dissipative dynamics.
+
+        Returns
+        ----------
+        lind: Qobj superoperator
+            The matrix is of size (nds**2, nds**2) where nds is the number of Dicke states.
+
+        """
+        N = self.N
+        nds = num_dicke_states(N)
+
+        num_ladders = num_dicke_ladders(N)
+        llind = np.zeros((nds**2, nds**2))
+
+        jmm1_row = self.jmm1_flat()
+        jmm1_keys = [int(k) for k in jmm1_row.keys()]
+
+        # loop in each row
+        for k in jmm1_row:
+            #print("k ", k)
+            j, m, m1 = jmm1_row[k]
+            jmm1_1 = (j, m, m1)
+            jmm1_2 = (j, m+1, m1+1)
+            jmm1_3 = (j+1, m+1, m1+1)
+            jmm1_4 = (j-1, m+1, m1+1)
+            jmm1_5 = (j+1, m, m1)
+            jmm1_6 = (j-1, m, m1)
+            jmm1_7 = (j+1, m-1, m1-1)
+            jmm1_8 = (j, m-1, m1-1)
+            jmm1_9 = (j-1, m-1, m1-1)
+
+            t1 = self.get_tau("tau1", jmm1_1)
+            l1 = self._get_element_flat(jmm1_1)
+            llind[int(k), int(l1)] = t1
+            #print("l1 t1 ", l1, t1)
+
+            # generate taus in the given row 
+            # checking if the taus exist
+            # and load taus in the lindbladian in the correct position
+
+            if jmm1_2 in jmm1_row.values():
+                t2 = self.get_tau("tau2", jmm1_2)
+                l2 = self._get_element_flat(jmm1_2)
+                llind[int(k), int(l2)] = t2
+                #print("l2 t2 ", l2, t2)
+
+            if jmm1_3 in jmm1_row.values():
+                l3 = self._get_element_flat(jmm1_3)
+                t3 = self.get_tau("tau3", jmm1_3) 
+                llind[int(k), int(l3)] = t3
+                #print("l3 t3 ", l3, t3) 
+
+            if jmm1_4 in jmm1_row.values():
+                t4 = self.get_tau("tau4", jmm1_4)
+                l4 = self._get_element_flat(jmm1_4)
+                llind[int(k), int(l4)] = t4
+                #print("l4 t4 ", l4, t4)
+
+            if jmm1_5 in jmm1_row.values():                
+                t5 = self.get_tau("tau5", jmm1_5)
+                l5 = self._get_element_flat(jmm1_5)
+                llind[int(k), int(l5)] = t5
+                #print("l5 t5 ", l5, t5)
+
+            if jmm1_6 in jmm1_row.values():
+                t6 = self.get_tau("tau6", jmm1_6)
+                l6 = self._get_element_flat(jmm1_6)
+                llind[int(k), int(l6)] = t6
+                #print("l6 t6 ", l6, t6)
+
+            if jmm1_7 in jmm1_row.values():                
+                t7 = self.get_tau("tau7", jmm1_7)
+                l7 = self._get_element_flat(jmm1_7)
+                llind[int(k), int(l7)] = t7
+                #print("l7 t7 ", l7, t7)
+
+            if jmm1_8 in jmm1_row.values():
+                t8 = self.get_tau("tau8", jmm1_8)
+                l8 = self._get_element_flat(jmm1_8)
+                llind[int(k), int(l8)] = t8
+                #print("l8 t8 ", l8, t8)
+
+            if jmm1_9 in jmm1_row.values():
+                t9 = self.get_tau("tau9", jmm1_9)
+                l9 = self._get_element_flat(jmm1_9)
+                llind[int(k), int(l9)] = t9
+                #print("l9 t9 ", l9, t9) 
+            
+            #print("lind [{}, :] ".format(int(k)), llind[int(k), :])
+
+        #make matrix a Qobj superoperator with expected dims
+        llind_dims = [[[nds], [nds]],[[nds], [nds]]]
+        llind_qobj = Qobj(llind, dims = llind_dims)
+
+        return llind_qobj
+
+    def lindblad_sup(self):
+        """
+        Build the Lindbladian superoperator of the dissipative dynamics as a sparse matrix using COO.
+
+        Returns
+        ----------
+        lindblad_qobj: Qobj superoperator (sparse)
+            The matrix size is (nds**2, nds**2) where nds is the number of Dicke states.
+
+        """
+        N = self.N
+        nds = num_dicke_states(N)
+
+        num_ladders = num_dicke_ladders(N)
+
+        jmm1_row = self.jmm1_flat()
+        jmm1_keys = [int(k) for k in jmm1_row.keys()]
+
+        # initialize lists to build the sparse COO matrix
+        data = []
+        row = []
+        col = []
+
+        # perform loop in each row of matrix 
+        for r in jmm1_row:
+            j, m, m1 = jmm1_row[r]
+            jmm1_1 = (j, m, m1)
+            jmm1_2 = (j, m+1, m1+1)
+            jmm1_3 = (j+1, m+1, m1+1)
+            jmm1_4 = (j-1, m+1, m1+1)
+            jmm1_5 = (j+1, m, m1)
+            jmm1_6 = (j-1, m, m1)
+            jmm1_7 = (j+1, m-1, m1-1)
+            jmm1_8 = (j, m-1, m1-1)
+            jmm1_9 = (j-1, m-1, m1-1)
+            
+            t1 = self.get_tau("tau1", jmm1_1)
+            c1 = self._get_element_flat(jmm1_1)
+            row.append(int(r))
+            col.append(int(c1))
+            data.append(t1)            
+
+            # generate taus in the given row 
+            # checking if the taus exist
+            # and load taus in the lindbladian in the correct position
+
+            if jmm1_2 in jmm1_row.values():
+                t2 = self.get_tau("tau2", jmm1_2)
+                c2 = self._get_element_flat(jmm1_2)
+                row.append(int(r))
+                col.append(int(c2))                
+                data.append(t2)
+
+            if jmm1_3 in jmm1_row.values():
+                t3 = self.get_tau("tau3", jmm1_3) 
+                c3 = self._get_element_flat(jmm1_3)
+                row.append(int(r))
+                col.append(int(c3))                
+                data.append(t3)
+
+            if jmm1_4 in jmm1_row.values():
+                t4 = self.get_tau("tau4", jmm1_4)
+                c4 = self._get_element_flat(jmm1_4)
+                row.append(int(r))
+                col.append(int(c4))                
+                data.append(t4)
+
+            if jmm1_5 in jmm1_row.values():                
+                t5 = self.get_tau("tau5", jmm1_5)
+                c5 = self._get_element_flat(jmm1_5)
+                row.append(int(r))
+                col.append(int(c5))                
+                data.append(t5)
+
+            if jmm1_6 in jmm1_row.values():
+                t6 = self.get_tau("tau6", jmm1_6)
+                c6 = self._get_element_flat(jmm1_6)
+                row.append(int(r))
+                col.append(int(c6))                
+                data.append(t6)
+
+            if jmm1_7 in jmm1_row.values():                
+                t7 = self.get_tau("tau7", jmm1_7)
+                c7 = self._get_element_flat(jmm1_7)
+                row.append(int(r))
+                col.append(int(c7))                
+                data.append(t7)
+
+            if jmm1_8 in jmm1_row.values():
+                t8 = self.get_tau("tau8", jmm1_8)
+                c8 = self._get_element_flat(jmm1_8)
+                row.append(int(r))
+                col.append(int(c8))                
+                data.append(t8)
+
+
+            if jmm1_9 in jmm1_row.values():
+                t9 = self.get_tau("tau9", jmm1_9)
+                c9 = self._get_element_flat(jmm1_9)
+                row.append(int(r))
+                col.append(int(c9))                
+                data.append(t9)
+
+        #make Lindblad matrix as a COO sparse matrix 
+        data = np.array(data)
+        row = np.array(row)
+        col = np.array(col)
+        lindblad_matrix = coo_matrix((data, (row, col)), shape=(nds**2, nds**2))
+
+        #convert matrix into CSR sparse
+        lindblad_matrix = lindblad_matrix.tocsr()
+
+        #make matrix a Qobj superoperator with expected dims
+        llind_dims = [[[nds], [nds]],[[nds], [nds]]]
+        lindblad_qobj = Qobj(lindblad_matrix, dims = llind_dims)
+
+        return lindblad_qobj
+
+    def identity_sup(self):
+        """
+        Build an identity superoperator.
+
+        Returns
+        ----------
+        lind: Qobj superoperator
+            The matrix is of size (nds**2, nds**2) where nds is the number of Dicke states.
+
+        """
+        N = self.N
+        nds = num_dicke_states(N)
+
+        num_ladders = num_dicke_ladders(N)
+        llind = np.zeros((nds**2, nds**2))
+
+        jmm1_row = self.jmm1_flat()
+        jmm1_keys = [int(k) for k in jmm1_row.keys()]
+
+        # loop in each row
+        for k in jmm1_row:
+
+            j, m, m1 = jmm1_row[k]
+
+            # generate taus for each row
+            t1 = 1
+
+            l1 = self._get_element_flat((j, m, m1))
+
+            # load taus in the lindbladian in the correct position
+            llind[int(k), int(l1)] = t1
+
+        #make matrix a Qobj superoperator with expected dims
+        llind_dims = [[[nds], [nds]],[[nds], [nds]]]
+        llind_qobj = Qobj(llind, dims = llind_dims)
+
+        return llind_qobj
+
+
+    def liouvillian(self):
+        """
+        Gives the total liouvillian in the jmm1 basis |j, m > < j, m1|
+        """ 
+        hamiltonian = self.hamiltonian
+
+        lindblad = self.lindblad_sup()
+        hamiltonian_superoperator = - 1j* spre(hamiltonian) + 1j* spost(hamiltonian)
+        
+        liouv = lindblad + hamiltonian_superoperator 
+
+        return liouv
+
     def hamiltonian_gradient(self, rho):
         """
         Get the hamiltonian gradient for all the elements in the density matrix by looping over
@@ -828,6 +1244,7 @@ class Pisolve(object):
 
         hamiltonian_grad = self.hamiltonian_gradient(rho)
         total_grad = hamiltonian_grad + grad
+
         return total_grad.flatten()
 
     def f(self, t, y):
@@ -867,6 +1284,55 @@ class Pisolve(object):
             The intitial density matrix.
         t_list: np.array
             The time steps at which the density matrix time evolution rho_t is evaluated.
+        Returns
+        ----------
+       result: Result (QuTiP class)
+            Contains info on the solver method used (solver), the density matrix time evolution (states), the time array (times).
+
+        """
+        if isinstance(rho0, Qobj):
+            rho0 = rho0.full()
+
+        y0, t0 = rho0.flatten(), t_list[0]
+
+        nt= np.size(t_list)
+
+        r = ode(self.f).set_integrator("zvode")
+        r.set_initial_value(y0, t0)
+
+        t1 = t_list[-1]
+        dt = (t_list[-1] - t_list[0])/len(t_list)
+        
+        result = Result()
+        rho_t = rho0
+        result.states.append(Qobj(rho_t))
+        while r.successful() and r.t  < t1:
+            rho_t = r.integrate(r.t + dt).reshape(self.dshape)
+            result.states.append(Qobj(rho_t))
+
+        result.states = result.states[:nt]
+
+        #result.expect.append(Qobj(rho_t))
+        
+        result.solver = "general_solver"
+        result.times = t_list
+        
+        return result
+
+    def general_solve_liouv(self, rho0, t_list, liouv):
+        """
+        Solve the differential equation dp/dt = Tau to evolve the density matrix using given liouvillian.
+
+        Parameters
+        ----------
+        rho: Qobj
+            The intitial density matrix.
+        t_list: np.array
+            The time steps at which the density matrix time evolution rho_t is evaluated.
+        liouvillian: Qobj
+            The liouvillian as a Qobj superoperator.
+        Returns
+        ----------
         result: Result (QuTiP class)
             Contains info on the solver method used (solver), the density matrix time evolution (states), the time array (times).
 
@@ -1073,7 +1539,7 @@ class Pisolve(object):
 
         return (t9)
 
-#diagonal solver functions
+    #below: diagonal solver functions 
 
     def isdicke(self, dicke_row, dicke_col):
         """
@@ -1298,7 +1764,8 @@ class Pisolve(object):
         """
 
         if isinstance(rho0, Qobj):
-        #this manipulation limits the initial dm to be real-valued ones.  
+        #this manipulation limits the initial dm to be real-valued ones. 
+        #it is inserted in case one is using the solver to calculate a correlation function.
             rho0_real = np.real(rho0.full())
             if Qobj(rho0_real) != rho0:
             	print("Warning: only real part of density matrix  considered")

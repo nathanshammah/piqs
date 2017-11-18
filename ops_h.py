@@ -153,6 +153,48 @@ def reduced_algebra(N):
 
 	return red_alg 
 
+def j_algebra(N):
+	"""
+	Gives the list with the collective operators of the total algebra, using the reduced basis |j,m><j,m'| in which the density matrix is expressed.    
+	The list returned is [J^2, J_x, J_y, J_z, J_+, J_-]. 
+	Parameters
+	----------
+	N: int 
+		Number of two-level systems    
+	Returns
+	-------
+	red_alg: list
+		Each element of the list is a Qobj matrix (QuTiP class) of dimensions (nds,nds). nds = number of Dicke states.    
+	"""
+	nds = num_dicke_states(N)
+	num_ladders = num_dicke_ladders(N)
+	block_diagonal = block_matrix(N)
+	j2_operator = np.zeros((nds, nds))
+	jz_operator = np.zeros((nds, nds))
+	jp_operator = np.zeros((nds, nds))
+	jm_operator = np.zeros((nds, nds))
+
+	s = 0
+	for k in range(0, num_ladders):
+			j = 0.5 * N - k
+			mmax = int(2 * j + 1)
+			for i in range(0, mmax):
+				m = j - i
+				jz_operator[s,s] = m
+				j2_operator[s,s] = j * (j + 1)
+				if (s + 1) in range(0,nds):
+					jp_operator[s,s+1] = block_diagonal[s,s+1] * ap(j,m-1)
+				if (s - 1) in range(0,nds):
+					jm_operator[s,s-1] =  block_diagonal[s,s-1] * am(j,m+1)
+				s = s + 1
+	jx_operator = 1/2*(jp_operator + jm_operator)
+	jy_operator = 1j/2*(jm_operator - jp_operator)
+
+	j_alg = [Qobj(jx_operator), Qobj(jy_operator), Qobj(jz_operator), Qobj(jp_operator), Qobj(jm_operator)]
+
+	return j_alg 
+
+
 def jx_op(N):
 	"""
 	Builds the Jx operator in the same basis of the reduced density matrix rho(j,m,m').    
@@ -668,65 +710,3 @@ def qobj_flatten(rho_t):
 	p_t = np.array(p_t)
 
 	return p_t
-
-### Below are all the modules required to use the `is_valid` module
-
-#  def is_valid(j, m, m1):
-#     if (j, m, m1) in block_dict.keys():
-#         return True
-#     else:
-#         return False
-	
-# def _make_block_dict(self):
-#     block_dict = {}
-#     blocks = get_blocks(self.N)
-#     for (i, k) in np.ndindex(blocks[-1], blocks[-1]):
-#         if self.get_jmm1(i, k):
-#             block_dict[self.get_jmm1(i, k)] = (i, k)
-#     return block_dict
-
-# def get_blocks(N):
-#     num_blocks = num_dicke_ladders(N)
-#     blocks = np.array([i * (N + 2 - i) for i in range(1, num_blocks + 1)], dtype = int)
-#     return blocks
-
-# def _find_block(self, i, blocks):
-#     block_number = np.searchsorted(blocks - 1, i)
-#     return block_number
-
-# def get_jmm1(self, i, k):
-#     N = self.N
-
-#     blocks = get_blocks(N)
-#     block_number = self._find_block(i, blocks)
-
-#     # The j is simply N/2 - block number
-#     j = N/2. - block_number
-
-#     # We need to calculate the offset for the m and m' value from the start of the
-#     # block.
-#     offset = 0
-
-#     k_block = self._find_block(k, blocks)
-
-#     if k_block != block_number:
-#         return False
-
-#     if block_number > 0:
-#         offset = blocks[block_number - 1]
-
-#     _k = k - offset
-#     _k_prime = i - offset
-
-#     m = j - _k_prime
-#     m1 = j - _k
-
-#     return(j, m, m1)
-
-# def _make_block_dict(self):
-#     block_dict = {}
-#     blocks = get_blocks(self.N)
-#     for (i, k) in np.ndindex(blocks[-1], blocks[-1]):
-#         if self.get_jmm1(i, k):
-#             block_dict[self.get_jmm1(i, k)] = (i, k)
-#     return block_dict
