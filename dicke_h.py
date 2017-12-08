@@ -12,7 +12,9 @@ from scipy.sparse import *
 #from scipy.linalg import block_diag as linalg_block_diag
 
 from qutip import Qobj, spre, spost
+from qutip import sigmax, sigmay, sigmaz, sigmap, sigmam
 from qutip.solver import Result
+from qutip import *
 
 
 
@@ -235,14 +237,14 @@ class Dicke(object):
         """ 
         hamiltonian = self.hamiltonian
 
-        lindblad = self.lindblad()
+        lindblad = self.lindbladian()
         hamiltonian_superoperator = - 1j* spre(hamiltonian) + 1j* spost(hamiltonian)
         
         liouv = lindblad + hamiltonian_superoperator 
 
         return liouv
 
-    def lindblad(self):
+    def lindbladian(self):
         """
         Build the Lindbladian superoperator of the dissipative dynamics as a sparse matrix using COO.
 
@@ -1223,7 +1225,8 @@ def superradiant_state_brute(N):
 
     psi0 = vn[2**N - N]
         
-    return psi0    
+    return psi0
+       
 
 def ground_state_brute(N):
     """
@@ -1276,7 +1279,7 @@ def identity_brute(N):
     
     return identity
 
-def ghz_brute(N):
+def ghz_state_brute(N):
     """
     Generates the GHZ density matrix in a 2**N dimensional Hilbert space
 
@@ -1307,7 +1310,7 @@ def ghz_brute(N):
     
     return ghz
 
-def css_brute(N):
+def css_state_brute(N):
     """
     Generates the CSS density matrix in a 2**N dimensional Hilbert space.
     The CSS state, also called 'plus state' is, |+>_i = 1/np.sqrt(2) * (|0>_i + |1>_i ).
