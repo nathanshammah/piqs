@@ -1,3 +1,4 @@
+
 """
 Dynamics for dicke states exploiting permutational invariance
 """
@@ -62,7 +63,7 @@ def num_dicke_ladders(N):
     Nj = (N + 1) * 0.5 + (1 - np.mod(N, 2)) * 0.5    
     return int(Nj)
 
-def num_two_level(nds):
+def num_tls(nds):
     """
     The number of two level systems (TLS), given the number of Dicke states. 
     Inverse function of num_dicke_states(N)
@@ -123,16 +124,16 @@ class Dicke(object):
     N : int
         The number of two level systems
         default: 2
-        
-    emission : float
-        Collective spontaneous emmission coefficient
-        default: 1.0
 
     hamiltonian : Qobj matrix
         An Hamiltonian H in the reduced basis set by `reduced_algebra()`. 
         Matrix dimensions are (nds, nds), with nds = num_dicke_states.
         The hamiltonian is assumed to be with hbar = 1. 
         default: H = jz_op(N)
+
+    emission : float
+        Collective spontaneous emmission coefficient
+        default: 1.0
                 
     loss : float
         Incoherent loss coefficient
@@ -153,26 +154,57 @@ class Dicke(object):
     collective_dephasing : float
         Collective dephasing coefficient
         default: 0.0
+    nds : int
+        The number of Dicke states
+        default: nds(2) = 4 
+
+    dshape : tuple
+        The tuple (nds, nds) 
+        default: (4,4) 
+
+    blocks : array
+        A list which gets the number of cumulative elements at each block boundary
+        default:  array([3, 4])
     """
-    def __init__(self, N = 2, hamiltonian = None,
-                 loss = 0., dephasing = 0., pumping = 0., emission = 1.,
+    def __init__(self, N = 1, hamiltonian = None,
+                 loss = 0., dephasing = 0., pumping = 0., emission = 0.,
                  collective_pumping = 0., collective_dephasing = 0.):
         self.N = N
-        if hamiltonian == None:
-            self.hamiltonian = jz_op(N)
-        else :
-            self.hamiltonian = hamiltonian
+        self.hamiltonian = hamiltonian
         self.emission = emission
         self.loss = loss
         self.dephasing = dephasing
         self.pumping = pumping
         self.collective_pumping = collective_pumping
         self.collective_dephasing = collective_dephasing
-        self.blocks = get_blocks(N)
-        self.nds = num_dicke_states(N)
-        self.dshape = (num_dicke_states(N), num_dicke_states(N))
-        
+        self.nds = num_dicke_states(self.N) 
+        self.dshape = (num_dicke_states(self.N), num_dicke_states(self.N))
         self.blocks = get_blocks(self.N)
+
+    def parameters(self):
+        """
+        Print the current parameters of the system.
+        """
+        string =[]
+        if self.N != None:
+            string.append(str("N = {}".format(self.N)))
+        if self.nds != None:
+            string.append(("Hilbert shape = {}".format(self.dshape)))            
+        if self.emission != 0:
+            string.append(("emission = {}".format(self.emission)))
+        if self.loss != 0:
+            string.append(("loss = {}".format(self.loss)))
+        if self.dephasing != 0:
+            string.append(("dephasing = {}".format(self.dephasing)))
+        if self.pumping != 0:
+            string.append(("pumping = {}".format(self.pumping)))
+        if self.collective_dephasing != 0:
+            string.append(("collective_dephasing = {}".format(self.collective_dephasing)))
+        if self.collective_pumping != 0: 
+            string.append(("collective_pumping = {}".format(self.collective_pumping)))
+
+        return string
+
         
     def j_vals(self):
         """
@@ -206,6 +238,29 @@ class Dicke(object):
         k = _k + offset
 
         return (int(i), int(k))
+
+    def jmm1_dictionary(self):
+        """
+        A dictionary with keys: (i,k) and values: (j, m, m1) for a block-diagonal matrix
+        in the |j, m> <j, m1| basis. l is the position of the particular jmm1 in the flattened vector.
+        """
+        N = self.N
+        nds = num_dicke_states(N)
+        num_ladders = num_dicke_ladders(N)
+        
+        jmm1_dic = {}
+        
+        jmm1_inverted = {}
+        # loop in the allowed matrix elements
+        for j in self.j_vals():
+            for m in self.m_vals(j):
+                for m1 in self.m_vals(j):
+                    jmm1 = (j, m, m1)
+                    i, k = self.get_index(jmm1)
+                    jmm1_dic[(i,k)] = jmm1
+                    jmm1_inverted[jmm1] = (i,k)
+
+        return jmm1_dic, jmm1_inverted
         
     def jmm1_flat(self):
         """
@@ -568,10 +623,10 @@ class Dicke(object):
 
         return Qobj(rho)
     
-    def thermal(self, temperature):
+    def thermal_diagonal(self, temperature):
         """
-        Gives the thermal state density matrix at the absolute temperature T.
-        It is defined for N two-level systems.
+        Gives the thermal state density matrix at the absolute temperature T for a diagonal hamiltonian.
+        It is defined for N two-level systems written into the reduced density matrix rho(j,m,m').
         For temperature = 0, the thermal state is the ground state. 
 
         Parameters
@@ -588,14 +643,18 @@ class Dicke(object):
         N = self.N        
         hamiltonian = self.hamiltonian
 
-            
-        if temperature == 0:
-            ground_state = self.dicke( N/2, - N/2)
-            return ground_state
-        
         nds = num_dicke_states(N)
         num_ladders = num_dicke_ladders(N)
 
+        if isdiagonal(hamiltonian) == False:
+            raise ValueError("Hamiltonian is not diagonal")
+
+        if temperature == 0:        
+            ground_energy, ground_state = hamiltonian.groundstate()
+            ground_dm= ground_state * ground_state.dag()
+            return ground_dm
+
+        eigenval, eigenvec = hamiltonian.eigenstates()
         rho_thermal = dok_matrix((nds, nds))
 
         s = 0
@@ -607,13 +666,12 @@ class Dicke(object):
                 x = (hamiltonian[s,s] / temperature) * (constants.hbar / constants.Boltzmann)
                 rho_thermal[s,s] = np.exp( - x ) * state_degeneracy(N, j)
                 s = s + 1
-        zeta = self.partition_function(temperature)
-
+        zeta = self.partition_diagonal(temperature)
         rho = rho_thermal/zeta
 
         return Qobj(rho)
 
-    def partition_function(self, temperature):
+    def partition_diagonal(self, temperature):
         """
         Gives the partition function for the system at a given temperature if the Hamiltonian is diagonal.
         The Hamiltonian is assumed to be given with hbar = 1.
@@ -651,6 +709,268 @@ class Dicke(object):
             raise ValueError("Error, zeta <=0, zeta = {}".format(zeta))
                 
         return float(zeta)
+
+    def thermal_old(self, temperature):
+        """
+        Gives the thermal state density matrix at the absolute temperature T.
+        It is defined for N two-level systems written into the reduced density matrix rho(j,m,m').
+        For temperature = 0, the thermal state is the ground state. 
+
+        Parameters
+        ----------
+        temperature: float
+            The absolute temperature in Kelvin. 
+        Returns
+        -------
+        rho_thermal: matrix array
+            A square matrix of dimensions (nds, nds), with nds = num_dicke_states(N).
+            The thermal populations are the matrix elements on the main diagonal
+        """
+        
+        N = self.N        
+        hamiltonian = self.hamiltonian
+
+        nds = num_dicke_states(N)
+        num_ladders = num_dicke_ladders(N)
+
+        if temperature == 0:
+            if isdiagonal(hamiltonian) == True:
+                ground_state = self.dicke( N/2, - N/2)
+                return ground_state
+            else:
+                eigval, eigvec = hamiltonian.eigenstates()
+                ground_state = eigvec[0]*eigvec[0].dag()
+                return ground_state
+
+        rho_thermal = dok_matrix((nds, nds))
+
+        if isdiagonal(hamiltonian) == True:
+            s = 0
+            for k in range(1, int(num_ladders + 1)):
+                j = 0.5 * N + 1 - k
+                mmax = (2 * j + 1)
+                for i in range(1, int(mmax + 1)):
+                    m = j + 1 - i
+                    x = (hamiltonian[s,s] / temperature) * (constants.hbar / constants.Boltzmann)
+                    rho_thermal[s,s] = np.exp( - x ) * state_degeneracy(N, j)
+                    s = s + 1
+            zeta = self.partition_function_diag(temperature)
+            rho = rho_thermal/zeta
+
+        else:
+            eigval, eigvec = hamiltonian.eigenstates()
+            zeta = self.partition_function(temperature)
+
+            rho = rho_thermal/zeta
+
+        return Qobj(rho)
+
+    def eigenstates(self, liouvillian):
+        """
+        Calculates the eigenvalues and eigenvectors of the Liouvillian, removing the spurious ones. 
+
+        Parameters
+        ----------
+        liouvillian: Qobj superoperator type
+            The Liouvillian of which to calculate the spectrum.
+            
+        Returns
+        -------
+        eigen_states: list of Qobj
+            The list of eigenvalues and correspondent eigenstates.
+        """
+        unpruned_eigenstates = liouvillian.eigenstates()
+
+        eigen_states = self.prune_eigenstates(unpruned_eigenstates)
+
+        return eigen_states
+
+    def prune_eigenstates_1(self, liouvillian_eigenstates):
+        """
+        Removes the spurious eigenvalues and eigenvectors of the Liouvillian.
+        Spurious means that the given eigenvector has elements outside of the block diagonal matrix 
+
+        Parameters
+        ----------
+        liouvillian_eigenstates: list of Qobj
+            A list with the eigenvalues and eigenvectors of the Liouvillian including spurious ones. 
+
+        Returns
+        -------
+        correct_eigenstates: list of Qobj
+            The list with the correct eigenvalues and eigenvectors of the Liouvillian.
+        """
+        
+        N = self.N
+
+        block_mat = block_matrix(N)
+
+        eig_val, eig_vec = liouvillian_eigenstates
+
+        tol = 8
+        eig_val = np.round(eig_val,tol)
+
+        # 1. Restrict search only to eigenvalues on imaginary axis (for physical reasons).
+
+        index_imag_eig = []
+        for i in range(0,len(eig_val)):
+            if np.real(eig_val[i]) == 0:
+                index_imag_eig.append(i) 
+
+        # 2. Use block matrix as a mask to find forbidden eigenvectors.
+        
+        forbidden_eig_index = []
+
+        for k in index_imag_eig:
+            dm = vector_to_operator(eig_vec[k])
+            dm_mask = Qobj(dm.data.multiply(block_mat))
+            if dm_mask != dm:
+                forbidden_eig_index.append(k)
+        
+        # 3. Remove the forbidden eigenvalues and eigenvectors.
+        
+        correct_eig_val = np.delete(eig_val,forbidden_eig_index)
+        correct_eig_vec = np.delete(eig_vec,forbidden_eig_index)
+
+        correct_eigenstates = correct_eig_val, correct_eig_vec
+
+        return correct_eigenstates
+
+    def prune_eigenstates_2(self, liouvillian_eigenstates):
+        """
+        Removes the spurious eigenvalues and eigenvectors of the Liouvillian.
+        Spurious means that the given eigenvector has elements outside of the block diagonal matrix 
+
+        Parameters
+        ----------
+        liouvillian_eigenstates: list of Qobj
+            A list with the eigenvalues and eigenvectors of the Liouvillian including spurious ones. 
+
+        Returns
+        -------
+        correct_eigenstates: list of Qobj
+            The list with the correct eigenvalues and eigenvectors of the Liouvillian.
+        """
+        
+        N = self.N
+
+        dict_jmm1 = self.jmm1_dictionary()[0]
+        block_mat = block_matrix(N)
+
+        # 0. Search eigenvalues that have zero real part by createing an approximated value
+        eig_val, eig_vec = liouvillian_eigenstates
+        tol = 8
+        eig_val_round = np.round(eig_val, tol)
+
+        # 1. Restrict search only to eigenvalues on imaginary axis (for physical reasons).
+        index_imag_eig = []
+        for i in range(0,len(eig_val)):
+            if np.real(eig_val_round[i]) == 0:
+                index_imag_eig.append(i)
+
+        # 2. Use jmm1_dict to find eigenvectors with matrix elements outside of the block matrix.
+        forbidden_eig_index = []
+        forbidden_eig_index_bm = []
+        for k in index_imag_eig:
+            dm = vector_to_operator(eig_vec[k])
+            nnz_tuple = [(i, j) for i, j in zip(*dm.data.nonzero())]
+            nnz_tuple_bm = [(i, j) for i, j in zip(*block_mat.nonzero())]
+            for i in nnz_tuple:
+                if i not in nnz_tuple_bm:
+                #    forbidden_eig_index_bm.append(k)
+                #if i not in dict_jmm1:
+                    if np.round(dm[i],tol) !=0:
+                        forbidden_eig_index.append(k)
+                        break
+
+        # 3. Remove the forbidden eigenvalues and eigenvectors.
+        correct_eig_val = np.delete(eig_val,forbidden_eig_index)
+        correct_eig_vec = np.delete(eig_vec,forbidden_eig_index)
+        correct_eigenstates = correct_eig_val, correct_eig_vec
+
+        return correct_eigenstates
+
+    def prune_eigenstates3(self, liouvillian_eigenstates):
+        """
+        Removes the spurious eigenvalues and eigenvectors of the Liouvillian.
+        Spurious means that the given eigenvector has elements outside of the block diagonal matrix 
+
+        Parameters
+        ----------
+        liouvillian_eigenstates: list of Qobj
+            A list with the eigenvalues and eigenvectors of the Liouvillian including spurious ones. 
+
+        Returns
+        -------
+        correct_eigenstates: list of Qobj
+            The list with the correct eigenvalues and eigenvectors of the Liouvillian.
+        """
+        
+        N = self.N
+        block_mat = block_matrix(N)
+        nnz_tuple_bm = [(i, j) for i, j in zip(*block_mat.nonzero())]
+
+        # 0. Create  a copy of the eigenvalues to approximate values
+        eig_val, eig_vec = liouvillian_eigenstates
+        tol = 10
+        eig_val_round = np.round(eig_val, tol)
+
+        # 2. Use 'block_matrix(N)' to remove eigenvectors with matrix elements outside of the block matrix.
+        forbidden_eig_index = []
+        for k in range(0,len(eig_vec)):
+            dm = vector_to_operator(eig_vec[k])
+            nnz_tuple = [(i, j) for i, j in zip(*dm.data.nonzero())]
+            for i in nnz_tuple:
+                if i not in nnz_tuple_bm:
+                    if np.round(dm[i],tol) !=0:
+                        print(nnz_tuple)
+                        forbidden_eig_index.append(k)
+                        #break
+
+        forbidden_eig_index = np.array(list(set(forbidden_eig_index)))
+        # 3. Remove the forbidden eigenvalues and eigenvectors.
+        correct_eig_val = np.delete(eig_val,forbidden_eig_index)
+        correct_eig_vec = np.delete(eig_vec,forbidden_eig_index)
+        correct_eigenstates = correct_eig_val, correct_eig_vec
+
+        return correct_eigenstates
+
+    def prune_eigenstates(self, liouvillian_eigenstates):
+        """
+        Removes the spurious eigenvalues and eigenvectors of the Liouvillian.
+        Spurious means that the given eigenvector has elements outside of the block diagonal matrix 
+
+        Parameters
+        ----------
+        liouvillian_eigenstates: list of Qobj
+            A list with the eigenvalues and eigenvectors of the Liouvillian including spurious ones. 
+
+        Returns
+        -------
+        correct_eigenstates: list of Qobj
+            The list with the correct eigenvalues and eigenvectors of the Liouvillian.
+        """
+        
+        N = self.N
+        block_mat = block_matrix(N)
+        nds = num_dicke_states(N)
+
+
+        # 0. Create  a copy of the eigenvalues to approximate values
+        eig_val, eig_vec = liouvillian_eigenstates
+        mask_column = Qobj(block_mat).full().flatten().astype(bool)
+        liouv_stack = np.column_stack([eig_vec[i].full() for i in range(len(eig_vec))])
+        masked_incorrect = np.array([np.round(sum(liouv_stack[:, i][~mask_column]), 10) for i in range(liouv_stack.shape[1])])
+        forbidden_eig_index = masked_incorrect.reshape(nds**2, 1).nonzero()[0]
+
+        # 3. Remove the forbidden eigenvalues and eigenvectors.
+        correct_eig_val = np.delete(eig_val,forbidden_eig_index)
+        correct_eig_vec = np.delete(eig_vec,forbidden_eig_index)
+        correct_eigenstates = correct_eig_val, correct_eig_vec
+        print(forbidden_eig_index)
+        print(eig_val)
+
+        return correct_eigenstates
 
 #modules for the Dicke space
 
@@ -1014,9 +1334,9 @@ def block_matrix(N):
 
     return block_matr
 
-# brute calculation modules (full Hilbert space 2**N)
+# TLS Hilbert space (2**N) modules (full Hilbert space 2**N)
 
-# brute force modules
+# TLS Hilbert space (2**N) modules
 
 def su2_algebra(N):
     """
@@ -1179,9 +1499,9 @@ def make_cops(N = 2, emission = 1., loss = 0., dephasing = 0., pumping = 0., col
     
     return c_ops
 
-# brute force functions
+# TLS Hilbert space (2**N) functions
 
-def excited_state_brute(N):
+def excited_state_tls(N):
     """
     Generates a initial dicke state |N/2, N/2 > as a Qobj in a 2**N dimensional Hilbert space
 
@@ -1204,7 +1524,7 @@ def excited_state_brute(N):
         
     return psi0
 
-def superradiant_state_brute(N):
+def superradiant_state_tls(N):
     """
     Generates a initial dicke state |N/2, 0 > (N even) or |N/2, 0.5 > (N odd) as a Qobj in a 2**N dimensional Hilbert space
 
@@ -1228,7 +1548,7 @@ def superradiant_state_brute(N):
     return psi0
        
 
-def ground_state_brute(N):
+def ground_state_tls(N):
     """
     Generates a initial dicke state |N/2, - N/2 > as a Qobj in a 2**N dimensional Hilbert space
 
@@ -1251,7 +1571,7 @@ def ground_state_brute(N):
         
     return psi0
 
-def identity_brute(N):
+def identity_tls(N):
     """
     Generates the identity in a 2**N dimensional Hilbert space
 
@@ -1279,7 +1599,7 @@ def identity_brute(N):
     
     return identity
 
-def ghz_state_brute(N):
+def ghz_state_tls(N):
     """
     Generates the GHZ density matrix in a 2**N dimensional Hilbert space
 
@@ -1310,7 +1630,7 @@ def ghz_state_brute(N):
     
     return ghz
 
-def css_state_brute(N):
+def css_state_tls(N):
     """
     Generates the CSS density matrix in a 2**N dimensional Hilbert space.
     The CSS state, also called 'plus state' is, |+>_i = 1/np.sqrt(2) * (|0>_i + |1>_i ).
@@ -1351,7 +1671,7 @@ def css_state_brute(N):
     
     return rho_tot
 
-def partition_function_brute(N, omega_0, temperature) :
+def partition_function_tls(N, omega_0, temperature) :
     """
     Gives the partition function for a collection of N two-level systems with H = omega_0 * j_z.
     It is calculated in the full 2**N Hilbert state, using the eigenstates of H in the uncoupled basis, not the Dicke basis.
@@ -1383,7 +1703,7 @@ def partition_function_brute(N, omega_0, temperature) :
             
     return zeta
 
-def thermal_state_brute(N, omega_0, temperature) :
+def thermal_state_tls(N, omega_0, temperature) :
     """
     Gives the thermal state for a collection of N two-level systems with H = omega_0 * j_z.
     It is calculated in the full 2**N Hilbert state on the eigenstates of H in the uncoupled basis, not the Dicke basis. 
@@ -1415,7 +1735,7 @@ def thermal_state_brute(N, omega_0, temperature) :
         rho_thermal[i, i] = np.exp( - x * m_list[i])
     rho_thermal = Qobj(rho_thermal, dims = jz.dims, shape = jz.shape)
     
-    zeta = partition_function_brute(N, omega_0, temperature)
+    zeta = partition_function_tls(N, omega_0, temperature)
     
     rho_thermal = rho_thermal / zeta
     
