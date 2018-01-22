@@ -10,7 +10,7 @@ from piqs.dicke import (num_tls, Piqs)
 
 from piqs.cy.dicke import (get_blocks, j_min, j_vals, m_vals, num_dicke_states,
                             num_dicke_ladders, get_index, jmm1_dictionary)
-from cy.dicke import Dicke as _Dicke
+from piqs.cy.dicke import Dicke as _Dicke
 from qutip import Qobj
 
 

@@ -17,8 +17,8 @@ from qutip import *
 from qutip.cy.spmatfuncs import cy_ode_rhs
 from qutip.ui.progressbar import BaseProgressBar, TextProgressBar
 from qutip.mesolve import _generic_ode_solve
-from cy.dicke import Dicke as _Dicke
-from cy.dicke import (j_min, j_vals, get_blocks, 
+from piqs.cy.dicke import Dicke as _Dicke
+from piqs.cy.dicke import (j_min, j_vals, get_blocks, 
                       jmm1_dictionary, num_dicke_states,
                       num_dicke_ladders)
 # ============================================================================
