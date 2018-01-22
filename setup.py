@@ -52,12 +52,13 @@ ISRELEASED = False
 VERSION = '%d.%d.%d' % (MAJOR, MINOR, MICRO)
 REQUIRES = ['numpy (>=1.8)', 'scipy (>=0.15)', 'cython (>=0.21)', 'qutip (>=4.2)']
 INSTALL_REQUIRES = ['numpy>=1.8', 'scipy>=0.15', 'cython>=0.21', 'qutip>=4.2']
-PACKAGES = ['piqs', 'piqs/dicke', 'piqs/cy']
+PACKAGES = ['piqs', 'piqs/cy']
 PACKAGE_DATA = {
     'piqs': ['configspec.ini'],
     'piqs/tests': ['*.ini'],
     'piqs/cy': ['*.pxi', '*.pxd', '*.pyx'],
 }
+INCLUDE_DIRS = [np.get_include()] if np is not None else []
 NAME = "piqs"
 AUTHOR = ("Nathan Shammah, Shahnawaz Ahmed")
 AUTHOR_EMAIL = ("nathan.shammah@gmail.com, shahnawaz.ahmed95@gmail.com")
@@ -99,11 +100,10 @@ if "CFLAGS" in cfg_vars:
 # Setup commands go here
 setup(
     name = NAME,
-    version = FULLVERSION,
+    version = VERSION,
     packages = PACKAGES,
     include_package_data=True,
     include_dirs = INCLUDE_DIRS,
-    headers = HEADERS,
     ext_modules = cythonize(EXT_MODULES),
     cmdclass = {'build_ext': build_ext},
     author = AUTHOR,
