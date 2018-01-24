@@ -45,7 +45,8 @@ PIQS is licensed under the terms of the BSD license.
 
 
 ## Resources
-The code can be found in [1]. A paper detailing the theoretical aspects and illustrating many applications is in [2]. The original permutational invariant theory can be found here Chase and Geremia 2008. Some of the other existing open-source libraries for open quantum dynamics is $Permutations$ [3] by Peter Kirton and $PsiQuaSP$ by Michal Gegg. [4]
+The code can be found in [1]. A paper detailing the theoretical aspects and illustrating many applications is in [2]. The original permutational invariant theory can be found here Chase and Geremia 2008. Some of the other existing open-source libraries for open quantum dynamics is *Permutations* [3] by Peter Kirton and *PsiQuaSP* by Michal Gegg. [4]
+
 
 [1] https://github.com/nathanshammah/piqs
 
