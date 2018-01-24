@@ -501,6 +501,216 @@ def m_degeneracy(N, m):
         raise ValueError(e)
     return int(degeneracy)
 
+def jx_op(N):
+    """
+    Builds the Jx operator in the same basis of the reduced density matrix
+    rho(j,m,m').    
+
+    Parameters
+    ----------
+    N: int 
+        Number of two-level systems
+    Returns
+    -------
+    jx_operator: Qobj matrix
+        The Jx operator as a QuTiP object. The dimensions are (nds,nds) where
+        nds is the number of Dicke states.         
+    """
+    nds = num_dicke_states(N)
+    num_ladders = num_dicke_ladders(N)
+    block_diagonal = block_matrix(N).todense()
+
+    jp_operator = dok_matrix((nds, nds))
+    jm_operator = dok_matrix((nds, nds))
+
+    s = 0
+    for k in range(0, num_ladders):
+            j = 0.5 * N - k
+            mmax = int(2 * j + 1)
+            for i in range(0, mmax):
+                m = j - i
+                if (s + 1) in range(0,nds):
+                    jp_operator[s,s+1] = block_diagonal[s,s+1] * ap(j,m-1)
+                if (s - 1) in range(0,nds):
+                    jm_operator[s,s-1] =  block_diagonal[s,s-1] * am(j,m+1)
+                s = s + 1
+    jx_operator = 1/2*(jp_operator + jm_operator)
+
+    return Qobj(jx_operator)
+
+def jy_op(N):
+    """
+    Builds the Jy operator in the same basis of the reduced density matrix
+    rho(j,m,m').    
+    Parameters
+    ----------
+    N: int 
+        Number of two-level systems
+    Returns
+    -------
+    jy_operator: Qobj matrix
+        The Jy operator as a QuTiP object. The dimensions are (nds,nds) where
+        nds is the number of Dicke states.    
+    """
+    nds = num_dicke_states(N)
+    num_ladders = num_dicke_ladders(N)
+    block_diagonal = block_matrix(N).todense()
+    jp_operator = dok_matrix((nds, nds))
+    jm_operator = dok_matrix((nds, nds))
+
+    s = 0
+    for k in range(0, num_ladders):
+            j = 0.5 * N - k
+            mmax = int(2 * j + 1)
+            for i in range(0, mmax):
+                m = j - i
+                if (s + 1) in range(0,nds):
+                    jp_operator[s,s+1] = block_diagonal[s,s+1] * ap(j,m-1)
+                if (s - 1) in range(0,nds):
+                    jm_operator[s,s-1] =  block_diagonal[s,s-1] * am(j,m+1)
+                s = s + 1
+    jy_operator = 1j/2*(jm_operator - jp_operator)
+
+    return Qobj(jy_operator)
+
+def jz_op(N):
+    """
+    Builds the Jz operator in the same basis of the reduced density matrix
+    rho(j,m,m'). Jz is diagonal in this basis.   
+    
+    Parameters
+    ----------
+    N: int 
+        Number of two-level systems
+    
+    Returns
+    -------
+    jz_operator: Qobj matrix
+        The Jz operator as a QuTiP object. The dimensions are (nds,nds)
+        where nds is the number of Dicke states.      
+    """
+    nds = num_dicke_states(N)
+    num_ladders = num_dicke_ladders(N)
+    jz_operator = dok_matrix((nds, nds))
+
+    s = 0
+    for k in range(0, num_ladders):
+            j = 0.5 * N - k
+            mmax = int(2 * j + 1)
+            for i in range(0, mmax):
+                m = j - i
+                jz_operator[s,s] = m
+                s = s + 1
+
+    return Qobj(jz_operator)
+
+def j2_op(N):
+    """
+    Builds the J^2 operator in the same basis of the reduced density matrix
+    rho(j,m,m'). J^2 is diagonal in this basis.   
+    Parameters
+    ----------
+    N: int 
+        Number of two-level systems
+    Returns
+    -------
+    j2_operator: Qobj matrix
+        The J^2 operator as a QuTiP object. The dimensions are (nds,nds) where
+        nds is the number of Dicke states.  
+    """
+    nds = num_dicke_states(N)
+    num_ladders = num_dicke_ladders(N)
+    j2_operator = dok_matrix((nds, nds))
+
+    s = 0
+    for k in range(0, num_ladders):
+            j = 0.5 * N - k
+            mmax = int(2 * j + 1)
+            for i in range(0, mmax):
+                m = j - i
+                j2_operator[s,s] = j * (j + 1)
+                s = s + 1
+
+    return Qobj(j2_operator) 
+
+def jp_op(N):
+    """
+    Builds the Jp operator in the same basis of the reduced density matrix
+    rho(j,m,m').   
+    
+    Parameters
+    ----------
+    N: int 
+        Number of two-level systems
+    
+    Returns
+    -------
+    jp_operator: Qobj matrix
+        The Jp operator as a QuTiP object. The dimensions are (nds,nds) where
+        nds is the number of Dicke states.    
+    """
+    nds = num_dicke_states(N)
+    num_ladders = num_dicke_ladders(N)
+    jp_operator = dok_matrix((nds, nds))
+
+    s = 0
+    for k in range(0, num_ladders):
+            j = 0.5 * N - k
+            mmax = int(2 * j + 1)
+            for i in range(0, mmax):
+                m = j - i
+                if (s + 1) in range(0,nds):
+                    jp_operator[s,s+1] = ap(j,m-1)
+                s = s + 1
+
+    return Qobj(jp_operator)
+
+def jm_op(N):
+    """
+    Builds the Jm operator in the same basis of the reduced density matrix rho(j,m,m').    
+
+    Parameters
+    ----------
+    N: int 
+        Number of two-level systems
+
+    Returns
+    -------
+    jm_operator: Qobj matrix
+        The Jm operator as a QuTiP object. The dimensions are (nds,nds) where nds is
+        the number of Dicke states.    
+    """
+    nds = num_dicke_states(N)
+    num_ladders = num_dicke_ladders(N)
+    jm_operator = dok_matrix((nds, nds))
+
+    s = 0
+    for k in range(0, num_ladders):
+            j = 0.5 * N - k
+            mmax = int(2 * j + 1)
+            for i in range(0, mmax):
+                m = j - i
+                if (s - 1) in range(0,nds):
+                    jm_operator[s,s-1] = am(j,m+1)
+                s = s + 1
+
+    return Qobj(jm_operator)
+
+def ap( j, m):
+    """
+    Calculate A_{+} for value of j, m.
+    """
+    a_plus = np.sqrt((j - m) * (j + m + 1))
+    
+    return(a_plus)
+
+def am(j, m):
+    """
+    Calculate A_{m} for value of j, m.
+    """
+    a_minus = np.sqrt((j + m) * (j - m + 1))
+    
+    return(a_minus)
 
 def su2_algebra(N):
     """
@@ -557,7 +767,6 @@ def su2_algebra(N):
     su2_operators = [sx, sy, sz, sm, sp]
 
     return su2_operators
-
 
 def collective_algebra(N):
     """
@@ -671,7 +880,6 @@ def c_ops_tls(N=2, emission=1., loss=0., dephasing=0., pumping=0.,
 
     return c_ops
 
-
 # ============================================================================
 # State definitions in the Dicke basis with an option for basis transformation
 # ============================================================================
@@ -733,9 +941,9 @@ def dicke(N, jmm1 = None, basis = "dicke"):
 
 def excited(N, basis='dicke'):
     """
-    Generates an initial dicke state density matrix |N/2, N/2, N/2> in the dicke basis.
-    If the argument `basis` is "uncoupled" then it generates the state in
-    a 2**N dim Hilbert space.
+    Generates an initial dicke state density matrix |N/2, N/2, N/2> in the
+    dicke basis. If the argument `basis` is "uncoupled" then it generates
+    the state in a 2**N dim Hilbert space.
     """
     if basis == "uncoupled":
         return _uncoupled_excited(N)
@@ -760,7 +968,8 @@ def superradiant(N, basis="dicke"):
 
 def css(N, a=1, b=1, basis="dicke"):
     """
-    Loads the separable spin state |->= Prod_i^N(a|1>_i + b|0>_i) into the reduced density matrix rho(j,m,m'). 
+    Loads the separable spin state |->= Prod_i^N(a|1>_i + b|0>_i)
+    into the reduced density matrix rho(j,m,m'). 
     """
     if basis == "uncoupled":
         return _uncoupled_css(N, a, b)
@@ -1054,3 +1263,39 @@ def uncoupled_partition_function(N, omega_0, temperature):
         zeta = zeta + np.exp(- x * m)
 
     return zeta
+
+
+def block_matrix(N):
+    """
+    Gives the block diagonal matrix filled with 1 if the matrix element
+    is allowed in the reduced basis |j,m><j,m'|.   
+    Parameters
+    ----------
+    N: int 
+        Number of two-level systems
+    
+    Returns
+    -------
+    block_matr: ndarray
+        A block diagonal matrix of ones with dimension (nds,nds), where
+        nds is the number of Dicke states for N two-level systems.   
+    """
+    nds = num_dicke_states(N)
+    
+    #create a list with the sizes of the blocks, in order
+    blocks_dimensions = int(N/2 + 1 - 0.5 *(N%2))
+    blocks_list = [ (2*(i+1*(N%2))+1*((N+1)%2)) for i in range(blocks_dimensions)]
+    blocks_list = np.flip(blocks_list,0)
+
+    #create a list with each block matrix as element  
+
+    square_blocks = []
+    k = 0
+    for i in blocks_list:
+        square_blocks.append(np.ones((i,i)))
+        k = k + 1
+
+    #create the final block diagonal matrix (dense)
+    block_matr = block_diag(square_blocks)
+
+    return block_matr
