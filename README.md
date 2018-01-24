@@ -38,6 +38,7 @@ system = Dicke(N, emission = gamma)
 L = system.louivillian()
 steady_state = steadystate(L)
 ```
+For more details and examples on the use of *PIQS* see the notebook repository. 
 
 ## License
 
