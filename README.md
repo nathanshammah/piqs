@@ -11,7 +11,7 @@ A major feature of PIQS is that it allows to build the Liouvillian of the system
 
 ## A wide range of applications
 
-- The time evolution of the total density matrix of cavity QED systems for permutationally symmetric initial states (such as the GHZ state, Dicke states, spin-squeezed states).
+- The time evolution of the total density matrix of quantum optics and cavity QED systems for permutationally symmetric initial states (such as the GHZ state, Dicke states, coherent spin states).
 - Quantum phase transitions (QPT) of driven-dissipative out-of-equilibrium quantum systems.  
 - Correlation functions of collective systems in quantum optics experiments, such as the spectral density and second-order correlation functions.
 - Various quantum phenomena such as steady-state superradiance, superradiant light emission, superradiant phase transition, spin squeezing, boundary time crystals, optical bistability.
