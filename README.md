@@ -33,9 +33,9 @@ from qutip import *
 N = 10
 
 gamma = 1.
-system = Dicke(N, emission = gamma)
+system = Piqs(N, emission = gamma)
 
-L = system.louivillian()
+L = system.liouvillian()
 steady_state = steadystate(L)
 ```
 For more details and examples on the use of *PIQS* see the notebook repository. 
