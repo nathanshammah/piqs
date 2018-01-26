@@ -7,8 +7,7 @@ import numpy as np
 
 from scipy import constants
 from scipy.integrate import odeint, ode
-from scipy.sparse import dok_matrix, csr_matrix
-
+from scipy.sparse import dok_matrix, csr_matrix, block_diag
 from qutip import Qobj, spre, spost
 from qutip import sigmax, sigmay, sigmaz, sigmap, sigmam
 from qutip.solver import Result, Options
@@ -762,6 +761,46 @@ def collective_algebra(N):
 
     return collective_operators
 
+def j_algebra(N):
+    """
+    Gives the list with the collective operators of the total algebra, using the reduced basis
+    |j,m><j,m'| in which the density matrix is expressed.    
+    The list returned is [J^2, J_x, J_y, J_z, J_+, J_-]. 
+    Parameters
+    ----------
+    N: int 
+        Number of two-level systems    
+    Returns
+    -------
+    red_alg: list
+        Each element of the list is a Qobj matrix (QuTiP class) of dimensions (nds,nds). nds = number of Dicke states.    
+    """
+    nds = num_dicke_states(N)
+    num_ladders = num_dicke_ladders(N)
+
+    jz_operator = dok_matrix((nds, nds))
+    jp_operator = dok_matrix((nds, nds))
+    jm_operator = dok_matrix((nds, nds))
+
+    s = 0
+    for k in range(0, num_ladders):
+            j = 0.5 * N - k
+            mmax = int(2 * j + 1)
+            for i in range(0, mmax):
+                m = j - i
+                jz_operator[s,s] = m
+                if (s + 1) in range(0,nds):
+                    jp_operator[s,s+1] = ap(j,m-1)
+                if (s - 1) in range(0,nds):
+                    jm_operator[s,s-1] = am(j,m+1)
+                s = s + 1
+    jx_operator = 1/2*(jp_operator + jm_operator)
+    jy_operator = 1j/2*(jm_operator - jp_operator)
+
+    j_alg = [Qobj(jx_operator), Qobj(jy_operator), Qobj(jz_operator), Qobj(jp_operator), Qobj(jm_operator)]
+
+    return j_alg
+
 
 def c_ops_tls(N=2, emission=0., dephasing=0., pumping=0., collective_emission=0.,
               collective_dephasing=0., collective_pumping=0.):
@@ -887,7 +926,7 @@ def dicke_basis(N, jmm1 = None, basis = "dicke"):
     nds = _num_dicke_states(N)
     rho = np.zeros((nds, nds))
 
-    jmm1_dict = jmm1_dictionary(N)[0]
+    jmm1_dict = jmm1_dictionary(N)[1]
 
     for key in jmm1:
         i, k = jmm1_dict[key]
@@ -895,7 +934,7 @@ def dicke_basis(N, jmm1 = None, basis = "dicke"):
 
     return Qobj(rho)
 
-def dicke_basis(N, j, m, basis = "dicke"):
+def dicke_state(N, j, m, basis = "dicke"):
     """
     Initialize the density matrix in the Dicke basis state. 
     For instance, if the superradiant state is given |j, m> = |1, 0> for N = 2, 
@@ -924,7 +963,7 @@ def dicke_basis(N, j, m, basis = "dicke"):
     nds = num_dicke_states(N)
     rho = np.zeros((nds, nds))
 
-    jmm1_dict = jmm1_dictionary(N)[0]
+    jmm1_dict = jmm1_dictionary(N)[1]
 
     i, k = jmm1_dict[(j, m, m)]
     rho[i, k] = 1.
@@ -973,7 +1012,7 @@ def css(N, a=1/np.sqrt(2), b=1/np.sqrt(2), basis = "dicke"):
     rho = dok_matrix((nds, nds))
 
     # loop in the allowed matrix elements
-    jmm1_dict = jmm1_dictionary(N)[0]
+    jmm1_dict = jmm1_dictionary(N)[1]
 
     j = 0.5 * N 
     mmax = int(2 * j + 1)
