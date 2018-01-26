@@ -18,6 +18,7 @@ from qutip.cy.spmatfuncs import cy_ode_rhs
 from qutip.ui.progressbar import BaseProgressBar, TextProgressBar
 from qutip.mesolve import _generic_ode_solve
 from piqs.cy.dicke import Dicke as _Dicke
+from piqs.cy.dicke import Pim as _Pim
 from piqs.cy.dicke import (_j_min, _j_vals, _get_blocks, 
                       jmm1_dictionary, _num_dicke_states,
                       _num_dicke_ladders)
@@ -202,18 +203,18 @@ class Piqs(object):
     """
 
     def __init__(self, N=1, hamiltonian=None,
-                 emission=0., dephasing=0., pumping=0., collective_emission=0.,
-                 collective_pumping=0., collective_dephasing=0.):
+                 emission=0., dephasing=0., pumping=0.,
+                 collective_emission=0., collective_dephasing=0., collective_pumping=0.):
         self.N = N
         self.hamiltonian = hamiltonian
 
-        self.collective_emission = collective_emission
         self.emission = emission
         self.dephasing = dephasing
         self.pumping = pumping
-        self.collective_pumping = collective_pumping
+        self.collective_emission = collective_emission
         self.collective_dephasing = collective_dephasing
-
+        self.collective_pumping = collective_pumping
+        
         self.nds = _num_dicke_states(self.N)
         self.dshape = (_num_dicke_states(self.N), _num_dicke_states(self.N))
 
@@ -248,14 +249,27 @@ class Piqs(object):
                 The matrix size is (nds**2, nds**2) where nds is the number of
                 Dicke states.
         """
-        cythonized_dicke = _Dicke(int(self.N), float(self.emission),
-                                  float(self.dephasing),
-                                  float(self.pumping),
-                                  float(self.collective_emission),
-                                  float(self.collective_pumping),
-                                  float(self.collective_dephasing))
+        cythonized_dicke = _Dicke(int(self.N),
+                                float(self.emission),
+                                float(self.dephasing),
+                                float(self.pumping),
+                                float(self.collective_emission),
+                                float(self.collective_dephasing),
+                                float(self.collective_pumping))
 
         return cythonized_dicke.lindbladian()
+
+    def diagonal_lindbladian(self):
+        """
+        A faster implementation for diagonal Hamiltonians which only computes
+        the Lindblad terms for the diagonal elements and hence is much faster.
+        """
+        system = _Pim(int(self.N), float(self.emission), float(self.dephasing),
+              float(self.pumping), float(self.collective_emission),
+              float(self.collective_dephasing), float(self.collective_pumping))
+
+        M = system.generate_matrix()
+        return M
 
     def liouvillian(self):
         """
@@ -350,123 +364,6 @@ class Piqs(object):
         correct_eigenstates = correct_eig_val, correct_eig_vec
 
         return correct_eigenstates
-
-
-# ============================================================================
-# Functions necessary to generate the Lindbladian/Liouvillian for j, m
-# ============================================================================
-class Pim(object):
-    """
-    The permutation invariant matrix class. Initialize the class with the
-    parameters for generating a permutation invariant density matrix. This
-    is a faster implementation for diagonal Hamiltonians when the initial
-    state is also diagonal in the Dicke basis. i.e., we only have non-zero
-    coefficient values for |j, m, m>.
-
-    Parameters
-    ----------
-    N : int
-        The number of two level systems
-        default: 2
-
-    emission : float
-        Incoherent emission coefficient
-        default: 0.0
-
-    dephasing : float
-        Local dephasing coefficient
-        default: 0.0
-
-    pumping : float
-        Incoherent pumping coefficient
-        default: 0.0
-
-    collective_emission : float
-        Collective (superradiant) emission coefficient
-        default: 1.0
-
-    collective_dephasing : float
-        Collective dephasing coefficient
-        default: 0.0
-
-    collective_pumping : float
-        Collective pumping coefficient
-        default: 0.0
-
-    M: dict
-        A nested dictionary of the structure {row: {col: val}} which holds
-        non zero elements of the matrix M
-
-    sparse_M: scipy.sparse.csr_matrix
-        A sparse representation of the matrix M for efficient vector
-        multiplication
-    """
-
-    def __init__(self, N=2, emission=0, dephasing=0, pumping=0,
-                 collective_emission=1, collective_dephasing=0, collective_pumping=0):
-        self.N = N
-        self.emission = emission
-        self.dephasing = dephasing
-        self.pumping = pumping
-        self.collective_emission = collective_emission                
-        self.collective_dephasing = collective_dephasing
-        self.collective_pumping = collective_pumping        
-        self.M = None
-
-    def sparse_M(self):
-        """
-        Wraps around the Cythonized _Pim class to generate the sparse matrix
-        `M` which can be used to evolve the system as:
-
-        .. math::
-            \frac{\partial\rho}{\partial t} = M\rho
-        """
-        system = _Pim(int(self.N), float(self.emission), float(self.dephasing),
-                      float(self.pumping), float(self.collective_emission),
-                      float(self.collective_dephasing), float(self.collective_pumping))
-
-        self.M = system.generate_matrix()
-
-        return self.M
-
-    def solve(self, initial_state, tlist, options=None, progress_bar=None):
-        """
-        An optimized solver for diagonal states using the matrix M and QuTiP's
-        sparse `spmat` routine
-        """
-        if options is None:
-            options = Options()
-        if progress_bar is None:
-            progress_bar = BaseProgressBar()
-        elif progress_bar is True:
-            progress_bar = TextProgressBar()
-
-        n_tsteps = len(tlist)
-        output = Result()
-        output.solver = "pim"
-
-        if options.store_states:
-            output.states = []
-
-        M = self.M
-        r = scipy.integrate.ode(cy_ode_rhs)
-
-        r.set_f_params(M.data, M.indices, M.indptr)
-        r.set_integrator('zvode', method=options.method,order=options.order,
-                 atol=options.atol, rtol=options.rtol,
-                 nsteps=options.nsteps, first_step=options.first_step,
-                 min_step=options.min_step,max_step=options.max_step)
-
-        rho0 = None
-        if not isinstance(initial_state, Qobj):
-            rho0 = Qobj(initial_state)
-
-        else:
-            rho0 = initial_state
-
-        r.set_initial_value(initial_state.data, tlist[0])
-
-        return _generic_ode_solve(r, rho0, tlist, e_ops, opt, progress_bar)
 
 
 # ============================================================================

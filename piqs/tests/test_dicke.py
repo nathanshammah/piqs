@@ -217,8 +217,8 @@ class TestPim:
         gD = 0.1
         gP = 0.1
 
-        system = Piqs(N = N, loss = gE, pumping = gP, dephasing = gD,
-                        emission = gCE, collective_pumping = gCP,
+        system = Piqs(N = N, emission = gE, pumping = gP, dephasing = gD,
+                        collective_emission = gCE, collective_pumping = gCP,
                         collective_dephasing = gCD)
 
         lindbladian = system.lindbladian()
@@ -241,8 +241,8 @@ class TestPim:
         gD = 0.1
         gP = 0.1
 
-        system = Piqs(N = N, loss = gE, pumping = gP, dephasing = gD,
-                        emission = gCE, collective_pumping = gCP,
+        system = Piqs(N = N, emission = gE, pumping = gP, dephasing = gD,
+                        collective_emission = gCE, collective_pumping = gCP,
                         collective_dephasing = gCD)
 
         lindbladian = system.lindbladian()
@@ -285,13 +285,13 @@ class TestPim:
         | 3,-3>
         """
         N = 6
+        collective_emission = 1.
         emission = 1.
-        loss = 1.
         dephasing = 1.
         pumping = 1.
         collective_pumping = 1.
 
-        model = _Dicke(N, emission = emission, loss = loss, dephasing = dephasing,
+        model = _Dicke(N, collective_emission = collective_emission, emission = emission, dephasing = dephasing,
                       pumping = pumping, collective_pumping = collective_pumping)
 
         tau_calculated = [model.gamma3((3, 1, 1)), model.gamma2((2, 1, 1)), model.gamma4((1, 1, 1)),
