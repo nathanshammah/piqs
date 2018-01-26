@@ -197,11 +197,7 @@ cdef class Dicke(object):
         default: H = jz_op(N)
 
     emission : float
-        Collective spontaneous emmission coefficient
-        default: 1.0
-
-    loss : float
-        Incoherent loss coefficient
+        Incoherent emission coefficient
         default: 0.0
 
     dephasing : float
@@ -212,13 +208,18 @@ cdef class Dicke(object):
         Incoherent pumping coefficient
         default: 0.0
 
-    collective_pumping : float
-        Collective pumping coefficient
-        default: 0.0
+    collective_emission : float
+        Collective spontaneous emmission coefficient
+        default: 1.0
 
     collective_dephasing : float
         Collective dephasing coefficient
         default: 0.0
+
+    collective_pumping : float
+        Collective pumping coefficient
+        default: 0.0
+
     nds : int
         The number of Dicke states
         default: nds(2) = 4
@@ -233,20 +234,19 @@ cdef class Dicke(object):
         default:  array([3, 4])
     """
     cdef int N
-    cdef float loss, dephasing, pumping, emission
-    cdef float collective_pumping, collective_dephasing
+    cdef float emission, dephasing, pumping
+    cdef float collective_emission, collective_dephasing, collective_pumping
 
-    def __init__(self, int N=1, float loss=0., float dephasing=0.,
-                 float pumping=0., float emission=0.,
-                 collective_pumping=0., collective_dephasing=0.):
+    def __init__(self, int N=2, float emission=0., float dephasing=0.,
+                 float pumping=0., float collective_emission=1.,
+                 collective_dephasing=0., collective_pumping=0.):
         self.N = N
-
         self.emission = emission
-        self.loss = loss
         self.dephasing = dephasing
         self.pumping = pumping
-        self.collective_pumping = collective_pumping
+        self.collective_emission = collective_emission        
         self.collective_dephasing = collective_dephasing
+        self.collective_pumping = collective_pumping
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -389,7 +389,7 @@ cdef class Dicke(object):
 
         j, m, m1 = jmm1
 
-        cdef float yS, yL, yD, yP, yCP, yCD
+        cdef float yCE, yE, yD, yP, yCP, yCD
 
         cdef float N
         N = float(self.N)
@@ -397,15 +397,15 @@ cdef class Dicke(object):
         cdef float spontaneous, losses, pump, collective_pump
         cdef float dephase, collective_dephase, g1
 
-        yS = self.emission
-        yL = self.loss
+        yE = self.emission
         yD = self.dephasing
         yP = self.pumping
+        yCE = self.collective_emission        
         yCP = self.collective_pumping
         yCD = self.collective_dephasing
 
-        spontaneous = yS / 2 * (2 * j * (j + 1) - m * (m - 1) - m1 * (m1 - 1))
-        losses = yL / 2 * (N + m + m1)
+        spontaneous = yCE / 2 * (2 * j * (j + 1) - m * (m - 1) - m1 * (m1 - 1))
+        losses = yE / 2 * (N + m + m1)
         pump = yP / 2 * (N - m - m1)
         collective_pump = yCP / 2 * \
             (2 * j * (j + 1) - m * (m + 1) - m1 * (m1 + 1))
@@ -431,7 +431,7 @@ cdef class Dicke(object):
 
         j, m, m1 = jmm1
 
-        cdef float yS, yL, yD, yP, yCP, yCD, g2
+        cdef float yCE, yE, yD, yP, yCP, yCD, g2
 
         cdef float N
         N = float(self.N)
@@ -440,19 +440,19 @@ cdef class Dicke(object):
         cdef float dephase, collective_dephase
 
         j, m, m1 = jmm1
-        yS = self.emission
-        yL = self.loss
+        yCE = self.collective_emission
+        yE = self.emission
 
-        if yS == 0:
+        if yCE == 0:
             spontaneous = 0.0
         else:
-            spontaneous = yS * \
+            spontaneous = yCE * \
                 np.sqrt((j + m) * (j - m + 1) * (j + m1) * (j - m1 + 1))
 
-        if (yL == 0) or (j <= 0):
+        if (yE == 0) or (j <= 0):
             losses = 0.0
         else:
-            losses = yL / 2 * \
+            losses = yE / 2 * \
                 np.sqrt((j + m) * (j - m + 1) * (j + m1) * (j - m1 + 1)) * (N / 2 + 1) / (j * (j + 1))
 
         g2 = spontaneous + losses
@@ -468,7 +468,7 @@ cdef class Dicke(object):
         cdef float j, m, m1
         j, m, m1 = jmm1
 
-        cdef float yL
+        cdef float yE
 
         cdef float N
         N = float(self.N)
@@ -478,12 +478,12 @@ cdef class Dicke(object):
 
         cdef complex g3
 
-        yL = self.loss
+        yE = self.emission
 
-        if (yL == 0) or (j <= 0):
+        if (yE == 0) or (j <= 0):
             g3 = 0.0
         else:
-            g3 = yL / 2 * np.sqrt((j + m) * (j + m - 1) * (j + m1) * (j + m1 - 1)) * (N / 2 + j + 1) / (j * (2 * j + 1))
+            g3 = yE / 2 * np.sqrt((j + m) * (j + m - 1) * (j + m1) * (j + m1 - 1)) * (N / 2 + j + 1) / (j * (2 * j + 1))
 
         return (g3)
 
@@ -496,18 +496,18 @@ cdef class Dicke(object):
         cdef float j, m, m1
         j, m, m1 = jmm1
 
-        cdef float yL
+        cdef float yE
         cdef float N
         N = float(self.N)
 
         cdef complex g4
 
-        yL = self.loss
+        yE = self.emission
 
-        if (yL == 0) or ((j + 1) <= 0):
+        if (yE == 0) or ((j + 1) <= 0):
             g4 = 0.0
         else:
-            g4 = yL / 2 * np.sqrt((j - m + 1) * (j - m + 2) * (j - m1 + 1) * (j - m1 + 2)) * (N / 2 - j) / ((j + 1) * (2 * j + 1))
+            g4 = yE / 2 * np.sqrt((j - m + 1) * (j - m + 2) * (j - m1 + 1) * (j - m1 + 2)) * (N / 2 - j) / ((j + 1) * (2 * j + 1))
 
         return (g4)
 
