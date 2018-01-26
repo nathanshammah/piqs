@@ -8,7 +8,7 @@ cimport numpy as cnp
 cimport cython
 
 
-def num_dicke_states(N):
+def _num_dicke_states(N):
     """
     The number of dicke states with a modulo term taking care of ensembles
     with odd number of systems.
@@ -32,7 +32,7 @@ def num_dicke_states(N):
     return int(nds)
 
 
-def num_dicke_ladders(N):
+def _num_dicke_ladders(N):
     """
     Calculates the total number of Dicke ladders in the Dicke space for a
     collection of N two-level systems. It counts how many different "j" exist.
@@ -53,7 +53,7 @@ def num_dicke_ladders(N):
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef list get_blocks(int N):
+cpdef list _get_blocks(int N):
     """
     A list which gets the number of cumulative elements at each block
     boundary. For N = 4
@@ -79,7 +79,7 @@ cpdef list get_blocks(int N):
         An array with the number of cumulative elements at the boundary of
         each block
     """
-    cdef int num_blocks = num_dicke_ladders(N)
+    cdef int num_blocks = _num_dicke_ladders(N)
 
     cdef list blocks
     blocks = [i * (N + 2 - i) for i in range(1, num_blocks + 1)]
@@ -88,7 +88,7 @@ cpdef list get_blocks(int N):
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef float j_min(N):
+cpdef float _j_min(N):
     """
     Calculate the minimum value of j for given N
 
@@ -109,11 +109,11 @@ cpdef float j_min(N):
         return 0.5
 
 
-def j_vals(N):
+def _j_vals(N):
     """
     Get the valid values of j for given N.
     """
-    j = np.arange(j_min(N), N / 2 + 1, 1)
+    j = np.arange(_j_min(N), N / 2 + 1, 1)
     return j
 
 
@@ -158,11 +158,11 @@ cpdef list jmm1_dictionary(int N):
     cdef dict jmm1_flat = {}
     cdef dict jmm1_flat_inv = {}
     cdef int l
-    cdef int nds = num_dicke_states(N)
+    cdef int nds = _num_dicke_states(N)
 
-    cdef list blocks = get_blocks(N)
+    cdef list blocks = _get_blocks(N)
 
-    jvalues = j_vals(N)
+    jvalues = _j_vals(N)
 
     for j in jvalues:
         mvalues = m_vals(j)
@@ -192,7 +192,7 @@ cdef class Dicke(object):
 
     hamiltonian : Qobj matrix
         An Hamiltonian H in the reduced basis set by `reduced_algebra()`.
-        Matrix dimensions are (nds, nds), with nds = num_dicke_states.
+        Matrix dimensions are (nds, nds), with nds = _num_dicke_states.
         The hamiltonian is assumed to be with hbar = 1.
         default: H = jz_op(N)
 
@@ -263,8 +263,8 @@ cdef class Dicke(object):
 
         """
         N = self.N
-        cdef int nds = num_dicke_states(N)
-        cdef int num_ladders = num_dicke_ladders(N)
+        cdef int nds = _num_dicke_states(N)
+        cdef int num_ladders = _num_dicke_ladders(N)
 
         cdef list lindblad_row = []
         cdef list lindblad_col = []

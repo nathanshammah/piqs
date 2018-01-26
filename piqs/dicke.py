@@ -18,16 +18,59 @@ from qutip.cy.spmatfuncs import cy_ode_rhs
 from qutip.ui.progressbar import BaseProgressBar, TextProgressBar
 from qutip.mesolve import _generic_ode_solve
 from piqs.cy.dicke import Dicke as _Dicke
-from piqs.cy.dicke import (j_min, j_vals, get_blocks, 
-                      jmm1_dictionary, num_dicke_states,
-                      num_dicke_ladders)
+from piqs.cy.dicke import (_j_min, _j_vals, _get_blocks, 
+                      jmm1_dictionary, _num_dicke_states,
+                      _num_dicke_ladders)
 # ============================================================================
 # Functions necessary to generate the Lindbladian/Liouvillian for j, m, m1
 # ============================================================================
+def num_dicke_states(N):
+    """
+    The number of dicke states with a modulo term taking care of ensembles
+    with odd number of systems.
+
+    Parameters
+    -------
+    N: int
+        The number of two level systems
+    Returns
+    -------
+    nds: int
+        The number of Dicke states
+    """
+    if (not float(N).is_integer()):
+        raise ValueError("Number of TLS should be an integer")
+
+    if (N < 1):
+        raise ValueError("Number of TLS should be non-negative")
+
+    nds = (N / 2 + 1)**2 - (N % 2) / 4
+    return int(nds)
+
+
+def num_dicke_ladders(N):
+    """
+    Calculates the total number of Dicke ladders in the Dicke space for a
+    collection of N two-level systems. It counts how many different "j" exist.
+    Or the number of blocks in the block diagonal matrix.
+
+    Parameters
+    -------
+    N: int
+        The number of two level systems.
+    Returns
+    -------
+    Nj: int
+        The number of Dicke ladders
+    """
+    Nj = (N + 1) * 0.5 + (1 - np.mod(N, 2)) * 0.5
+    return int(Nj)
+
+
 def num_tls(nds):
     """
     The number of two level systems (TLS), given the number of Dicke states.
-    Inverse function of num_dicke_states(N)
+    Inverse function of _num_dicke_states(N)
 
     Parameters
     ----------
@@ -76,7 +119,7 @@ def block_matrix(N):
         A block diagonal matrix of ones with dimension (nds,nds), where nds
         is the number of Dicke states for N two-level systems.
     """
-    nds = num_dicke_states(N)
+    nds = _num_dicke_states(N)
 
     # create a list with the sizes of the blocks, in order
     blocks_dimensions = int(N / 2 + 1 - 0.5 * (N % 2))
@@ -109,7 +152,7 @@ class Piqs(object):
 
     hamiltonian : Qobj matrix
         An Hamiltonian H in the reduced basis set by `reduced_algebra()`.
-        Matrix dimensions are (nds, nds), with nds = num_dicke_states.
+        Matrix dimensions are (nds, nds), with nds = _num_dicke_states.
         The hamiltonian is assumed to be with hbar = 1.
         default: H = jz_op(N)
 
@@ -163,8 +206,8 @@ class Piqs(object):
         self.collective_pumping = collective_pumping
         self.collective_dephasing = collective_dephasing
 
-        self.nds = num_dicke_states(self.N)
-        self.dshape = (num_dicke_states(self.N), num_dicke_states(self.N))
+        self.nds = _num_dicke_states(self.N)
+        self.dshape = (_num_dicke_states(self.N), _num_dicke_states(self.N))
 
     def __repr__(self):
         """
@@ -516,8 +559,8 @@ def jx_op(N):
         The Jx operator as a QuTiP object. The dimensions are (nds,nds) where
         nds is the number of Dicke states.         
     """
-    nds = num_dicke_states(N)
-    num_ladders = num_dicke_ladders(N)
+    nds = _num_dicke_states(N)
+    num_ladders = _num_dicke_ladders(N)
     block_diagonal = block_matrix(N).todense()
 
     jp_operator = dok_matrix((nds, nds))
@@ -552,8 +595,8 @@ def jy_op(N):
         The Jy operator as a QuTiP object. The dimensions are (nds,nds) where
         nds is the number of Dicke states.    
     """
-    nds = num_dicke_states(N)
-    num_ladders = num_dicke_ladders(N)
+    nds = _num_dicke_states(N)
+    num_ladders = _num_dicke_ladders(N)
     block_diagonal = block_matrix(N).todense()
     jp_operator = dok_matrix((nds, nds))
     jm_operator = dok_matrix((nds, nds))
@@ -589,8 +632,8 @@ def jz_op(N):
         The Jz operator as a QuTiP object. The dimensions are (nds,nds)
         where nds is the number of Dicke states.      
     """
-    nds = num_dicke_states(N)
-    num_ladders = num_dicke_ladders(N)
+    nds = _num_dicke_states(N)
+    num_ladders = _num_dicke_ladders(N)
     jz_operator = dok_matrix((nds, nds))
 
     s = 0
@@ -618,8 +661,8 @@ def j2_op(N):
         The J^2 operator as a QuTiP object. The dimensions are (nds,nds) where
         nds is the number of Dicke states.  
     """
-    nds = num_dicke_states(N)
-    num_ladders = num_dicke_ladders(N)
+    nds = _num_dicke_states(N)
+    num_ladders = _num_dicke_ladders(N)
     j2_operator = dok_matrix((nds, nds))
 
     s = 0
@@ -649,8 +692,8 @@ def jp_op(N):
         The Jp operator as a QuTiP object. The dimensions are (nds,nds) where
         nds is the number of Dicke states.    
     """
-    nds = num_dicke_states(N)
-    num_ladders = num_dicke_ladders(N)
+    nds = _num_dicke_states(N)
+    num_ladders = _num_dicke_ladders(N)
     jp_operator = dok_matrix((nds, nds))
 
     s = 0
@@ -680,8 +723,8 @@ def jm_op(N):
         The Jm operator as a QuTiP object. The dimensions are (nds,nds) where nds is
         the number of Dicke states.    
     """
-    nds = num_dicke_states(N)
-    num_ladders = num_dicke_ladders(N)
+    nds = _num_dicke_states(N)
+    num_ladders = _num_dicke_ladders(N)
     jm_operator = dok_matrix((nds, nds))
 
     s = 0
@@ -883,7 +926,7 @@ def c_ops_tls(N=2, emission=1., loss=0., dephasing=0., pumping=0.,
 # ============================================================================
 # State definitions in the Dicke basis with an option for basis transformation
 # ============================================================================
-def dicke(N, jmm1 = None, basis = "dicke"):
+def dicke_basis(N, jmm1 = None, basis = "dicke"):
     """
     Initialize a Dicke basis state from a dictionary of coefficients for each
     jmm1 value in the dictionary jmm1. For instance, if we start from the most
@@ -927,7 +970,7 @@ def dicke(N, jmm1 = None, basis = "dicke"):
         msg += "excited state where jmm1 = {(N/2, N/2, N/2): 1}"
         raise AttributeError(msg)
 
-    nds = num_dicke_states(N)
+    nds = _num_dicke_states(N)
     rho = np.zeros((nds, nds))
 
     jmm1_dict = jmm1_dictionary(N)[0]
@@ -949,7 +992,7 @@ def excited(N, basis='dicke'):
         return _uncoupled_excited(N)
 
     jmm1 = {(N/2, N/2, N/2): 1}
-    return dicke(N, jmm1)
+    return dicke_basis(N, jmm1)
 
 def superradiant(N, basis="dicke"):
     """
@@ -964,7 +1007,7 @@ def superradiant(N, basis="dicke"):
         return dicke(N, jmm1)
     else:
         jmm1 = {N/2, 0.5, 0.5}
-        return dicke(N, jmm1)
+        return dicke_basis(N, jmm1)
 
 def css(N, a=1, b=1, basis="dicke"):
     """
@@ -974,8 +1017,8 @@ def css(N, a=1, b=1, basis="dicke"):
     if basis == "uncoupled":
         return _uncoupled_css(N, a, b)
 
-    nds = num_dicke_states(N)
-    num_ladders = num_dicke_ladders(N)
+    nds = _num_dicke_states(N)
+    num_ladders = _num_dicke_ladders(N)
     rho = dok_matrix((nds, nds))
 
     # loop in the allowed matrix elements
@@ -1001,7 +1044,7 @@ def ghz(N, basis='dicke'):
     if basis == "uncoupled":
         return _uncoupled_ghz(N)
 
-    nds = num_dicke_states(N)
+    nds = _num_dicke_states(N)
     rho = dok_matrix((nds, nds))
 
     rho[0,0] = 1/2
@@ -1018,7 +1061,7 @@ def ground(N, basis="dicke"):
     if basis == "uncoupled":
         return _uncoupled_ground(N)
 
-    nds = num_dicke_states(N)
+    nds = _num_dicke_states(N)
     rho = dok_matrix((nds, nds))
 
     rho[-1, -1] = 1
@@ -1224,9 +1267,7 @@ def _uncoupled_thermal(N, omega_0, temperature):
     rho_thermal = Qobj(rho_thermal, dims=jz.dims, shape=jz.shape)
 
     zeta = uncoupled_partition_function(N, omega_0, temperature)
-
     rho_thermal = rho_thermal / zeta
-
     return rho_thermal
 
 
@@ -1258,10 +1299,8 @@ def uncoupled_partition_function(N, omega_0, temperature):
     m_list = jz.eigenstates()[0]
 
     zeta = 0
-
     for m in m_list:
         zeta = zeta + np.exp(- x * m)
-
     return zeta
 
 
@@ -1280,7 +1319,7 @@ def block_matrix(N):
         A block diagonal matrix of ones with dimension (nds,nds), where
         nds is the number of Dicke states for N two-level systems.   
     """
-    nds = num_dicke_states(N)
+    nds = _num_dicke_states(N)
     
     #create a list with the sizes of the blocks, in order
     blocks_dimensions = int(N/2 + 1 - 0.5 *(N%2))
@@ -1295,7 +1334,4 @@ def block_matrix(N):
         square_blocks.append(np.ones((i,i)))
         k = k + 1
 
-    #create the final block diagonal matrix (dense)
-    block_matr = block_diag(square_blocks)
-
-    return block_matr
+    return block_diag(square_blocks)
