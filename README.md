@@ -14,10 +14,11 @@ A major feature of PIQS is that it allows to build the Liouvillian of the system
 - The time evolution of the total density matrix of quantum optics and cavity QED systems for permutationally symmetric initial states (such as the GHZ state, Dicke states, coherent spin states).
 - Quantum phase transitions (QPT) of driven-dissipative out-of-equilibrium quantum systems.  
 - Correlation functions of collective systems in quantum optics experiments, such as the spectral density and second-order correlation functions.
-- Various quantum phenomena such as steady-state superradiance, superradiant light emission, superradiant phase transition, spin squeezing, boundary time crystals, optical bistability.
+- Various quantum optics phenomena such as steady-state superradiance, superradiant light emission, superradiant phase transition, spin squeezing, boundary time crystals, optical bistability.
 
 ## Installation
 
+In the terminal enter the following commands (you just need `git` and `python` installed)
 ```
 git clone https://github.com/nathanshammah/piqs.git
 cd piqs
