@@ -736,7 +736,7 @@ def am(j, m):
 # ============================================================================
 def su2_algebra(N):
     """
-    Creates the vector (sx, sy, sz, sm, sp) with the spin operators of a
+    Creates the list [sx, sy, sz, sp, sm] with the spin operators of a
     collection of N two-level systems (TLSs). Each element of the vector,
     i.e., sx, is a vector of Qobs objects (spin matrices), as it cointains the
     list of the SU(2) Pauli matrices for the N TLSs. Each TLS operator
@@ -758,21 +758,21 @@ def su2_algebra(N):
     sx = [0 for i in range(N)]
     sy = [0 for i in range(N)]
     sz = [0 for i in range(N)]
-    sm = [0 for i in range(N)]
     sp = [0 for i in range(N)]
+    sm = [0 for i in range(N)]
     sx[0] = 0.5 * sigmax()
     sy[0] = 0.5 * sigmay()
     sz[0] = 0.5 * sigmaz()
-    sm[0] = sigmam()
     sp[0] = sigmap()
+    sm[0] = sigmam()
 
     # 2. Place operators in total Hilbert space
     for k in range(N - 1):
         sx[0] = tensor(sx[0], identity(2))
         sy[0] = tensor(sy[0], identity(2))
         sz[0] = tensor(sz[0], identity(2))
-        sm[0] = tensor(sm[0], identity(2))
         sp[0] = tensor(sp[0], identity(2))
+        sm[0] = tensor(sm[0], identity(2))
 
     # 3. Cyclic sequence to create all N operators
     a = [i for i in range(N)]
@@ -783,17 +783,17 @@ def su2_algebra(N):
         sx[i] = sx[0].permute(b[i])
         sy[i] = sy[0].permute(b[i])
         sz[i] = sz[0].permute(b[i])
-        sm[i] = sm[0].permute(b[i])
         sp[i] = sp[0].permute(b[i])
+        sm[i] = sm[0].permute(b[i])
 
-    su2_operators = [sx, sy, sz, sm, sp]
+    su2_operators = [sx, sy, sz, sp, sm]
 
     return su2_operators
 
 def collective_algebra(N):
     """
     Uses the module su2_algebra to create the collective spin algebra
-    Jx, Jy, Jz, Jm, Jp in the uncoupled basis of the two-level system
+    [Jx, Jy, Jz, Jp, Jm ] in the uncoupled basis of the two-level system
     (TLS) SU(2) Pauli matrices. Each collective operator is placed in a
     Hilbert space of dimension 2^N.
 
@@ -815,16 +815,18 @@ def collective_algebra(N):
     sx = si_TLS[0]
     sy = si_TLS[1]
     sz = si_TLS[2]
-    sm = si_TLS[3]
-    sp = si_TLS[4]
+    sp = si_TLS[3]
+    sm = si_TLS[4]
+    
 
     jx = sum(sx)
     jy = sum(sy)
     jz = sum(sz)
-    jm = sum(sm)
     jp = sum(sp)
+    jm = sum(sm)
+    
 
-    collective_operators = [jx, jy, jz, jm, jp]
+    collective_operators = [jx, jy, jz, jp, jm]
 
     return collective_operators
 
