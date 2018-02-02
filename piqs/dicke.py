@@ -832,7 +832,7 @@ def j_algebra(N):
     """
     Gives the list with the collective operators of the total algebra, using the reduced basis
     |j,m><j,m'| in which the density matrix is expressed.    
-    The list returned is [J^2, J_x, J_y, J_z, J_+, J_-]. 
+    The list returned is [J_x, J_y, J_z, J_+, J_-]. 
     Parameters
     ----------
     N: int 
