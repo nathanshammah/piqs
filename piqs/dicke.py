@@ -940,8 +940,8 @@ def c_ops_tls(N=1, emission=0., dephasing=0., pumping=0.,
         print("""Warning! N > 10. dim(H) = 2^N. Use the permutational
               invariant methods for large N. """)
 
-    [sx, sy, sz, sm, sp] = su2_algebra(N)
-    [jx, jy, jz, jm, jp] = collective_algebra(N)
+    [sx, sy, sz, sp, sm] = su2_algebra(N)
+    [jx, jy, jz, jp, jm] = collective_algebra(N)
 
     c_ops = []
 
@@ -1078,12 +1078,13 @@ def dicke_state(N, j, m, basis = "dicke"):
     return Qobj(rho) 
 
 
-def excited(N, basis = "dicke"):
+def excited_state(N, basis = "dicke"):
     """
     Generates the density matrix for the Dicke state |N/2, N/2>, default in the
     Dicke basis. If the argument `basis` is "uncoupled" then it generates
     the state in a 2**N dim Hilbert space.
     """
+
     if basis == "uncoupled":
         return _uncoupled_excited(N)
 
@@ -1100,7 +1101,7 @@ def superradiant(N, basis = "dicke"):
 
     if N%2 == 0:
         jmm1 = {(N/2, 0, 0):1.}
-        return dicke(N, jmm1)
+        return dicke_basis(N, jmm1)
     else:
         jmm1 = {(N/2, 0.5, 0.5):1.}
     return dicke_basis(N, jmm1)
@@ -1151,7 +1152,7 @@ def ghz(N, basis = "dicke"):
 
     return Qobj(rho)
 
-def ground(N, basis = "dicke"):
+def ground_state(N, basis = "dicke"):
     """
     Generates the density matric of the ground state for N spins
     """
