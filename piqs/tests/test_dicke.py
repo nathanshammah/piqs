@@ -266,7 +266,7 @@ class TestPim:
 
         lindbladian_correct = Qobj(Ldata, dims= [[[4], [4]], [[4], [4]]],
                                     shape = (16, 16))
-
+        print(lindbladian.data.toarray(), Ldata)
         assert_array_almost_equal(lindbladian.data.toarray(), Ldata)
 
 

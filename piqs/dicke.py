@@ -175,7 +175,15 @@ class Piqs(object):
     pumping : float
         Incoherent pumping coefficient
         default: 0.0
-
+#xy_starts        
+    local_x : float
+        Local J_{x,n} coefficient
+        default: 0.0
+    
+    local_y : float
+        Local J_{y,n} coefficient
+        default: 0.0
+#xy_ends        
     collective_emission : float
         Collective (superradiant) emmission coefficient
         default: 1.0
@@ -187,6 +195,15 @@ class Piqs(object):
     collective_dephasing : float
         Collective dephasing coefficient
         default: 0.0
+#xy_starts    
+    collective_x : float
+        Collective Jx coefficient
+        default: 0.0        
+    
+    collective_y : float
+        Collective Jy coefficient
+        default: 0.0
+#xy_ends    
     nds : int
         The number of Dicke states
         default: nds(2) = 4
@@ -203,39 +220,80 @@ class Piqs(object):
 
     def __init__(self, N=1, hamiltonian=None,
                  emission=0., dephasing=0., pumping=0.,
-                 collective_emission=0., collective_dephasing=0., collective_pumping=0.):
+#xy_starts
+                 local_x=0., local_y=0., 
+#xy_ends
+                 collective_emission=0., collective_dephasing=0., collective_pumping=0.,
+#xy_starts
+                 collective_x=0., collective_y=0.
+#xy_ends
+                 ):
         self.N = N
         self.hamiltonian = hamiltonian
 
         self.emission = emission
         self.dephasing = dephasing
         self.pumping = pumping
+        #xy_starts
+        self.local_x = local_x 
+        self.local_y = local_y
+        #xy_ends 
         self.collective_emission = collective_emission
         self.collective_dephasing = collective_dephasing
-        self.collective_pumping = collective_pumping
-        
+        self.collective_pumping = collective_pumping        
+        #xy_starts
+        self.collective_x = collective_x 
+        self.collective_y = collective_y
+        #xy_ends 
+
         self.nds = _num_dicke_states(self.N)
         self.dshape = (_num_dicke_states(self.N), _num_dicke_states(self.N))
 
-    def __repr__(self):
+    def __repr__(self, verbose = False):
         """
         Print the current parameters of the system.
         """
         string = []
         string.append("N = {}".format(self.N))
         string.append("Hilbert space dim = {}".format(self.dshape))
-        string.append("collective_emission = {}".format(self.collective_emission))
-        string.append("emission = {}".format(self.emission))
-        string.append("dephasing = {}".format(self.dephasing))
-        string.append("pumping = {}".format(self.pumping))
-        string.append(
-            "collective_dephasing = {}".format(
-                self.collective_dephasing))
-        string.append(
-            "collective_pumping = {}".format(
-                self.collective_pumping))
+#xy_starts
+        if verbose == True:
 
-        return "\n".join(string)
+            string.append("collective_emission = {}".format(self.collective_emission))
+            string.append("emission = {}".format(self.emission))
+            string.append("dephasing = {}".format(self.dephasing))
+            string.append("pumping = {}".format(self.pumping))
+            string.append("local_x = {}".format(self.local_x))
+            string.append("local_y = {}".format(self.local_y))
+            string.append("collective_dephasing = {}".format(self.collective_dephasing))
+            string.append("collective_pumping = {}".format(self.collective_pumping))
+            string.append("collective_x = {}".format(self.collective_x))
+            string.append("collective_y = {}".format(self.collective_y))
+            return "\n".join(string)
+        else:
+            if self.collective_emission != None and self.collective_emission != 0  :
+                string.append("collective_emission = {}".format(self.collective_emission))
+            if self.emission != None and self.emission != 0  :
+                string.append("emission = {}".format(self.emission))
+            if self.dephasing != None and self.dephasing != 0  :
+                string.append("dephasing = {}".format(self.dephasing))
+            if self.pumping != None and self.pumping != 0  :            
+                string.append("pumping = {}".format(self.pumping))
+            if self.local_x != None and self.local_x != 0  :        
+                string.append("local_x = {}".format(self.local_x))
+            if self.local_y != None and self.local_y != 0  :            
+                string.append("local_y = {}".format(self.local_y))
+            if self.collective_dephasing != None and self.collective_dephasing != 0  :            
+                string.append("collective_dephasing = {}".format(self.collective_dephasing))
+            if self.collective_pumping != None and self.collective_pumping != 0  :            
+                string.append("collective_pumping = {}".format(self.collective_pumping))
+            if self.collective_x != None and self.collective_x != 0  :            
+                string.append("collective_x = {}".format(self.collective_x))
+            if self.collective_y != None and self.collective_y != 0  :            
+                string.append("collective_y = {}".format(self.collective_y))
+
+            return "\n".join(string)
+#xy_starts
 
     def lindbladian(self):
         """
@@ -252,9 +310,18 @@ class Piqs(object):
                                 float(self.emission),
                                 float(self.dephasing),
                                 float(self.pumping),
+#xy_starts
+                                float(self.local_x),
+                                float(self.local_y),
+#xy_ends                                
                                 float(self.collective_emission),
                                 float(self.collective_dephasing),
-                                float(self.collective_pumping))
+                                float(self.collective_pumping),
+#xy_starts
+                                float(self.collective_x),
+                                float(self.collective_y)
+#xy_ends                                
+                                )
 
         return cythonized_dicke.lindbladian()
 
@@ -802,8 +869,16 @@ def j_algebra(N):
     return j_alg
 
 
-def c_ops_tls(N=2, emission=0., dephasing=0., pumping=0., collective_emission=0.,
-              collective_dephasing=0., collective_pumping=0.):
+def c_ops_tls(N=1, emission=0., dephasing=0., pumping=0., 
+#xy_starts              
+              local_x=0., local_y=0.,
+#xy_ends
+              collective_emission=0.,
+              collective_dephasing=0., collective_pumping=0.,
+#xy_starts              
+              collective_x=0., collective_y=0.
+#xy_ends              
+               ):
     """
     Create the collapse operators (c_ops) of the Lindblad master equation in
     the in the uncoupled basis of the two-level system (TLS) SU(2) Pauli matrices. 
@@ -825,6 +900,14 @@ def c_ops_tls(N=2, emission=0., dephasing=0., pumping=0., collective_emission=0.
     pumping: float
         default = 0
         Incoherent pumping coefficient
+#xy_starts
+    local_x: float
+        default = 0
+        Local J_{x,n} coefficient
+    local_y: float
+        default = 0
+        Local J_{y,n} coefficient
+#xy_ends        
     collective_emission: float
         default = 0
         Collective (superradiant) emission coefficient
@@ -834,6 +917,14 @@ def c_ops_tls(N=2, emission=0., dephasing=0., pumping=0., collective_emission=0.
     collective_pumping: float
         default = 0
         Collective pumping coefficient
+#xy_starts
+    collective_x: float
+        default = 0
+        Collective Jx coefficient
+    collective_y: float
+        default = 0
+        Collective Jy coefficient
+#xy_ends
 
     Returns
     -------
@@ -863,7 +954,14 @@ def c_ops_tls(N=2, emission=0., dephasing=0., pumping=0., collective_emission=0.
     if pumping != 0:
         for i in range(0, N):
             c_ops.append(np.sqrt(pumping) * sp[i])
-
+#xy_starts
+    if local_x != 0:
+        for i in range(0, N):
+            c_ops.append(np.sqrt(local_x) * sx[i])
+    if local_y != 0:
+        for i in range(0, N):
+            c_ops.append(np.sqrt(local_y) * sy[i])
+#xy_ends
     if collective_emission != 0:
         c_ops.append(np.sqrt(collective_emission) * jm)
 
@@ -872,6 +970,13 @@ def c_ops_tls(N=2, emission=0., dephasing=0., pumping=0., collective_emission=0.
 
     if collective_pumping != 0:
         c_ops.append(np.sqrt(collective_pumping) * jp)
+#xy_starts
+    if collective_x != 0:
+        c_ops.append(np.sqrt(collective_x) * jx)
+
+    if collective_y != 0:
+        c_ops.append(np.sqrt(collective_y) * jx)
+#xy_ends
 
     return c_ops
 

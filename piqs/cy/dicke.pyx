@@ -50,6 +50,57 @@ def _num_dicke_ladders(N):
     Nj = (N + 1) * 0.5 + (1 - np.mod(N, 2)) * 0.5
     return int(Nj)
 
+#xy_starts
+def ap( j, m):
+    """
+    Calculates the coefficient A_{+}(j, m) for a value of j, m. 
+    J_{+}|j, m > = A_{+}(j, m) |j, m + 1 >
+    """
+    a_plus = np.sqrt((j - m) * (j + m + 1))
+    
+    return(a_plus)
+
+def am(j, m):
+    """
+    Calculates the coefficient A_{m}(j, m) for a value of j, m.
+    J_{-}|j, m > = A_{-}(j, m) |j, m - 1 >
+    """
+    a_minus = np.sqrt((j + m) * (j - m + 1))
+    
+    return(a_minus)
+
+def bp( j, m):
+    """
+    Calculates the coefficient B_{+}(j, m) for a value of j, m.
+    """
+    b_plus = np.sqrt((j - m) * (j - m - 1))
+    
+    return(b_plus)
+
+def bm(j, m):
+    """
+    Calculates B_{m}(j, m) for a value of j, m.
+    """
+    b_minus = (-1) * np.sqrt((j + m) * (j + m - 1))
+    
+    return(b_minus)
+
+def dp( j, m):
+    """
+    Calculates the coefficient D_{+}(j, m) for a value of j, m.
+    """
+    d_plus = (-1) * np.sqrt((j + m + 1) * (j + m + 2))
+    
+    return(d_plus)
+
+def dm(j, m):
+    """
+    Calculates D_{m}(j, m) for a value of j, m.
+    """
+    d_minus = np.sqrt((j - m + 1) * (j - m + 2))
+    
+    return(d_minus)
+#xy_ends
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -208,6 +259,16 @@ cdef class Dicke(object):
         Incoherent pumping coefficient
         default: 0.0
 
+#xy_starts        
+    local_x : float
+        Local J_{x,n} coefficient
+        default: 0.0
+    
+    local_y : float
+        Local J_{y,n} coefficient
+        default: 0.0
+#xy_ends
+
     collective_emission : float
         Collective spontaneous emmission coefficient
         default: 1.0
@@ -219,6 +280,16 @@ cdef class Dicke(object):
     collective_pumping : float
         Collective pumping coefficient
         default: 0.0
+
+#xy_starts    
+    collective_x : float
+        Collective Jx coefficient
+        default: 0.0        
+    
+    collective_y : float
+        Collective Jy coefficient
+        default: 0.0
+#xy_ends
 
     nds : int
         The number of Dicke states
@@ -235,18 +306,39 @@ cdef class Dicke(object):
     """
     cdef int N
     cdef float emission, dephasing, pumping
+#xy_starts    
+    cdef float local_x, local_y
+#xy_ends    
     cdef float collective_emission, collective_dephasing, collective_pumping
-
-    def __init__(self, int N=2, float emission=0., float dephasing=0.,
-                 float pumping=0., float collective_emission=1.,
-                 collective_dephasing=0., collective_pumping=0.):
+#xy_starts    
+    cdef float collective_x, collective_y
+#xy_ends
+    def __init__(self, int N=1, float emission=0., float dephasing=0.,
+                 float pumping=0., 
+#xy_starts    
+                 float local_x=0., float local_y=0.,    
+#xy_ends
+                 float collective_emission=0.,
+                 float collective_dephasing=0., float collective_pumping=0.,
+#xy_starts    
+                 float collective_x=0., float collective_y=0.    
+#xy_ends
+                 ):
         self.N = N
         self.emission = emission
         self.dephasing = dephasing
         self.pumping = pumping
+#xy_starts
+        self.local_x = local_x
+        self.local_y = local_y
+#xy_ends        
         self.collective_emission = collective_emission        
         self.collective_dephasing = collective_dephasing
         self.collective_pumping = collective_pumping
+#xy_starts
+        self.collective_x = collective_x
+        self.collective_y = collective_y
+#xy_ends
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -279,6 +371,18 @@ cdef class Dicke(object):
         cdef tuple jmm1_7
         cdef tuple jmm1_8
         cdef tuple jmm1_9
+#xy_starts 
+        cdef tuple jmm1_10
+        cdef tuple jmm1_11
+        cdef tuple jmm1_12
+        cdef tuple jmm1_13
+        cdef tuple jmm1_14
+        cdef tuple jmm1_15
+        cdef tuple jmm1_16
+        cdef tuple jmm1_17
+        cdef tuple jmm1_18
+        cdef tuple jmm1_19
+#xy_ends
 
         _1, _2, jmm1_row, jmm1_inv = jmm1_dictionary(N)
 
@@ -294,7 +398,18 @@ cdef class Dicke(object):
             jmm1_7 = (j + 1, m - 1, m1 - 1)
             jmm1_8 = (j, m - 1, m1 - 1)
             jmm1_9 = (j - 1, m - 1, m1 - 1)
-
+#xy_starts            
+            jmm1_10 = (j, m - 1, m1 + 1)
+            jmm1_11 = (j + 1, m - 1, m1 + 1)
+            jmm1_12 = (j - 1, m - 1, m1 + 1)
+            jmm1_13 = (j, m + 1, m1 - 1)
+            jmm1_14 = (j + 1, m + 1, m1 - 1)
+            jmm1_15 = (j - 1, m + 1, m1 - 1)
+            jmm1_16 = (j, m - 2, m1)
+            jmm1_17 = (j, m  + 2, m1)
+            jmm1_18 = (j, m, m1 - 2)
+            jmm1_19 = (j, m, m1 + 2)
+#xy_ends
             g1 = self.gamma1(jmm1_1)
             c1 = jmm1_inv[jmm1_1]
 
@@ -370,6 +485,89 @@ cdef class Dicke(object):
                 lindblad_col.append(int(c9))
                 lindblad_data.append(g9)
 
+#xy_starts            
+            if jmm1_10 in jmm1_inv:
+                g10 = self.gamma10(jmm1_10)
+                c10 = jmm1_inv[jmm1_10]
+
+                lindblad_row.append(int(r))
+                lindblad_col.append(int(c10))
+                lindblad_data.append(g10)
+
+            if jmm1_11 in jmm1_inv:
+                g11 = self.gamma11(jmm1_11)
+                c11 = jmm1_inv[jmm1_11]
+
+                lindblad_row.append(int(r))
+                lindblad_col.append(int(c11))
+                lindblad_data.append(g11)
+
+            if jmm1_12 in jmm1_inv:
+                g12 = self.gamma12(jmm1_12)
+                c12 = jmm1_inv[jmm1_12]
+
+                lindblad_row.append(int(r))
+                lindblad_col.append(int(c12))
+                lindblad_data.append(g12)
+
+            if jmm1_13 in jmm1_inv:
+                g13 = self.gamma13(jmm1_13)
+                c13 = jmm1_inv[jmm1_13]
+
+                lindblad_row.append(int(r))
+                lindblad_col.append(int(c13))
+                lindblad_data.append(g13)
+
+            if jmm1_14 in jmm1_inv:
+                g14 = self.gamma14(jmm1_14)
+                c14 = jmm1_inv[jmm1_14]
+
+                lindblad_row.append(int(r))
+                lindblad_col.append(int(c14))
+                lindblad_data.append(g14)
+
+            if jmm1_15 in jmm1_inv:
+                g15 = self.gamma15(jmm1_15)
+                c15 = jmm1_inv[jmm1_15]
+
+                lindblad_row.append(int(r))
+                lindblad_col.append(int(c15))
+                lindblad_data.append(g15)
+
+            if jmm1_16 in jmm1_inv:
+                g16 = self.gamma16(jmm1_16)
+                c16 = jmm1_inv[jmm1_16]
+
+                lindblad_row.append(int(r))
+                lindblad_col.append(int(c16))
+                lindblad_data.append(g16)
+
+            if jmm1_17 in jmm1_inv:
+                g17 = self.gamma17(jmm1_17)
+                c17 = jmm1_inv[jmm1_17]
+
+                lindblad_row.append(int(r))
+                lindblad_col.append(int(c17))
+                lindblad_data.append(g17)
+
+            if jmm1_18 in jmm1_inv:
+                g18 = self.gamma18(jmm1_18)
+                c18 = jmm1_inv[jmm1_18]
+
+                lindblad_row.append(int(r))
+                lindblad_col.append(int(c18))
+                lindblad_data.append(g18)
+
+
+            if jmm1_19 in jmm1_inv:
+                g19 = self.gamma19(jmm1_19)
+                c19 = jmm1_inv[jmm1_19]
+
+                lindblad_row.append(int(r))
+                lindblad_col.append(int(c19))
+                lindblad_data.append(g19)
+#xy_ends            
+
         cdef lindblad_matrix = csr_matrix((lindblad_data, (lindblad_row, lindblad_col)),
                                           shape=(nds**2, nds**2))
 
@@ -390,12 +588,15 @@ cdef class Dicke(object):
         j, m, m1 = jmm1
 
         cdef float yCE, yE, yD, yP, yCP, yCD
-
         cdef float N
         N = float(self.N)
 
         cdef float spontaneous, losses, pump, collective_pump
         cdef float dephase, collective_dephase, g1
+#xy_starts
+        cdef float yCX, yCY, yX, yY
+        cdef float collect_x, collect_y, loc_x, loc_y
+#xy_ends
 
         yE = self.emission
         yD = self.dephasing
@@ -403,10 +604,20 @@ cdef class Dicke(object):
         yCE = self.collective_emission        
         yCP = self.collective_pumping
         yCD = self.collective_dephasing
+#xy_starts
+        yX = self.local_x
+        yY = self.local_y
+        yCX = self.collective_x
+        yCY = self.collective_y
+#xy_ends
 
         spontaneous = yCE / 2 * (2 * j * (j + 1) - m * (m - 1) - m1 * (m1 - 1))
         losses = yE / 2 * (N + m + m1)
         pump = yP / 2 * (N - m - m1)
+#xy_starts
+        loc_x = yX * N / 4
+        loc_y = yY * N / 4
+#xy_ends
         collective_pump = yCP / 2 * \
             (2 * j * (j + 1) - m * (m + 1) - m1 * (m1 + 1))
         collective_dephase = yCD / 2 * (m - m1)**2
@@ -415,10 +626,16 @@ cdef class Dicke(object):
             dephase = yD * N / 4
         else:
             dephase = yD / 2 * (N / 2 - m * m1 * (N / 2 + 1) / j / (j + 1))
+#xy_starts
+        collect_x = yCX / 8 * (ap(j, m)**2 + ap(j, m - 1)**2 + ap(j, m1)**2 + ap(j, m1 - 1)**2)
+        collect_y =  yCY / 8 * (ap(j, m)**2 + ap(j, m - 1)**2 + ap(j, m1)**2 + ap(j, m1 - 1)**2)
+#xy_ends
 
-        g1 = spontaneous + losses + pump + dephase + \
-            collective_pump + collective_dephase
 
+#xy_starts
+        g1 = spontaneous + losses + pump + dephase + loc_x +  loc_y +\
+             collective_pump + collective_dephase + collect_x  + collect_y
+#xy_ends
         return(-g1)
 
     @cython.boundscheck(False)
@@ -438,10 +655,19 @@ cdef class Dicke(object):
 
         cdef float spontaneous, losses, pump, collective_pump
         cdef float dephase, collective_dephase
-
+#xy_starts
+        cdef float yCX, yCY, yX, yY
+        cdef float collect_x, collect_y, loc_x, loc_y
+#xy_ends
         j, m, m1 = jmm1
         yCE = self.collective_emission
         yE = self.emission
+#xy_starts
+        yX = self.local_x
+        yY = self.local_y
+        yCX = self.collective_x
+        yCY = self.collective_y
+#xy_ends        
 
         if yCE == 0:
             spontaneous = 0.0
@@ -454,8 +680,30 @@ cdef class Dicke(object):
         else:
             losses = yE / 2 * \
                 np.sqrt((j + m) * (j - m + 1) * (j + m1) * (j - m1 + 1)) * (N / 2 + 1) / (j * (j + 1))
+        
+#xy_starts
+        if (yX == 0) or (j <= 0):
+            loc_x = 0.0
+        else:
+            loc_x = yX / 4 * (0.5 * N + 1)/( 2 * j * (j + 1)) * am( j, m) * am( j, m1)
 
-        g2 = spontaneous + losses
+        if (yY == 0) or (j <= 0):
+            loc_y = 0.0
+        else:
+            loc_y = yY / 4 * (0.5 * N + 1)/( 2 * j * (j + 1)) * am( j, m) * am( j, m1)
+
+        if (yCX == 0):
+            collect_x = 0.0
+        else:
+            collect_x = yCX / 4 * am( j, m) * am( j, m1)
+
+        if (yCY == 0):
+            collect_y = 0.0
+        else:
+            collect_y =  yCY / 4 * am( j, m) * am( j, m1)
+#xy_ends
+
+        g2 = spontaneous + losses + collect_x + collect_y + loc_x + loc_y
 
         return (g2)
 
@@ -469,23 +717,43 @@ cdef class Dicke(object):
         j, m, m1 = jmm1
 
         cdef float yE
-
+#xy_starts
+        cdef float yX, yY
+        cdef float losses, loc_x, loc_y
+#xy_ends
         cdef float N
         N = float(self.N)
-
-        cdef float spontaneous, losses, pump, collective_pump
-        cdef float dephase, collective_dephase
 
         cdef complex g3
 
         yE = self.emission
+#xy_starts
+        yX = self.local_x
+        yY = self.local_y
+#xy_ends
 
         if (yE == 0) or (j <= 0):
-            g3 = 0.0
+            losses = 0.0
         else:
-            g3 = yE / 2 * np.sqrt((j + m) * (j + m - 1) * (j + m1) * (j + m1 - 1)) * (N / 2 + j + 1) / (j * (2 * j + 1))
+            losses = yE / 2 * np.sqrt((j + m) * (j + m - 1) * (j + m1) * (j + m1 - 1)) * (N / 2 + j + 1) / (j * (2 * j + 1))
+
+#xy_starts
+        if (yX == 0) or (j <= 0):
+            loc_x = 0.0
+        else:
+            loc_x = yX / 4 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) * bm( j, m) * bm( j, m1)
+
+        if (yY == 0) or (j <= 0):
+            loc_y = 0.0
+        else:
+            loc_y = yY / 4 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) *  bm( j, m) * bm( j, m1)
+
+        g3 = losses + loc_x + loc_y
+
+#xy_ends
 
         return (g3)
+
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -498,18 +766,40 @@ cdef class Dicke(object):
 
         cdef float yE
         cdef float N
+#xy_starts
+        cdef float yX, yY
+        cdef float losses, loc_x, loc_y
+#xy_ends
         N = float(self.N)
 
         cdef complex g4
 
         yE = self.emission
+#xy_starts
+        yX = self.local_x
+        yY = self.local_y
+#xy_ends
 
         if (yE == 0) or ((j + 1) <= 0):
-            g4 = 0.0
+            losses = 0.0
         else:
-            g4 = yE / 2 * np.sqrt((j - m + 1) * (j - m + 2) * (j - m1 + 1) * (j - m1 + 2)) * (N / 2 - j) / ((j + 1) * (2 * j + 1))
+            losses = yE * np.sqrt((j - m + 1) * (j - m + 2) * (j - m1 + 1) * (j - m1 + 2)) * (N / 2 - j) / (2 * (j + 1) * (2 * j + 1))
 
-        return (g4)
+#xy_starts
+        if (yX == 0) or (j < 0):
+            loc_x = 0.0
+        else:
+            loc_x = yX / 4 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dm( j, m) * dm( j, m1)
+
+        if (yY == 0) or (j < 0):
+            loc_y = 0.0
+        else:
+            loc_y = yY / 4 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dm( j, m) * dm( j, m1)
+
+        g4 = losses + loc_x + loc_y
+
+        return(g4)
+#xy_ends
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -556,8 +846,7 @@ cdef class Dicke(object):
         if yD == 0:
             g6 = 0.0
         else:
-            g6 = yD / 2 * np.sqrt(((j + 1)**2 - m**2) * ((j + 1) **
-                                                         2 - m1**2)) * (N / 2 - j) / ((j + 1) * (2 * j + 1))
+            g6 = yD / 2 * np.sqrt(((j + 1)**2 - m**2) * ((j + 1)**2 - m1**2)) * (N / 2 - j) / ((j + 1) * (2 * j + 1))
 
         return (g6)
 
@@ -571,17 +860,38 @@ cdef class Dicke(object):
         j, m, m1 = jmm1
 
         cdef float yP
+#xy_starts
+        cdef float yX, yY
+        cdef float pump, loc_x, loc_y
+#xy_ends        
         cdef float N
         N = float(self.N)
 
         cdef complex g7
 
         yP = self.pumping
-
+#xy_starts
+        yX = self.local_x
+        yY = self.local_y
+#xy_ends
         if (yP == 0) or (j <= 0):
-            g7 = 0.0
+            pump = 0.0
         else:
-            g7 = yP / 2 * np.sqrt((j - m - 1) * (j - m) * (j - m1 - 1) * (j - m1)) * (N / 2 + j + 1) / (j * (2 * j + 1))
+            pump = yP / 2 * np.sqrt((j - m - 1) * (j - m) * (j - m1 - 1) * (j - m1)) * (N / 2 + j + 1) / (j * (2 * j + 1))
+
+#xy_starts
+        if (yX == 0) or (j <= 0):
+            loc_x = 0.0
+        else:
+            loc_x = yX / 4 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) * bp( j, m) * bp( j, m1)
+
+        if (yY == 0) or (j <= 0):
+            loc_y = 0.0
+        else:
+            loc_y = yY / 4 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) *  bp( j, m) * bp( j, m1)
+
+        g7 = pump + loc_x + loc_y
+#xy_ends
 
         return (g7)
 
@@ -595,7 +905,10 @@ cdef class Dicke(object):
         j, m, m1 = jmm1
 
         cdef float yP, yCP
-
+#xy_starts
+        cdef float yCX, yCY, yX, yY
+        cdef float collect_x, collect_y, loc_x, loc_y
+#xy_ends
         cdef float N
         N = float(self.N)
 
@@ -603,6 +916,12 @@ cdef class Dicke(object):
 
         yP = self.pumping
         yCP = self.collective_pumping
+#xy_starts
+        yX = self.local_x
+        yY = self.local_y
+        yCX = self.collective_x
+        yCY = self.collective_y
+#xy_ends
 
         if (yP == 0) or (j <= 0):
             pump = 0.0
@@ -614,8 +933,29 @@ cdef class Dicke(object):
         else:
             collective_pump = yCP * \
                 np.sqrt((j - m) * (j + m + 1) * (j + m1 + 1) * (j - m1))
+#xy_starts
+        if (yX == 0) or (j <= 0):
+            loc_x = 0.0
+        else:
+            loc_x = yX / 4 * (0.5 * N + 1)/( 2 * j * (j + 1)) * ap( j, m) * ap( j, m1)
 
-        g8 = pump + collective_pump
+        if (yY == 0) or (j <= 0):
+            loc_y = 0.0
+        else:
+            loc_y = yY / 4 * (0.5 * N + 1)/( 2 * j * (j + 1)) * ap( j, m) * ap( j, m1)
+
+        if (yCX == 0):
+            collect_x = 0.0
+        else:
+            collect_x = yCX / 4 * ap( j, m) * ap( j, m1)
+
+        if (yCY == 0):
+            collect_y = 0.0
+        else:
+            collect_y =  yCY / 4 * ap( j, m) * ap( j, m1)
+
+        g8 = pump + collective_pump + loc_x + loc_y + collect_x  + collect_y
+#xy_ends
 
         return (g8)
 
@@ -629,21 +969,374 @@ cdef class Dicke(object):
         j, m, m1 = jmm1
 
         cdef float yP
+#xy_starts
+        cdef float yX, yY
+        cdef float pump, loc_x, loc_y
+#xy_ends        
         cdef float N
         N = float(self.N)
 
         cdef complex g9
 
         yP = self.pumping
+#xy_starts
+        yX = self.local_x
+        yY = self.local_y
+#xy_ends
 
         if (yP == 0):
-            g9 = 0.0
+            pump = 0.0
         else:
-            g9 = yP / 2 * np.sqrt((j + m + 1) * (j + m + 2) * (j + m1 + 1)
+            pump = yP / 2 * np.sqrt((j + m + 1) * (j + m + 2) * (j + m1 + 1)
                                   * (j + m1 + 2)) * (N / 2 - j) / ((j + 1) * (2 * j + 1))
+#xy_starts
+        if (yX == 0) or (j < 0):
+            loc_x = 0.0
+        else:
+            loc_x = yX / 4 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dp( j, m) * dp( j, m1)
 
+        if (yY == 0) or (j < 0):
+            loc_y = 0.0
+        else:
+            loc_y = yY / 4 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dp( j, m) * dp( j, m1)
+
+        g9 = pump + loc_x + loc_y
+#xy_ends
         return (g9)
 
+#xy_starts
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    cpdef complex gamma10(self, tuple jmm1):
+        """
+        Calculate gamma10 for given j, m, m'
+        """
+        cdef float j, m, m1
+        j, m, m1 = jmm1
+        cdef float yX, yY
+        cdef float collect_x, collect_y
+        cdef float N
+        N = float(self.N)
+
+        cdef complex g10
+        yCX = self.collective_x
+        yCY = self.collective_y
+
+        if (yCX == 0):
+            collect_x = 0.0
+        else:
+            collect_x = yCX / 4 * ap( j, m) * am( j, m1)
+
+        if (yCY == 0):
+            collect_y = 0.0
+        else:
+            collect_y = (-1) * yCY / 4 * ap( j, m) * am( j, m1)
+
+        g10 = collect_x + collect_y
+
+        return (g10)
+
+#11
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    cpdef complex gamma11(self, tuple jmm1):
+        """
+        Calculate gamma11 for given j, m, m'
+        """
+        cdef float j, m, m1
+        j, m, m1 = jmm1
+        cdef float yX, yY
+        cdef float loc_x, loc_y
+        cdef float N
+        N = float(self.N)
+
+        cdef complex g11
+        yX = self.local_x
+        yY = self.local_y
+
+        if (yX == 0) or (j <= 0):
+            loc_x = 0.0
+        else:
+            loc_x = yX / 4 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) * bp( j, m) * bm( j, m1)
+
+        if (yY == 0) or (j <= 0):
+            loc_y = 0.0
+        else:
+            loc_y = (-1) * yY / 4 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) * bp( j, m) * bm( j, m1)
+
+        g11 = loc_x + loc_y
+
+        return (g11)
+        
+#12
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    cpdef complex gamma12(self, tuple jmm1):
+        """
+        Calculate gamma12 for given j, m, m'
+        """
+        cdef float j, m, m1
+        j, m, m1 = jmm1
+        cdef float yX, yY
+        cdef float pump, loc_x, loc_y
+        cdef float N
+        N = float(self.N)
+
+        cdef complex g12
+        yX = self.local_x
+        yY = self.local_y
+
+        if (yX == 0) or (j < 0):
+            loc_x = 0.0
+        else:
+            loc_x = yX / 4 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dp( j, m) * dm( j, m1)
+
+        if (yY == 0) or (j < 0):
+            loc_y = 0.0
+        else:
+            loc_y = (-1) * yY / 4 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dp( j, m) * dm( j, m1)
+
+        g12 = loc_x + loc_y
+
+        return (g12)
+    
+
+#13
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    cpdef complex gamma13(self, tuple jmm1):
+        """
+        Calculate gamma13 for given j, m, m'
+        """
+        cdef float j, m, m1
+        j, m, m1 = jmm1
+        cdef float yCX, yCY, yX, yY
+        cdef float collect_x, collect_y, loc_x, loc_y
+        cdef float N
+        N = float(self.N)
+
+        cdef complex g13
+
+        yX = self.local_x
+        yY = self.local_y
+        yCX = self.collective_x
+        yCY = self.collective_y
+
+        if (yX == 0) or (j <= 0):
+            loc_x = 0.0
+        else:
+            loc_x = yX / 4 * (0.5 * N + 1)/( 2 * j * (j + 1)) * am( j, m) * ap( j, m1)
+
+        if (yY == 0) or (j <= 0):
+            loc_y = 0.0
+        else:
+            loc_y = (-1) * yY / 4 * (0.5 * N + 1)/( 2 * j * (j + 1)) * am( j, m) * ap( j, m1)
+
+        if (yCX == 0):
+            collect_x = 0.0
+        else:
+            collect_x = yCX / 4 * am( j, m) * ap( j, m1)
+
+        if (yCY == 0):
+            collect_y = 0.0
+        else:
+            collect_y =  (-1) * yCY / 4 * am( j, m) * ap( j, m1)
+
+        g13 = loc_x + loc_y + collect_x  + collect_y
+
+        return (g13)
+        
+
+#14
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    cpdef complex gamma14(self, tuple jmm1):
+        """
+        Calculate gamma14 for given j, m, m'
+        """
+        cdef float j, m, m1
+        j, m, m1 = jmm1
+        cdef float yX, yY
+        cdef float loc_x, loc_y
+        cdef float N
+        N = float(self.N)
+
+        cdef complex g14
+        yX = self.local_x
+        yY = self.local_y
+
+        if (yX == 0) or (j <= 0):
+            loc_x = 0.0
+        else:
+            loc_x = yX / 4 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) * bm( j, m) * bp( j, m1)
+
+        if (yY == 0) or (j <= 0):
+            loc_y = 0.0
+        else:
+            loc_y = (-1) * yY / 4 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) * bm( j, m) * bp( j, m1)
+
+        g14 = loc_x + loc_y
+
+        return (g14)
+        
+
+#15
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    cpdef complex gamma15(self, tuple jmm1):
+        """
+        Calculate gamma15 for given j, m, m'
+        """
+        cdef float j, m, m1
+        j, m, m1 = jmm1
+        cdef float yX, yY
+        cdef float pump, loc_x, loc_y
+        cdef float N
+        N = float(self.N)
+
+        cdef complex g15
+        yX = self.local_x
+        yY = self.local_y
+
+        if (yX == 0) or (j < 0):
+            loc_x = 0.0
+        else:
+            loc_x = yX / 4 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dm( j, m) * dp( j, m1)
+
+        if (yY == 0) or (j < 0):
+            loc_y = 0.0
+        else:
+            loc_y = (-1) * yY / 4 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dm( j, m) * dp( j, m1)
+
+        g15 = loc_x + loc_y
+
+        return (g15)
+        
+
+#16
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    cpdef complex gamma16(self, tuple jmm1):
+        """
+        Calculate gamma16 for given j, m, m'
+        """
+        cdef float j, m, m1
+        j, m, m1 = jmm1
+        cdef float collect_x, collect_y
+        cdef float N
+        N = float(self.N)
+
+        cdef complex g16
+        yCX = self.collective_x
+        yCY = self.collective_y
+
+        if (yCX == 0):
+            collect_x = 0.0
+        else:
+            collect_x = (-1) * yCX / 4 * ap( j, m) * ap( j, m + 1)
+
+        if (yCY == 0):
+            collect_y = 0.0
+        else:
+            collect_y = yCY / 4 * ap( j, m) * ap( j, m + 1)
+
+        g16 = collect_x + collect_y
+
+        return (g16)
+
+#17
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    cpdef complex gamma17(self, tuple jmm1):
+        """
+        Calculate gamma17 for given j, m, m'
+        """
+        cdef float j, m, m1
+        j, m, m1 = jmm1
+        cdef float collect_x, collect_y
+        cdef float N
+        N = float(self.N)
+
+        cdef complex g17
+        yCX = self.collective_x
+        yCY = self.collective_y
+
+        if (yCX == 0):
+            collect_x = 0.0
+        else:
+            collect_x = (-1) * yCX / 4 * ap( j, m) * am( j, m - 1)
+
+        if (yCY == 0):
+            collect_y = 0.0
+        else:
+            collect_y = yCY / 4 * ap( j, m) * am( j, m - 1)
+
+        g17 = collect_x + collect_y
+
+        return (g17)
+
+#18
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    cpdef complex gamma18(self, tuple jmm1):
+        """
+        Calculate gamma18 for given j, m, m'
+        """
+        cdef float j, m, m1
+        j, m, m1 = jmm1
+        cdef float N
+        N = float(self.N)
+
+        cdef complex g18
+        yCX = self.collective_x
+        yCY = self.collective_y
+
+        if (yCX == 0):
+            collect_x = 0.0
+        else:
+            collect_x = (-1) * yCX / 4 * ap( j, m1) * ap( j, m1 + 1)
+
+        if (yCY == 0):
+            collect_y = 0.0
+        else:
+            collect_y = yCY / 4 * ap( j, m1) * ap( j, m1 + 1)
+
+        g18 = collect_x + collect_y
+
+        return (g18)
+
+#19
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    cpdef complex gamma19(self, tuple jmm1):
+        """
+        Calculate gamma19 for given j, m, m'
+        """
+        cdef float j, m, m1
+        j, m, m1 = jmm1
+        cdef float collect_x, collect_y
+        cdef float N
+        N = float(self.N)
+
+        cdef complex g19
+        yCX = self.collective_x
+        yCY = self.collective_y
+
+        if (yCX == 0):
+            collect_x = 0.0
+        else:
+            collect_x = (-1) * yCX / 4 * am( j, m1) * am( j, m1 - 1)
+
+        if (yCY == 0):
+            collect_y = 0.0
+        else:
+            collect_y = yCY / 4 * am( j, m1) * am( j, m1 - 1)
+
+        g19 = collect_x + collect_y
+
+        return (g19)
+
+#xy_ends
 
 #=============================================================================
 # Method to be used when the Hamiltonian is diagonal
@@ -688,7 +1381,7 @@ cdef class Pim(object):
     ----------
     N : int
         The number of two level systems
-        default: 2
+        default: 1
     emission : float
         Incoherent emission coefficient
         default: 0.0
@@ -701,7 +1394,7 @@ cdef class Pim(object):
 
     collective_emission : float
         Collective emission coefficient
-        default: 1.0
+        default: 0.0
     collective_dephasing: float
         Collective dephasing coefficient
         default: 0.0        
@@ -715,9 +1408,9 @@ cdef class Pim(object):
         A sparse representation of the matrix M for efficient vector multiplication
     """
 
-    def __init__(self, int N=2,
+    def __init__(self, int N=1,
                 float emission=0, float dephasing=0, float pumping=0,
-                float collective_emission=1, float collective_pumping=0,
+                float collective_emission=0, float collective_pumping=0,
                 float collective_dephasing=0):
         self.N = N
         self.collective_emission = collective_emission
