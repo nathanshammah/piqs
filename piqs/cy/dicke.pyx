@@ -345,7 +345,7 @@ cdef class Dicke(object):
     cpdef object lindbladian(self):
         """
         Build the Lindbladian superoperator of the dissipative dynamics as a
-        sparse matrix using COO.
+        sparse matrix.
 
         Returns
         ----------
@@ -611,21 +611,20 @@ cdef class Dicke(object):
         yCY = self.collective_y
 #xy_ends
 
-        spontaneous = yCE / 2 * (2 * j * (j + 1) - m * (m - 1) - m1 * (m1 - 1))
-        losses = yE / 2 * (N + m + m1)
-        pump = yP / 2 * (N - m - m1)
+        spontaneous = yCE * 0.5 * (2 * j * (j + 1) - m * (m - 1) - m1 * (m1 - 1))
+        losses = yE * 0.5 * (N + m + m1)
+        pump = yP * 0.5 * (N - m - m1)
 #xy_starts
-        loc_x = yX * N / 4
-        loc_y = yY * N / 4
+        loc_x = yX * N * 0.25
+        loc_y = yY * N * 0.25
 #xy_ends
-        collective_pump = yCP / 2 * \
-            (2 * j * (j + 1) - m * (m + 1) - m1 * (m1 + 1))
-        collective_dephase = yCD / 2 * (m - m1)**2
+        collective_pump = yCP * 0.5 * (2 * j * (j + 1) - m * (m + 1) - m1 * (m1 + 1))
+        collective_dephase = yCD * 0.5 * (m - m1)**2
 
         if j <= 0:
-            dephase = yD * N / 4
+            dephase = yD * N * 0.25
         else:
-            dephase = yD / 2 * (N / 2 - m * m1 * (N / 2 + 1) / j / (j + 1))
+            dephase = yD * 0.5 * (N / 2 - m * m1 * (N / 2 + 1) / (j * (j + 1)))
 #xy_starts
         collect_x = yCX / 8 * (ap(j, m)**2 + ap(j, m - 1)**2 + ap(j, m1)**2 + ap(j, m1 - 1)**2)
         collect_y =  yCY / 8 * (ap(j, m)**2 + ap(j, m - 1)**2 + ap(j, m1)**2 + ap(j, m1 - 1)**2)
@@ -672,35 +671,33 @@ cdef class Dicke(object):
         if yCE == 0:
             spontaneous = 0.0
         else:
-            spontaneous = yCE * \
-                np.sqrt((j + m) * (j - m + 1) * (j + m1) * (j - m1 + 1))
+            spontaneous = yCE * np.sqrt((j + m) * (j - m + 1) * (j + m1) * (j - m1 + 1))
 
         if (yE == 0) or (j <= 0):
             losses = 0.0
         else:
-            losses = yE / 2 * \
-                np.sqrt((j + m) * (j - m + 1) * (j + m1) * (j - m1 + 1)) * (N / 2 + 1) / (j * (j + 1))
+            losses = yE * 0.5 * np.sqrt((j + m) * (j - m + 1) * (j + m1) * (j - m1 + 1)) * (N / 2 + 1) / (j * (j + 1))
         
 #xy_starts
         if (yX == 0) or (j <= 0):
             loc_x = 0.0
         else:
-            loc_x = yX / 4 * (0.5 * N + 1)/( 2 * j * (j + 1)) * am( j, m) * am( j, m1)
+            loc_x = yX * 0.25 * (0.5 * N + 1)/( 2 * j * (j + 1)) * am( j, m) * am( j, m1)
 
         if (yY == 0) or (j <= 0):
             loc_y = 0.0
         else:
-            loc_y = yY / 4 * (0.5 * N + 1)/( 2 * j * (j + 1)) * am( j, m) * am( j, m1)
+            loc_y = yY * 0.25* (0.5 * N + 1)/( 2 * j * (j + 1)) * am( j, m) * am( j, m1)
 
         if (yCX == 0):
             collect_x = 0.0
         else:
-            collect_x = yCX / 4 * am( j, m) * am( j, m1)
+            collect_x = yCX * 0.25 * am( j, m) * am( j, m1)
 
         if (yCY == 0):
             collect_y = 0.0
         else:
-            collect_y =  yCY / 4 * am( j, m) * am( j, m1)
+            collect_y =  yCY * 0.25 * am( j, m) * am( j, m1)
 #xy_ends
 
         g2 = spontaneous + losses + collect_x + collect_y + loc_x + loc_y
@@ -735,18 +732,18 @@ cdef class Dicke(object):
         if (yE == 0) or (j <= 0):
             losses = 0.0
         else:
-            losses = yE / 2 * np.sqrt((j + m) * (j + m - 1) * (j + m1) * (j + m1 - 1)) * (N / 2 + j + 1) / (j * (2 * j + 1))
+            losses = yE * 0.5 * np.sqrt((j + m) * (j + m - 1) * (j + m1) * (j + m1 - 1)) * (N / 2 + j + 1) / (j * (2 * j + 1))
 
 #xy_starts
         if (yX == 0) or (j <= 0):
             loc_x = 0.0
         else:
-            loc_x = yX / 4 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) * bm( j, m) * bm( j, m1)
+            loc_x = yX * 0.25 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) * bm( j, m) * bm( j, m1)
 
         if (yY == 0) or (j <= 0):
             loc_y = 0.0
         else:
-            loc_y = yY / 4 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) *  bm( j, m) * bm( j, m1)
+            loc_y = yY * 0.25 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) *  bm( j, m) * bm( j, m1)
 
         g3 = losses + loc_x + loc_y
 
@@ -789,12 +786,12 @@ cdef class Dicke(object):
         if (yX == 0) or (j < 0):
             loc_x = 0.0
         else:
-            loc_x = yX / 4 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dm( j, m) * dm( j, m1)
+            loc_x = yX * 0.25 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dm( j, m) * dm( j, m1)
 
         if (yY == 0) or (j < 0):
             loc_y = 0.0
         else:
-            loc_y = yY / 4 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dm( j, m) * dm( j, m1)
+            loc_y = yY * 0.25 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dm( j, m) * dm( j, m1)
 
         g4 = losses + loc_x + loc_y
 
@@ -821,7 +818,7 @@ cdef class Dicke(object):
         if (yD == 0) or (j <= 0):
             g5 = 0.0
         else:
-            g5 = yD / 2 * np.sqrt((j**2 - m**2) * (j**2 - m1**2)) * \
+            g5 = yD * 0.5 * np.sqrt((j**2 - m**2) * (j**2 - m1**2)) * \
                 (N / 2 + j + 1) / (j * (2 * j + 1))
 
         return (g5)
@@ -846,7 +843,7 @@ cdef class Dicke(object):
         if yD == 0:
             g6 = 0.0
         else:
-            g6 = yD / 2 * np.sqrt(((j + 1)**2 - m**2) * ((j + 1)**2 - m1**2)) * (N / 2 - j) / ((j + 1) * (2 * j + 1))
+            g6 = yD * 0.5 * np.sqrt(((j + 1)**2 - m**2) * ((j + 1)**2 - m1**2)) * (N / 2 - j) / ((j + 1) * (2 * j + 1))
 
         return (g6)
 
@@ -877,18 +874,18 @@ cdef class Dicke(object):
         if (yP == 0) or (j <= 0):
             pump = 0.0
         else:
-            pump = yP / 2 * np.sqrt((j - m - 1) * (j - m) * (j - m1 - 1) * (j - m1)) * (N / 2 + j + 1) / (j * (2 * j + 1))
+            pump = yP * 0.5 * np.sqrt((j - m - 1) * (j - m) * (j - m1 - 1) * (j - m1)) * (N / 2 + j + 1) / (j * (2 * j + 1))
 
 #xy_starts
         if (yX == 0) or (j <= 0):
             loc_x = 0.0
         else:
-            loc_x = yX / 4 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) * bp( j, m) * bp( j, m1)
+            loc_x = yX * 0.25 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) * bp( j, m) * bp( j, m1)
 
         if (yY == 0) or (j <= 0):
             loc_y = 0.0
         else:
-            loc_y = yY / 4 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) *  bp( j, m) * bp( j, m1)
+            loc_y = yY * 0.25 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) *  bp( j, m) * bp( j, m1)
 
         g7 = pump + loc_x + loc_y
 #xy_ends
@@ -926,7 +923,7 @@ cdef class Dicke(object):
         if (yP == 0) or (j <= 0):
             pump = 0.0
         else:
-            pump = yP / 2 * np.sqrt((j + m + 1) * (j - m) * (j + m1 + 1) * (j - m1)) * (N / 2 + 1) / (j * (j + 1))
+            pump = yP * 0.5 * np.sqrt((j + m + 1) * (j - m) * (j + m1 + 1) * (j - m1)) * (N / 2 + 1) / (j * (j + 1))
 
         if yCP == 0:
             collective_pump = 0.0
@@ -937,22 +934,22 @@ cdef class Dicke(object):
         if (yX == 0) or (j <= 0):
             loc_x = 0.0
         else:
-            loc_x = yX / 4 * (0.5 * N + 1)/( 2 * j * (j + 1)) * ap( j, m) * ap( j, m1)
+            loc_x = yX * 0.25 * (0.5 * N + 1)/( 2 * j * (j + 1)) * ap( j, m) * ap( j, m1)
 
         if (yY == 0) or (j <= 0):
             loc_y = 0.0
         else:
-            loc_y = yY / 4 * (0.5 * N + 1)/( 2 * j * (j + 1)) * ap( j, m) * ap( j, m1)
+            loc_y = yY * 0.25 * (0.5 * N + 1)/( 2 * j * (j + 1)) * ap( j, m) * ap( j, m1)
 
         if (yCX == 0):
             collect_x = 0.0
         else:
-            collect_x = yCX / 4 * ap( j, m) * ap( j, m1)
+            collect_x = yCX * 0.25 * ap( j, m) * ap( j, m1)
 
         if (yCY == 0):
             collect_y = 0.0
         else:
-            collect_y =  yCY / 4 * ap( j, m) * ap( j, m1)
+            collect_y =  yCY * 0.25 * ap( j, m) * ap( j, m1)
 
         g8 = pump + collective_pump + loc_x + loc_y + collect_x  + collect_y
 #xy_ends
@@ -987,18 +984,17 @@ cdef class Dicke(object):
         if (yP == 0):
             pump = 0.0
         else:
-            pump = yP / 2 * np.sqrt((j + m + 1) * (j + m + 2) * (j + m1 + 1)
-                                  * (j + m1 + 2)) * (N / 2 - j) / ((j + 1) * (2 * j + 1))
+            pump = yP * 0.5 * np.sqrt((j + m + 1) * (j + m + 2) * (j + m1 + 1)* (j + m1 + 2)) * (N / 2 - j) / ((j + 1) * (2 * j + 1))
 #xy_starts
         if (yX == 0) or (j < 0):
             loc_x = 0.0
         else:
-            loc_x = yX / 4 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dp( j, m) * dp( j, m1)
+            loc_x = yX * 0.25 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dp( j, m) * dp( j, m1)
 
         if (yY == 0) or (j < 0):
             loc_y = 0.0
         else:
-            loc_y = yY / 4 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dp( j, m) * dp( j, m1)
+            loc_y = yY * 0.25 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dp( j, m) * dp( j, m1)
 
         g9 = pump + loc_x + loc_y
 #xy_ends
@@ -1025,12 +1021,12 @@ cdef class Dicke(object):
         if (yCX == 0):
             collect_x = 0.0
         else:
-            collect_x = yCX / 4 * ap( j, m) * am( j, m1)
+            collect_x = yCX * 0.25 * ap( j, m) * am( j, m1)
 
         if (yCY == 0):
             collect_y = 0.0
         else:
-            collect_y = (-1) * yCY / 4 * ap( j, m) * am( j, m1)
+            collect_y = (-1) * yCY * 0.25 * ap( j, m) * am( j, m1)
 
         g10 = collect_x + collect_y
 
@@ -1057,12 +1053,12 @@ cdef class Dicke(object):
         if (yX == 0) or (j <= 0):
             loc_x = 0.0
         else:
-            loc_x = yX / 4 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) * bp( j, m) * bm( j, m1)
+            loc_x = yX * 0.25 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) * bp( j, m) * bm( j, m1)
 
         if (yY == 0) or (j <= 0):
             loc_y = 0.0
         else:
-            loc_y = (-1) * yY / 4 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) * bp( j, m) * bm( j, m1)
+            loc_y = (-1) * yY * 0.25 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) * bp( j, m) * bm( j, m1)
 
         g11 = loc_x + loc_y
 
@@ -1089,12 +1085,12 @@ cdef class Dicke(object):
         if (yX == 0) or (j < 0):
             loc_x = 0.0
         else:
-            loc_x = yX / 4 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dp( j, m) * dm( j, m1)
+            loc_x = yX * 0.25 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dp( j, m) * dm( j, m1)
 
         if (yY == 0) or (j < 0):
             loc_y = 0.0
         else:
-            loc_y = (-1) * yY / 4 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dp( j, m) * dm( j, m1)
+            loc_y = (-1) * yY * 0.25 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dp( j, m) * dm( j, m1)
 
         g12 = loc_x + loc_y
 
@@ -1125,22 +1121,22 @@ cdef class Dicke(object):
         if (yX == 0) or (j <= 0):
             loc_x = 0.0
         else:
-            loc_x = yX / 4 * (0.5 * N + 1)/( 2 * j * (j + 1)) * am( j, m) * ap( j, m1)
+            loc_x = yX * 0.25 * (0.5 * N + 1)/( 2 * j * (j + 1)) * am( j, m) * ap( j, m1)
 
         if (yY == 0) or (j <= 0):
             loc_y = 0.0
         else:
-            loc_y = (-1) * yY / 4 * (0.5 * N + 1)/( 2 * j * (j + 1)) * am( j, m) * ap( j, m1)
+            loc_y = (-1) * yY * 0.25 * (0.5 * N + 1)/( 2 * j * (j + 1)) * am( j, m) * ap( j, m1)
 
         if (yCX == 0):
             collect_x = 0.0
         else:
-            collect_x = yCX / 4 * am( j, m) * ap( j, m1)
+            collect_x = yCX * 0.25 * am( j, m) * ap( j, m1)
 
         if (yCY == 0):
             collect_y = 0.0
         else:
-            collect_y =  (-1) * yCY / 4 * am( j, m) * ap( j, m1)
+            collect_y =  (-1) * yCY * 0.25 * am( j, m) * ap( j, m1)
 
         g13 = loc_x + loc_y + collect_x  + collect_y
 
@@ -1168,12 +1164,12 @@ cdef class Dicke(object):
         if (yX == 0) or (j <= 0):
             loc_x = 0.0
         else:
-            loc_x = yX / 4 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) * bm( j, m) * bp( j, m1)
+            loc_x = yX * 0.25 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) * bm( j, m) * bp( j, m1)
 
         if (yY == 0) or (j <= 0):
             loc_y = 0.0
         else:
-            loc_y = (-1) * yY / 4 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) * bm( j, m) * bp( j, m1)
+            loc_y = (-1) * yY * 0.25 * (0.5 * N + j + 1) / (2 * j * (2 * j + 1)) * bm( j, m) * bp( j, m1)
 
         g14 = loc_x + loc_y
 
@@ -1201,12 +1197,12 @@ cdef class Dicke(object):
         if (yX == 0) or (j < 0):
             loc_x = 0.0
         else:
-            loc_x = yX / 4 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dm( j, m) * dp( j, m1)
+            loc_x = yX * 0.25 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dm( j, m) * dp( j, m1)
 
         if (yY == 0) or (j < 0):
             loc_y = 0.0
         else:
-            loc_y = (-1) * yY / 4 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dm( j, m) * dp( j, m1)
+            loc_y = (-1) * yY * 0.25 * (0.5 * N - j) / (2 * (j + 1) * (2 * j + 1)) *  dm( j, m) * dp( j, m1)
 
         g15 = loc_x + loc_y
 
@@ -1233,12 +1229,12 @@ cdef class Dicke(object):
         if (yCX == 0):
             collect_x = 0.0
         else:
-            collect_x = (-1) * yCX / 4 * ap( j, m) * ap( j, m + 1)
+            collect_x = (-1) * yCX * 0.25 * ap( j, m) * ap( j, m + 1)
 
         if (yCY == 0):
             collect_y = 0.0
         else:
-            collect_y = yCY / 4 * ap( j, m) * ap( j, m + 1)
+            collect_y = yCY * 0.25 * ap( j, m) * ap( j, m + 1)
 
         g16 = collect_x + collect_y
 
@@ -1264,12 +1260,12 @@ cdef class Dicke(object):
         if (yCX == 0):
             collect_x = 0.0
         else:
-            collect_x = (-1) * yCX / 4 * ap( j, m) * am( j, m - 1)
+            collect_x = (-1) * yCX * 0.25 * ap( j, m) * am( j, m - 1)
 
         if (yCY == 0):
             collect_y = 0.0
         else:
-            collect_y = yCY / 4 * ap( j, m) * am( j, m - 1)
+            collect_y = yCY * 0.25 * ap( j, m) * am( j, m - 1)
 
         g17 = collect_x + collect_y
 
@@ -1294,12 +1290,12 @@ cdef class Dicke(object):
         if (yCX == 0):
             collect_x = 0.0
         else:
-            collect_x = (-1) * yCX / 4 * ap( j, m1) * ap( j, m1 + 1)
+            collect_x = (-1) * yCX * 0.25 * ap( j, m1) * ap( j, m1 + 1)
 
         if (yCY == 0):
             collect_y = 0.0
         else:
-            collect_y = yCY / 4 * ap( j, m1) * ap( j, m1 + 1)
+            collect_y = yCY * 0.25 * ap( j, m1) * ap( j, m1 + 1)
 
         g18 = collect_x + collect_y
 
@@ -1325,12 +1321,12 @@ cdef class Dicke(object):
         if (yCX == 0):
             collect_x = 0.0
         else:
-            collect_x = (-1) * yCX / 4 * am( j, m1) * am( j, m1 - 1)
+            collect_x = (-1) * yCX * 0.25 * am( j, m1) * am( j, m1 - 1)
 
         if (yCY == 0):
             collect_y = 0.0
         else:
-            collect_y = yCY / 4 * am( j, m1) * am( j, m1 - 1)
+            collect_y = yCY * 0.25 * am( j, m1) * am( j, m1 - 1)
 
         g19 = collect_x + collect_y
 

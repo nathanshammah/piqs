@@ -977,7 +977,7 @@ def c_ops_tls(N=1, emission=0., dephasing=0., pumping=0.,
         c_ops.append(np.sqrt(collective_x) * jx)
 
     if collective_y != 0:
-        c_ops.append(np.sqrt(collective_y) * jx)
+        c_ops.append(np.sqrt(collective_y) * jy)
 #xy_ends
 
     return c_ops
@@ -1106,12 +1106,17 @@ def superradiant(N, basis = "dicke"):
         jmm1 = {(N/2, 0.5, 0.5):1.}
     return dicke_basis(N, jmm1)
 
-def css(N, a=1/np.sqrt(2), b=1/np.sqrt(2), basis = "dicke"):
+def css(N, theta =np.pi/2, phi=0, basis = "dicke"):
     """
-    Loads the separable spin state |CSS>= Prod_i^N(a|1>_i + b|0>_i)
-    into the reduced density matrix rho(j,m,m'). 
+    Loads the coherent spin state (CSS).
+    It can be defined as |CSS>= Prod_i^N(a|1>_i + b|0>_i)
+    with a = sin(theta/2), b = exp(1j*phi) * cos(theta/2). 
+    The default basis is that of Dicke space |j, m> < j, m'|. 
     The default state is the symmetric CSS, |CSS> = |+>.
     """
+    a = np.cos(0.5*theta) * np.exp(1j * phi)
+    b = np.sin(0.5*theta)
+
     if basis == "uncoupled":
         return _uncoupled_css(N, a, b)
 
@@ -1124,13 +1129,14 @@ def css(N, a=1/np.sqrt(2), b=1/np.sqrt(2), basis = "dicke"):
 
     j = 0.5 * N 
     mmax = int(2 * j + 1)
+
     for i in range(0, mmax):
         m = j - i
         psi_m = np.sqrt(float(energy_degeneracy(N, m))) * a**( N * 0.5 + m) * b**( N * 0.5 - m)
         for i1 in range(0, mmax):
             m1 = j - i1
             row_column = jmm1_dict[(j, m, m1)]
-            psi_m1 = np.sqrt(float(energy_degeneracy(N, m1))) * a**( N * 0.5 + m1) * b**( N * 0.5 - m1)
+            psi_m1 = np.sqrt(float(energy_degeneracy(N, m1))) * np.conj(a)**( N * 0.5 + m1) * np.conj(b)**( N * 0.5 - m1)
             rho[row_column] = psi_m * psi_m1
     
     return Qobj(rho)
@@ -1234,7 +1240,7 @@ def _uncoupled_superradiant(N):
     N = int(N)
     jz = collective_algebra(N)[2]
     en, vn = jz.eigenstates()
-    psi0 = vn[2**N - N]
+    psi0 = vn[2**N - (N+1)]
 
     return psi0
 
