@@ -175,7 +175,15 @@ class Piqs(object):
     pumping : float
         Incoherent pumping coefficient
         default: 0.0
-
+#xy_starts        
+    local_x : float
+        Local J_{x,n} coefficient
+        default: 0.0
+    
+    local_y : float
+        Local J_{y,n} coefficient
+        default: 0.0
+#xy_ends        
     collective_emission : float
         Collective (superradiant) emmission coefficient
         default: 1.0
@@ -187,6 +195,15 @@ class Piqs(object):
     collective_dephasing : float
         Collective dephasing coefficient
         default: 0.0
+#xy_starts    
+    collective_x : float
+        Collective Jx coefficient
+        default: 0.0        
+    
+    collective_y : float
+        Collective Jy coefficient
+        default: 0.0
+#xy_ends    
     nds : int
         The number of Dicke states
         default: nds(2) = 4
@@ -203,39 +220,80 @@ class Piqs(object):
 
     def __init__(self, N=1, hamiltonian=None,
                  emission=0., dephasing=0., pumping=0.,
-                 collective_emission=0., collective_dephasing=0., collective_pumping=0.):
+#xy_starts
+                 local_x=0., local_y=0., 
+#xy_ends
+                 collective_emission=0., collective_dephasing=0., collective_pumping=0.,
+#xy_starts
+                 collective_x=0., collective_y=0.
+#xy_ends
+                 ):
         self.N = N
         self.hamiltonian = hamiltonian
 
         self.emission = emission
         self.dephasing = dephasing
         self.pumping = pumping
+        #xy_starts
+        self.local_x = local_x 
+        self.local_y = local_y
+        #xy_ends 
         self.collective_emission = collective_emission
         self.collective_dephasing = collective_dephasing
-        self.collective_pumping = collective_pumping
-        
+        self.collective_pumping = collective_pumping        
+        #xy_starts
+        self.collective_x = collective_x 
+        self.collective_y = collective_y
+        #xy_ends 
+
         self.nds = _num_dicke_states(self.N)
         self.dshape = (_num_dicke_states(self.N), _num_dicke_states(self.N))
 
-    def __repr__(self):
+    def __repr__(self, verbose = False):
         """
         Print the current parameters of the system.
         """
         string = []
         string.append("N = {}".format(self.N))
         string.append("Hilbert space dim = {}".format(self.dshape))
-        string.append("collective_emission = {}".format(self.collective_emission))
-        string.append("emission = {}".format(self.emission))
-        string.append("dephasing = {}".format(self.dephasing))
-        string.append("pumping = {}".format(self.pumping))
-        string.append(
-            "collective_dephasing = {}".format(
-                self.collective_dephasing))
-        string.append(
-            "collective_pumping = {}".format(
-                self.collective_pumping))
+#xy_starts
+        if verbose == True:
 
-        return "\n".join(string)
+            string.append("collective_emission = {}".format(self.collective_emission))
+            string.append("emission = {}".format(self.emission))
+            string.append("dephasing = {}".format(self.dephasing))
+            string.append("pumping = {}".format(self.pumping))
+            string.append("local_x = {}".format(self.local_x))
+            string.append("local_y = {}".format(self.local_y))
+            string.append("collective_dephasing = {}".format(self.collective_dephasing))
+            string.append("collective_pumping = {}".format(self.collective_pumping))
+            string.append("collective_x = {}".format(self.collective_x))
+            string.append("collective_y = {}".format(self.collective_y))
+            return "\n".join(string)
+        else:
+            if self.collective_emission != None and self.collective_emission != 0  :
+                string.append("collective_emission = {}".format(self.collective_emission))
+            if self.emission != None and self.emission != 0  :
+                string.append("emission = {}".format(self.emission))
+            if self.dephasing != None and self.dephasing != 0  :
+                string.append("dephasing = {}".format(self.dephasing))
+            if self.pumping != None and self.pumping != 0  :            
+                string.append("pumping = {}".format(self.pumping))
+            if self.local_x != None and self.local_x != 0  :        
+                string.append("local_x = {}".format(self.local_x))
+            if self.local_y != None and self.local_y != 0  :            
+                string.append("local_y = {}".format(self.local_y))
+            if self.collective_dephasing != None and self.collective_dephasing != 0  :            
+                string.append("collective_dephasing = {}".format(self.collective_dephasing))
+            if self.collective_pumping != None and self.collective_pumping != 0  :            
+                string.append("collective_pumping = {}".format(self.collective_pumping))
+            if self.collective_x != None and self.collective_x != 0  :            
+                string.append("collective_x = {}".format(self.collective_x))
+            if self.collective_y != None and self.collective_y != 0  :            
+                string.append("collective_y = {}".format(self.collective_y))
+
+            return "\n".join(string)
+#xy_starts
 
     def lindbladian(self):
         """
@@ -252,9 +310,18 @@ class Piqs(object):
                                 float(self.emission),
                                 float(self.dephasing),
                                 float(self.pumping),
+#xy_starts
+                                float(self.local_x),
+                                float(self.local_y),
+#xy_ends                                
                                 float(self.collective_emission),
                                 float(self.collective_dephasing),
-                                float(self.collective_pumping))
+                                float(self.collective_pumping),
+#xy_starts
+                                float(self.collective_x),
+                                float(self.collective_y)
+#xy_ends                                
+                                )
 
         return cythonized_dicke.lindbladian()
 
@@ -669,7 +736,7 @@ def am(j, m):
 # ============================================================================
 def su2_algebra(N):
     """
-    Creates the vector (sx, sy, sz, sm, sp) with the spin operators of a
+    Creates the list [sx, sy, sz, sp, sm] with the spin operators of a
     collection of N two-level systems (TLSs). Each element of the vector,
     i.e., sx, is a vector of Qobs objects (spin matrices), as it cointains the
     list of the SU(2) Pauli matrices for the N TLSs. Each TLS operator
@@ -691,21 +758,21 @@ def su2_algebra(N):
     sx = [0 for i in range(N)]
     sy = [0 for i in range(N)]
     sz = [0 for i in range(N)]
-    sm = [0 for i in range(N)]
     sp = [0 for i in range(N)]
+    sm = [0 for i in range(N)]
     sx[0] = 0.5 * sigmax()
     sy[0] = 0.5 * sigmay()
     sz[0] = 0.5 * sigmaz()
-    sm[0] = sigmam()
     sp[0] = sigmap()
+    sm[0] = sigmam()
 
     # 2. Place operators in total Hilbert space
     for k in range(N - 1):
         sx[0] = tensor(sx[0], identity(2))
         sy[0] = tensor(sy[0], identity(2))
         sz[0] = tensor(sz[0], identity(2))
-        sm[0] = tensor(sm[0], identity(2))
         sp[0] = tensor(sp[0], identity(2))
+        sm[0] = tensor(sm[0], identity(2))
 
     # 3. Cyclic sequence to create all N operators
     a = [i for i in range(N)]
@@ -716,17 +783,17 @@ def su2_algebra(N):
         sx[i] = sx[0].permute(b[i])
         sy[i] = sy[0].permute(b[i])
         sz[i] = sz[0].permute(b[i])
-        sm[i] = sm[0].permute(b[i])
         sp[i] = sp[0].permute(b[i])
+        sm[i] = sm[0].permute(b[i])
 
-    su2_operators = [sx, sy, sz, sm, sp]
+    su2_operators = [sx, sy, sz, sp, sm]
 
     return su2_operators
 
 def collective_algebra(N):
     """
     Uses the module su2_algebra to create the collective spin algebra
-    Jx, Jy, Jz, Jm, Jp in the uncoupled basis of the two-level system
+    [Jx, Jy, Jz, Jp, Jm ] in the uncoupled basis of the two-level system
     (TLS) SU(2) Pauli matrices. Each collective operator is placed in a
     Hilbert space of dimension 2^N.
 
@@ -748,16 +815,18 @@ def collective_algebra(N):
     sx = si_TLS[0]
     sy = si_TLS[1]
     sz = si_TLS[2]
-    sm = si_TLS[3]
-    sp = si_TLS[4]
+    sp = si_TLS[3]
+    sm = si_TLS[4]
+    
 
     jx = sum(sx)
     jy = sum(sy)
     jz = sum(sz)
-    jm = sum(sm)
     jp = sum(sp)
+    jm = sum(sm)
+    
 
-    collective_operators = [jx, jy, jz, jm, jp]
+    collective_operators = [jx, jy, jz, jp, jm]
 
     return collective_operators
 
@@ -765,7 +834,7 @@ def j_algebra(N):
     """
     Gives the list with the collective operators of the total algebra, using the reduced basis
     |j,m><j,m'| in which the density matrix is expressed.    
-    The list returned is [J^2, J_x, J_y, J_z, J_+, J_-]. 
+    The list returned is [J_x, J_y, J_z, J_+, J_-]. 
     Parameters
     ----------
     N: int 
@@ -802,8 +871,16 @@ def j_algebra(N):
     return j_alg
 
 
-def c_ops_tls(N=2, emission=0., dephasing=0., pumping=0., collective_emission=0.,
-              collective_dephasing=0., collective_pumping=0.):
+def c_ops_tls(N=1, emission=0., dephasing=0., pumping=0., 
+#xy_starts              
+              local_x=0., local_y=0.,
+#xy_ends
+              collective_emission=0.,
+              collective_dephasing=0., collective_pumping=0.,
+#xy_starts              
+              collective_x=0., collective_y=0.
+#xy_ends              
+               ):
     """
     Create the collapse operators (c_ops) of the Lindblad master equation in
     the in the uncoupled basis of the two-level system (TLS) SU(2) Pauli matrices. 
@@ -825,6 +902,14 @@ def c_ops_tls(N=2, emission=0., dephasing=0., pumping=0., collective_emission=0.
     pumping: float
         default = 0
         Incoherent pumping coefficient
+#xy_starts
+    local_x: float
+        default = 0
+        Local J_{x,n} coefficient
+    local_y: float
+        default = 0
+        Local J_{y,n} coefficient
+#xy_ends        
     collective_emission: float
         default = 0
         Collective (superradiant) emission coefficient
@@ -834,6 +919,14 @@ def c_ops_tls(N=2, emission=0., dephasing=0., pumping=0., collective_emission=0.
     collective_pumping: float
         default = 0
         Collective pumping coefficient
+#xy_starts
+    collective_x: float
+        default = 0
+        Collective Jx coefficient
+    collective_y: float
+        default = 0
+        Collective Jy coefficient
+#xy_ends
 
     Returns
     -------
@@ -847,8 +940,8 @@ def c_ops_tls(N=2, emission=0., dephasing=0., pumping=0., collective_emission=0.
         print("""Warning! N > 10. dim(H) = 2^N. Use the permutational
               invariant methods for large N. """)
 
-    [sx, sy, sz, sm, sp] = su2_algebra(N)
-    [jx, jy, jz, jm, jp] = collective_algebra(N)
+    [sx, sy, sz, sp, sm] = su2_algebra(N)
+    [jx, jy, jz, jp, jm] = collective_algebra(N)
 
     c_ops = []
 
@@ -863,7 +956,14 @@ def c_ops_tls(N=2, emission=0., dephasing=0., pumping=0., collective_emission=0.
     if pumping != 0:
         for i in range(0, N):
             c_ops.append(np.sqrt(pumping) * sp[i])
-
+#xy_starts
+    if local_x != 0:
+        for i in range(0, N):
+            c_ops.append(np.sqrt(local_x) * sx[i])
+    if local_y != 0:
+        for i in range(0, N):
+            c_ops.append(np.sqrt(local_y) * sy[i])
+#xy_ends
     if collective_emission != 0:
         c_ops.append(np.sqrt(collective_emission) * jm)
 
@@ -872,6 +972,13 @@ def c_ops_tls(N=2, emission=0., dephasing=0., pumping=0., collective_emission=0.
 
     if collective_pumping != 0:
         c_ops.append(np.sqrt(collective_pumping) * jp)
+#xy_starts
+    if collective_x != 0:
+        c_ops.append(np.sqrt(collective_x) * jx)
+
+    if collective_y != 0:
+        c_ops.append(np.sqrt(collective_y) * jy)
+#xy_ends
 
     return c_ops
 
@@ -971,12 +1078,13 @@ def dicke_state(N, j, m, basis = "dicke"):
     return Qobj(rho) 
 
 
-def excited(N, basis = "dicke"):
+def excited_state(N, basis = "dicke"):
     """
     Generates the density matrix for the Dicke state |N/2, N/2>, default in the
     Dicke basis. If the argument `basis` is "uncoupled" then it generates
     the state in a 2**N dim Hilbert space.
     """
+
     if basis == "uncoupled":
         return _uncoupled_excited(N)
 
@@ -993,17 +1101,22 @@ def superradiant(N, basis = "dicke"):
 
     if N%2 == 0:
         jmm1 = {(N/2, 0, 0):1.}
-        return dicke(N, jmm1)
+        return dicke_basis(N, jmm1)
     else:
         jmm1 = {(N/2, 0.5, 0.5):1.}
     return dicke_basis(N, jmm1)
 
-def css(N, a=1/np.sqrt(2), b=1/np.sqrt(2), basis = "dicke"):
+def css(N, theta =np.pi/2, phi=0, basis = "dicke"):
     """
-    Loads the separable spin state |CSS>= Prod_i^N(a|1>_i + b|0>_i)
-    into the reduced density matrix rho(j,m,m'). 
+    Loads the coherent spin state (CSS).
+    It can be defined as |CSS>= Prod_i^N(a|1>_i + b|0>_i)
+    with a = sin(theta/2), b = exp(1j*phi) * cos(theta/2). 
+    The default basis is that of Dicke space |j, m> < j, m'|. 
     The default state is the symmetric CSS, |CSS> = |+>.
     """
+    a = np.cos(0.5*theta) * np.exp(1j * phi)
+    b = np.sin(0.5*theta)
+
     if basis == "uncoupled":
         return _uncoupled_css(N, a, b)
 
@@ -1016,13 +1129,14 @@ def css(N, a=1/np.sqrt(2), b=1/np.sqrt(2), basis = "dicke"):
 
     j = 0.5 * N 
     mmax = int(2 * j + 1)
+
     for i in range(0, mmax):
         m = j - i
         psi_m = np.sqrt(float(energy_degeneracy(N, m))) * a**( N * 0.5 + m) * b**( N * 0.5 - m)
         for i1 in range(0, mmax):
             m1 = j - i1
             row_column = jmm1_dict[(j, m, m1)]
-            psi_m1 = np.sqrt(float(energy_degeneracy(N, m1))) * a**( N * 0.5 + m1) * b**( N * 0.5 - m1)
+            psi_m1 = np.sqrt(float(energy_degeneracy(N, m1))) * np.conj(a)**( N * 0.5 + m1) * np.conj(b)**( N * 0.5 - m1)
             rho[row_column] = psi_m * psi_m1
     
     return Qobj(rho)
@@ -1044,7 +1158,7 @@ def ghz(N, basis = "dicke"):
 
     return Qobj(rho)
 
-def ground(N, basis = "dicke"):
+def ground_state(N, basis = "dicke"):
     """
     Generates the density matric of the ground state for N spins
     """
@@ -1126,7 +1240,7 @@ def _uncoupled_superradiant(N):
     N = int(N)
     jz = collective_algebra(N)[2]
     en, vn = jz.eigenstates()
-    psi0 = vn[2**N - N]
+    psi0 = vn[2**N - (N+1)]
 
     return psi0
 
