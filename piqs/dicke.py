@@ -102,51 +102,25 @@ def isdiagonal(matrix):
 
     return isdiag
 
-
-def dicke_states(N):
+def j_min(N):
     """
-    The number of dicke states with a modulo term taking care of ensembles
-    with odd number of systems. Same function, named "num_dicke_states",
-    is present in the file with cythonized code, dicke.pyx. 
+    Calculate the minimum value of j for given N
 
     Parameters
-    -------
+    ==========
     N: int
-        The number of two level systems
+        Number of two level systems
+
     Returns
-    -------
-    nds: int
-        The number of Dicke states
+    =======
+    jmin: float
+        The minimum value of j for odd or even number of two
+        level systems
     """
-    if (not float(N).is_integer()):
-        raise ValueError("Number of TLS should be an integer")
-
-    if (N < 1):
-        raise ValueError("Number of TLS should be non-negative")
-
-    nds = (N / 2 + 1)**2 - (N % 2) / 4
-
-    return int(nds)
-
-def dicke_ladders(N):
-    """
-    Calculates the total number of Dicke ladders in the Dicke space for a
-    collection of N two-level systems. It counts how many different "j" exist.
-    Or the number of blocks in the block diagonal matrix. Same function, 
-    named "num_dicke_ladders", is present in the file with cythonized code, dicke.pyx.
-
-    Parameters
-    -------
-    N: int
-        The number of two level systems.
-    Returns
-    -------
-    Nj: int
-        The number of Dicke ladders
-    """
-    Nj = (N + 1) * 0.5 + (1 - np.mod(N, 2)) * 0.5
-
-    return int(Nj)
+    if N % 2 == 0:
+        return 0
+    else:
+        return 0.5    
 
 class Piqs(object):
     """
@@ -1077,7 +1051,6 @@ def dicke_state(N, j, m, basis = "dicke"):
 
     return Qobj(rho) 
 
-
 def excited_state(N, basis = "dicke"):
     """
     Generates the density matrix for the Dicke state |N/2, N/2>, default in the
@@ -1086,7 +1059,8 @@ def excited_state(N, basis = "dicke"):
     """
 
     if basis == "uncoupled":
-        return _uncoupled_excited(N)
+        state = _uncoupled_excited(N)
+        return ket2dm(state)
 
     jmm1 = {(N/2, N/2, N/2): 1}
     return dicke_basis(N, jmm1)
@@ -1097,7 +1071,8 @@ def superradiant(N, basis = "dicke"):
     in the Dicke basis
     """
     if basis == "uncoupled":
-        return _uncoupled_superradiant(N)
+        state = _uncoupled_superradiant(N) 
+        return ket2dm(state)
 
     if N%2 == 0:
         jmm1 = {(N/2, 0, 0):1.}
@@ -1143,7 +1118,7 @@ def css(N, theta =np.pi/2, phi=0, basis = "dicke"):
 
 def ghz(N, basis = "dicke"):
     """
-    Generates the the density matric of the GHZ state
+    Generates the density matrix of the GHZ state in the 'dicke' or 'uncoupled' basis. 
     """
     if basis == "uncoupled":
         return _uncoupled_ghz(N)
@@ -1160,21 +1135,24 @@ def ghz(N, basis = "dicke"):
 
 def ground_state(N, basis = "dicke"):
     """
-    Generates the density matric of the ground state for N spins
+    Generates the density matrix of the ground state for N spins
     """
     if basis == "uncoupled":
-        return _uncoupled_ground(N)
+        state = _uncoupled_ground(N)
+        return ket2dm(state)        
+        
 
     nds = _num_dicke_states(N)
     rho = dok_matrix((nds, nds))
 
-    rho[-1, -1] = 1
+    rho[N, N] = 1
 
     return Qobj(rho)
 
 def uncoupled_identity(N):
     """
-    Generates the identity in a 2**N dimensional Hilbert space
+    Generates the identity in a 2**N dimensional Hilbert space formed from the tensor product of N TLSs.
+    It has the correct dimensions.
 
     Parameters
     ----------
@@ -1202,6 +1180,7 @@ def uncoupled_identity(N):
 # generation function is supplied with the parameter `basis`
 # as "uncoupled". Otherwise, we work in the default Dicke
 # basis
+
 def _uncoupled_excited(N):
     """
     Generates a initial dicke state |N/2, N/2> as a Qobj in a 2**N
