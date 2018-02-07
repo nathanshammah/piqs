@@ -1260,12 +1260,12 @@ cdef class Dicke(object):
         if (yCX == 0):
             collect_x = 0.0
         else:
-            collect_x = (-1) * yCX * 0.25 * ap( j, m) * am( j, m - 1)
+            collect_x = (-1) * yCX * 0.25 * am( j, m) * am( j, m - 1)
 
         if (yCY == 0):
             collect_y = 0.0
         else:
-            collect_y = yCY * 0.25 * ap( j, m) * am( j, m - 1)
+            collect_y = yCY * 0.25 * am( j, m) * am( j, m - 1)
 
         g17 = collect_x + collect_y
 

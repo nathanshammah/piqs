@@ -11,7 +11,7 @@ from piqs.dicke import (block_matrix, su2_algebra, collective_algebra, ap, am, m
 from piqs.dicke import (energy_degeneracy, num_tls, j_min, j_algebra, jx_op, jy_op, jz_op, jp_op, jm_op, j2_op)
 from piqs.dicke import (dicke_basis, dicke_state, isdiagonal, excited_state, ground_state, superradiant, ghz, c_ops_tls)
 from piqs.cy.dicke import (_get_blocks, _j_min, _j_vals, m_vals, _num_dicke_states)
-from piqs.cy.dicke import ( _num_dicke_ladders, get_index, jmm1_dictionary, bp, bm, dp, dm, _get_blocks)
+from piqs.cy.dicke import ( _num_dicke_ladders, get_index, jmm1_dictionary, bp, bm, dp, dm)
 from piqs.cy.dicke import Dicke as _Dicke
 from piqs.cy.dicke import Pim as _Pim
 
