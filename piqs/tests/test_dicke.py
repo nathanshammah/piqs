@@ -1199,7 +1199,7 @@ class TestPiqs:
         assert_almost_equal(true_gamma_3, test_gamma_3)
         assert_almost_equal(true_gamma_4, test_gamma_4)
 
-    def test_lindbladian(self):
+    def test_lindbladian_dims(self):
         """
         Tests the calculation of the lindbladian matrix including its dimensions as Qobj. Test performed for N = 1.
         """        
