@@ -6,14 +6,16 @@ from numpy.testing import (assert_, run_module_suite, assert_raises,
                            assert_array_equal, assert_array_almost_equal,
                            assert_almost_equal, assert_equal)
 
-from piqs.dicke import (Piqs)
+from piqs.dicke import Piqs
 from piqs.dicke import (block_matrix, su2_algebra, collective_algebra, ap, am, m_degeneracy, state_degeneracy, uncoupled_identity)
 from piqs.dicke import (energy_degeneracy, num_tls, j_min, j_algebra, jx_op, jy_op, jz_op, jp_op, jm_op, j2_op)
 from piqs.dicke import (dicke_basis, dicke_state, isdiagonal, excited_state, ground_state, superradiant, ghz, c_ops_tls)
 from piqs.cy.dicke import (_get_blocks, _j_min, _j_vals, m_vals, _num_dicke_states)
-from piqs.cy.dicke import ( _num_dicke_ladders, get_index, jmm1_dictionary)
+from piqs.cy.dicke import ( _num_dicke_ladders, get_index, jmm1_dictionary, bp, bm, dp, dm, _get_blocks)
 from piqs.cy.dicke import Dicke as _Dicke
-from qutip import Qobj
+from piqs.cy.dicke import Pim as _Pim
+
+from qutip import Qobj, sigmax, sigmaz
 
 
 class TestPiqs:
@@ -776,7 +778,467 @@ class TestPiqs:
 
         assert_equal(true_c_ops, c_ops_tls( N = 2, emission = 1))                
 
+# Tests below on functions in the cython file "dicke.pyx"
 
+    def test_bp(self):
+        """
+        Tests the calculation of the coefficient B_{+}(j, m)= sqrt((j-m)(j-m-1)) for a given value of j, m.
+        """
+
+        true_b1 = 0
+        true_b2 = 0
+        true_b3 = np.sqrt(30)
+        true_b4 = np.sqrt(2)
+        
+        j1 = 1
+        m1 = 0        
+        j2 = 3
+        m2 = 2
+        j3 = 3
+        m3 = -3
+        j4 = 2.5
+        m4 = 0.5
+        
+        test_b1 = bp(j1, m1)
+        test_b2 = bp(j2, m2)
+        test_b3 = bp(j3, m3)
+        test_b4 = bp(j4, m4)
+        
+        assert_almost_equal(test_b1, true_b1)
+        assert_almost_equal(test_b2, true_b2)
+        assert_almost_equal(test_b3, true_b3)
+        assert_almost_equal(test_b4, true_b4)
+
+    def test_bm(self):
+        """
+        Tests the calculation of the coefficient B_{-}(j, m)= -sqrt((j+m)(j+m-1)) for a given value of j, m.
+        """
+
+        true_b1 = 0
+        true_b2 = 0
+        true_b3 = np.sqrt(30)
+        true_b4 = np.sqrt(2)
+        
+        j1 = 1
+        m1 = 0        
+        j2 = 3
+        m2 = 2
+        j3 = 3
+        m3 = -3
+        j4 = 2.5
+        m4 = 0.5
+        
+        test_b1 = bp(j1, m1)
+        test_b2 = bp(j2, m2)
+        test_b3 = bp(j3, m3)
+        test_b4 = bp(j4, m4)
+        
+        assert_almost_equal(test_b1, true_b1)
+        assert_almost_equal(test_b2, true_b2)
+        assert_almost_equal(test_b3, true_b3)
+        assert_almost_equal(test_b4, true_b4)
+
+    def test_bm(self):
+        """
+        Tests the calculation of the coefficient B_{-}(j, m)= -sqrt((j+m)(j+m-1)) for a given value of j, m.
+        """
+
+        true_value1 = 0
+        true_value2 = -np.sqrt(20)
+        true_value3 = 0
+        true_value4 = -np.sqrt(6)
+        
+        j1 = 1
+        m1 = 0        
+        j2 = 3
+        m2 = 2
+        j3 = 3
+        m3 = -3
+        j4 = 2.5
+        m4 = 0.5
+        
+        test_value1 = bm(j1, m1)
+        test_value2 = bm(j2, m2)
+        test_value3 = bm(j3, m3)
+        test_value4 = bm(j4, m4)
+        
+        assert_almost_equal(test_value1, true_value1)
+        assert_almost_equal(test_value2, true_value2)
+        assert_almost_equal(test_value3, true_value3)
+        assert_almost_equal(test_value4, true_value4)
+
+    def test_dm(self):
+        """
+        Tests the calculation of the coefficient D_{-}(j, m)= sqrt((j-m+1)(j-m+2)) for a given value of j, m.
+        """
+
+        true_value1 = np.sqrt(6)
+        true_value2 = np.sqrt(6)
+        true_value3 = np.sqrt(56)
+        true_value4 = np.sqrt(12)
+        
+        j1 = 1
+        m1 = 0        
+        j2 = 3
+        m2 = 2
+        j3 = 3
+        m3 = -3
+        j4 = 2.5
+        m4 = 0.5
+        
+        test_value1 = dm(j1, m1)
+        test_value2 = dm(j2, m2)
+        test_value3 = dm(j3, m3)
+        test_value4 = dm(j4, m4)
+        
+        assert_almost_equal(test_value1, true_value1)
+        assert_almost_equal(test_value2, true_value2)
+        assert_almost_equal(test_value3, true_value3)
+        assert_almost_equal(test_value4, true_value4)
+
+    def test_dp(self):
+        """
+        Tests the calculation of the coefficient D_{+}(j, m)= -sqrt((j+m+1)(j+m+2)) for a given value of j, m.
+        """
+
+        true_value1 = -np.sqrt(6)
+        true_value2 = -np.sqrt(42)
+        true_value3 = -np.sqrt(2)
+        true_value4 = -np.sqrt(20)
+        
+        j1 = 1
+        m1 = 0        
+        j2 = 3
+        m2 = 2
+        j3 = 3
+        m3 = -3
+        j4 = 2.5
+        m4 = 0.5
+        
+        test_value1 = dp(j1, m1)
+        test_value2 = dp(j2, m2)
+        test_value3 = dp(j3, m3)
+        test_value4 = dp(j4, m4)
+        
+        assert_almost_equal(test_value1, true_value1)
+        assert_almost_equal(test_value2, true_value2)
+        assert_almost_equal(test_value3, true_value3)
+        assert_almost_equal(test_value4, true_value4)                                                                
+
+    def test__get_blocks(self):
+        """
+        Tests that the calculation of the list which gets the number of cumulative elements at each block
+        boundary is correct, in the (j,m,m1) block-diagonal representation. For N = 4
+
+        1 1 1 1 1
+        1 1 1 1 1
+        1 1 1 1 1
+        1 1 1 1 1
+        1 1 1 1 1
+                1 1 1
+                1 1 1
+                1 1 1
+                     1
+
+        Thus, the blocks are [5, 8, 9] denoting that after the first block 5
+        elements have been accounted for and so on.
+        """
+        trueb1 = [2]
+        trueb2 = [3,4]    
+        trueb3 = [4,6]
+        trueb4 = [5,8,9]
+
+        test_b1 = _get_blocks(1)
+        test_b2 = _get_blocks(2)
+        test_b3 = _get_blocks(3)
+        test_b4 = _get_blocks(4)
+
+        assert_equal(test_b1, trueb1)
+        assert_equal(test_b2, trueb2)
+        assert_equal(test_b3, trueb3)
+
+    # def test_calculate_k(self):
+    #     """
+    #     Tests the calculation of the k value from the current row and column element in the Dicke space.
+    #     """        
+    #     true_value1 = [2]
+    #     true_value2 = [3,4]    
+    #     true_value3 = [4,6]
+
+    #     test_value1 = calculate_k(1)
+    #     test_value2 = calculate_k(2)
+    #     test_value3 = calculate_k(3)
+
+    #     assert_equal(test_value1, true_value1)
+    #     assert_equal(test_value2, true_value2)
+    #     assert_equal(test_value3, true_value3)    
+
+    def test_gamma1(self):
+        """
+        Tests the calculation of gamma1.
+        """        
+
+        true_gamma_1 = -2
+        true_gamma_2 = -3
+        true_gamma_3 = -7
+        true_gamma_4 = -1
+        true_gamma_5 = 0
+        true_gamma_6 = 0
+
+        N = 4
+        test_dicke = _Dicke(N =N, collective_emission = 1)
+        test_gamma_1 = test_dicke.gamma1( (1,1,1))
+        test_dicke = _Dicke(N = N, emission = 1)
+        test_gamma_2 = test_dicke.gamma1( (1,1,1))
+        test_dicke = _Dicke(N = N, emission = 1, collective_emission = 2)
+        test_gamma_3 = test_dicke.gamma1( (1,1,1))
+        test_dicke = _Dicke(N = N, dephasing = 4)
+        test_gamma_4 = test_dicke.gamma1( (1,1,1))
+        test_dicke = _Dicke(N = N, collective_pumping = 2)
+        test_gamma_5 = test_dicke.gamma1( (1,1,1))
+        test_dicke = _Dicke(N = N, collective_dephasing = 2)
+        test_gamma_6 = test_dicke.gamma1( (1,1,1))
+
+        assert_almost_equal(true_gamma_1, test_gamma_1)
+        assert_almost_equal(true_gamma_2, test_gamma_2)
+        assert_almost_equal(true_gamma_3, test_gamma_3)
+        assert_almost_equal(true_gamma_4, test_gamma_4)
+        assert_almost_equal(true_gamma_5, test_gamma_5)
+        assert_almost_equal(true_gamma_6, test_gamma_6)
+
+    def test_gamma2(self):
+        """
+        Tests the calculation of gamma2. Test performed for N = 4.
+        """        
+        true_gamma_1 = 2
+        true_gamma_2 = 1.5
+        true_gamma_3 = 5.5
+        true_gamma_4 = 0
+        true_gamma_5 = 0
+        true_gamma_6 = 0
+
+        N = 4
+        test_dicke = _Dicke(N =N, collective_emission = 1)
+        test_gamma_1 = test_dicke.gamma2( (1,1,1))
+        test_dicke = _Dicke(N = N, emission = 1)
+        test_gamma_2 = test_dicke.gamma2( (1,1,1))
+        test_dicke = _Dicke(N = N, emission = 1, collective_emission = 2)
+        test_gamma_3 = test_dicke.gamma2( (1,1,1))
+        test_dicke = _Dicke(N = N, dephasing = 4)
+        test_gamma_4 = test_dicke.gamma2( (1,1,1))
+        test_dicke = _Dicke(N = N, collective_pumping = 2)
+        test_gamma_5 = test_dicke.gamma2( (1,1,1))
+        test_dicke = _Dicke(N = N, collective_dephasing = 2)
+        test_gamma_6 = test_dicke.gamma2( (1,1,1))
+
+
+        assert_almost_equal(true_gamma_1, test_gamma_1)
+        assert_almost_equal(true_gamma_2, test_gamma_2)
+        assert_almost_equal(true_gamma_3, test_gamma_3)
+        assert_almost_equal(true_gamma_4, test_gamma_4)
+        assert_almost_equal(true_gamma_5, test_gamma_5)
+        assert_almost_equal(true_gamma_6, test_gamma_6)
+
+    def test_gamma3(self):
+        """
+        Tests the calculation of gamma3. Test performed for N = 4.
+        """        
+        true_gamma_1 = 0
+        true_gamma_2 = 1.3333333730697632
+        true_gamma_3 = 1.3333333730697632
+        true_gamma_4 = 0
+        true_gamma_5 = 0
+        true_gamma_6 = 0
+
+        N = 4
+        test_dicke = _Dicke(N =N, collective_emission = 1)
+        test_gamma_1 = test_dicke.gamma3( (1,1,1))
+        test_dicke = _Dicke(N = N, emission = 1)
+        test_gamma_2 = test_dicke.gamma3( (1,1,1))
+        test_dicke = _Dicke(N = N, emission = 1, collective_emission = 2)
+        test_gamma_3 = test_dicke.gamma3( (1,1,1))
+        test_dicke = _Dicke(N = N, dephasing = 4)
+        test_gamma_4 = test_dicke.gamma3( (1,1,1))
+        test_dicke = _Dicke(N = N, collective_pumping = 2)
+        test_gamma_5 = test_dicke.gamma3( (1,1,1))
+        test_dicke = _Dicke(N = N, collective_dephasing = 2)
+        test_gamma_6 = test_dicke.gamma3( (1,1,1))
+        #
+        assert_almost_equal(true_gamma_1, test_gamma_1)
+        assert_almost_equal(true_gamma_2, test_gamma_2)
+        assert_almost_equal(true_gamma_3, test_gamma_3)
+        assert_almost_equal(true_gamma_4, test_gamma_4)
+        assert_almost_equal(true_gamma_5, test_gamma_5)
+        assert_almost_equal(true_gamma_6, test_gamma_6)
+
+    def test_gamma4(self):
+        """
+        Tests the calculation of gamma4. Test performed for N = 4.
+        """        
+
+        true_gamma_1 = 0.1666666716337204
+        true_gamma_2 = 2
+        true_gamma_3 = 0
+        true_gamma_4 = 0.40824830532073975
+
+        N = 4
+        test_dicke = _Dicke(N = N, emission = 1, collective_emission = 2)
+        test_gamma_1 = test_dicke.gamma4( (1,1,1))
+        test_gamma_2 = test_dicke.gamma4( (0,0,0))
+        test_gamma_3 = test_dicke.gamma4( (2,1,1))
+        test_gamma_4 = test_dicke.gamma4( (1,-1,1))
+
+        assert_almost_equal(true_gamma_1, test_gamma_1)
+        assert_almost_equal(true_gamma_2, test_gamma_2)
+        assert_almost_equal(true_gamma_3, test_gamma_3)
+        assert_almost_equal(true_gamma_4, test_gamma_4)        
+
+    def test_gamma5(self):
+        """
+        Tests the calculation of gamma5. Test performed for N = 4.
+        """        
+
+        true_gamma_1 = 0
+        true_gamma_2 = 0
+        true_gamma_3 = 0.75
+        true_gamma_4 = 0
+
+        N = 4
+        test_dicke = _Dicke(N = N, dephasing = 1)
+        test_gamma_1 = test_dicke.gamma5( (1,1,1))
+        test_gamma_2 = test_dicke.gamma5( (0,0,0))
+        test_gamma_3 = test_dicke.gamma5( (2,1,1))
+        test_gamma_4 = test_dicke.gamma5( (1,-1,1))
+
+        assert_almost_equal(true_gamma_1, test_gamma_1)
+        assert_almost_equal(true_gamma_2, test_gamma_2)
+        assert_almost_equal(true_gamma_3, test_gamma_3)
+        assert_almost_equal(true_gamma_4, test_gamma_4)
+
+    def test_gamma6(self):
+        """
+        Tests the calculation of gamma6. Test performed for N = 4.
+        """        
+        true_gamma_1 = 0.25
+        true_gamma_2 = 1
+        true_gamma_3 = 0
+        true_gamma_4 = 0.25
+
+        N = 4
+        test_dicke = _Dicke(N = N, dephasing = 1)
+        test_gamma_1 = test_dicke.gamma6( (1,1,1))
+        test_gamma_2 = test_dicke.gamma6( (0,0,0))
+        test_gamma_3 = test_dicke.gamma6( (2,1,1))
+        test_gamma_4 = test_dicke.gamma6( (1,-1,1))
+
+        assert_almost_equal(true_gamma_1, test_gamma_1)
+        assert_almost_equal(true_gamma_2, test_gamma_2)
+        assert_almost_equal(true_gamma_3, test_gamma_3)
+        assert_almost_equal(true_gamma_4, test_gamma_4)
+
+    def test_gamma7(self):
+        """
+        Tests the calculation of gamma7. Test performed for N = 4.
+        """        
+        true_gamma_1 = 0
+        true_gamma_2 = 0.5
+        true_gamma_3 = 0
+        true_gamma_4 = 1.5
+
+        N = 4
+        test_dicke = _Dicke(N = N, pumping = 1)
+        test_gamma_1 = test_dicke.gamma7( (1,1,1))
+        test_gamma_2 = test_dicke.gamma7( (2,0,0))
+        test_gamma_3 = test_dicke.gamma7( (1,0,0))
+        test_gamma_4 = test_dicke.gamma7( (2,-1,-1))
+
+        assert_almost_equal(true_gamma_1, test_gamma_1)
+        assert_almost_equal(true_gamma_2, test_gamma_2)
+        assert_almost_equal(true_gamma_3, test_gamma_3)
+        assert_almost_equal(true_gamma_4, test_gamma_4)       
+
+    def test_gamma8(self):
+        """
+        Tests the calculation of gamma8. Test performed for N = 4.
+        """        
+        true_gamma_1 = 0
+        true_gamma_2 = 13.5
+        true_gamma_3 = 5.5
+        true_gamma_4 = 13.5
+
+        N = 4
+        test_dicke = _Dicke(N = N, pumping = 1, collective_pumping = 2)
+        test_gamma_1 = test_dicke.gamma8( (1,1,1))
+        test_gamma_2 = test_dicke.gamma8( (2,0,0))
+        test_gamma_3 = test_dicke.gamma8( (1,0,0))
+        test_gamma_4 = test_dicke.gamma8( (2,-1,-1))
+
+        assert_almost_equal(true_gamma_1, test_gamma_1)
+        assert_almost_equal(true_gamma_2, test_gamma_2)
+        assert_almost_equal(true_gamma_3, test_gamma_3)
+        assert_almost_equal(true_gamma_4, test_gamma_4)
+
+    def test_gamma9(self):
+        """
+        Tests the calculation of gamma9. Test performed for N = 4.
+        """        
+        true_gamma_1 = 1
+        true_gamma_2 = 0
+        true_gamma_3 = 0.5
+        true_gamma_4 = 0
+
+        N = 4
+        test_dicke = _Dicke(N = N, pumping = 1, collective_pumping = 2)
+        test_gamma_1 = test_dicke.gamma9( (1,1,1))
+        test_gamma_2 = test_dicke.gamma9( (2,0,0))
+        test_gamma_3 = test_dicke.gamma9( (1,0,0))
+        test_gamma_4 = test_dicke.gamma9( (2,-1,-1))
+
+        assert_almost_equal(true_gamma_1, test_gamma_1)
+        assert_almost_equal(true_gamma_2, test_gamma_2)
+        assert_almost_equal(true_gamma_3, test_gamma_3)
+        assert_almost_equal(true_gamma_4, test_gamma_4)
+
+    def test_lindbladian(self):
+        """
+        Tests the calculation of the lindbladian matrix including its dimensions as Qobj. Test performed for N = 1.
+        """        
+
+        true_L = [[-4,  0, 0,  3],[ 0, -3.54999995,  0, 0],[ 0,  0, -3.54999995,0],[ 4,  0,  0, -3]]
+        true_L = Qobj(true_L)
+        true_L.dims = [[[2], [2]], [[2], [2]]]
+
+        N = 1
+        test_dicke = _Dicke(N = N, pumping = 1, collective_pumping = 2, emission = 1, collective_emission = 3, dephasing = 0.1)
+        test_L = test_dicke.lindbladian()
+        assert_array_almost_equal(test_L.full() , true_L.full())
+        assert_array_equal(test_L.dims , true_L.dims)
+
+    def test_liouvillian(self):
+        """
+        Tests the calculation of the liouvillian matrix including its dimensions as Qobj. Test performed for N = 1.
+        """        
+        
+        true_L = [[-4,  0, 0,  3],[ 0, -3.54999995,  0, 0],[ 0,  0, -3.54999995,0],[ 4,  0,  0, -3]]
+        true_L = Qobj(true_L)
+        true_L.dims = [[[2], [2]], [[2], [2]]]
+
+        true_H = [[ 1.+0.j,  1.+0.j],[ 1.+0.j, -1.+0.j]]
+        true_H = Qobj(true_H)
+        true_H.dims = [[[2], [2]]]
+
+        true_liouvillian = [[-4,-1.j,1.j,3],[-1.j,-3.54999995+2.j,0,1.j],[1.j,0, -3.54999995-2.j,-1.j],[ 4, +1.j,-1.j, -3]]
+        true_liouvillian = Qobj(true_liouvillian)
+        true_liouvillian.dims = [[[2], [2]], [[2], [2]]]
+
+        N = 1
+        test_piqs = Piqs( hamiltonian = sigmaz() + sigmax(), N = N, pumping = 1, collective_pumping = 2, emission = 1, collective_emission = 3, dephasing = 0.1)
+        test_liouvillian = test_piqs.liouvillian()
+        test_hamiltonian = test_piqs.hamiltonian
+
+        assert_array_almost_equal(test_liouvillian.full() , true_liouvillian.full())
+        assert_array_almost_equal(test_hamiltonian.full() , true_H.full())
+        assert_array_equal(test_liouvillian.dims , test_liouvillian.dims)
 
 if __name__ == "__main__":
     run_module_suite()
