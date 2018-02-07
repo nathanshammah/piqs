@@ -20612,7 +20612,7 @@ static __pyx_t_double_complex __pyx_f_4piqs_2cy_5dicke_5Dicke_gamma17(struct __p
  *         if (yCX == 0):
  *             collect_x = 0.0             # <<<<<<<<<<<<<<
  *         else:
- *             collect_x = (-1) * yCX * 0.25 * ap( j, m) * am( j, m - 1)
+ *             collect_x = (-1) * yCX * 0.25 * am( j, m) * am( j, m - 1)
  */
     __pyx_v_collect_x = 0.0;
 
@@ -20629,7 +20629,7 @@ static __pyx_t_double_complex __pyx_f_4piqs_2cy_5dicke_5Dicke_gamma17(struct __p
   /* "piqs/cy/dicke.pyx":1263
  *             collect_x = 0.0
  *         else:
- *             collect_x = (-1) * yCX * 0.25 * ap( j, m) * am( j, m - 1)             # <<<<<<<<<<<<<<
+ *             collect_x = (-1) * yCX * 0.25 * am( j, m) * am( j, m - 1)             # <<<<<<<<<<<<<<
  * 
  *         if (yCY == 0):
  */
@@ -20639,7 +20639,7 @@ static __pyx_t_double_complex __pyx_f_4piqs_2cy_5dicke_5Dicke_gamma17(struct __p
     __pyx_t_2 = PyNumber_Multiply(__pyx_t_3, __pyx_float_0_25); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1263, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_ap); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1263, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_am); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1263, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_t_5 = PyFloat_FromDouble(__pyx_v_j); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 1263, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
@@ -20764,7 +20764,7 @@ static __pyx_t_double_complex __pyx_f_4piqs_2cy_5dicke_5Dicke_gamma17(struct __p
   __pyx_L3:;
 
   /* "piqs/cy/dicke.pyx":1265
- *             collect_x = (-1) * yCX * 0.25 * ap( j, m) * am( j, m - 1)
+ *             collect_x = (-1) * yCX * 0.25 * am( j, m) * am( j, m - 1)
  * 
  *         if (yCY == 0):             # <<<<<<<<<<<<<<
  *             collect_y = 0.0
@@ -20781,12 +20781,12 @@ static __pyx_t_double_complex __pyx_f_4piqs_2cy_5dicke_5Dicke_gamma17(struct __p
  *         if (yCY == 0):
  *             collect_y = 0.0             # <<<<<<<<<<<<<<
  *         else:
- *             collect_y = yCY * 0.25 * ap( j, m) * am( j, m - 1)
+ *             collect_y = yCY * 0.25 * am( j, m) * am( j, m - 1)
  */
     __pyx_v_collect_y = 0.0;
 
     /* "piqs/cy/dicke.pyx":1265
- *             collect_x = (-1) * yCX * 0.25 * ap( j, m) * am( j, m - 1)
+ *             collect_x = (-1) * yCX * 0.25 * am( j, m) * am( j, m - 1)
  * 
  *         if (yCY == 0):             # <<<<<<<<<<<<<<
  *             collect_y = 0.0
@@ -20798,14 +20798,14 @@ static __pyx_t_double_complex __pyx_f_4piqs_2cy_5dicke_5Dicke_gamma17(struct __p
   /* "piqs/cy/dicke.pyx":1268
  *             collect_y = 0.0
  *         else:
- *             collect_y = yCY * 0.25 * ap( j, m) * am( j, m - 1)             # <<<<<<<<<<<<<<
+ *             collect_y = yCY * 0.25 * am( j, m) * am( j, m - 1)             # <<<<<<<<<<<<<<
  * 
  *         g17 = collect_x + collect_y
  */
   /*else*/ {
     __pyx_t_2 = PyNumber_Multiply(__pyx_v_yCY, __pyx_float_0_25); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1268, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_ap); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1268, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_am); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1268, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_t_11 = PyFloat_FromDouble(__pyx_v_j); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1268, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
@@ -20930,7 +20930,7 @@ static __pyx_t_double_complex __pyx_f_4piqs_2cy_5dicke_5Dicke_gamma17(struct __p
   __pyx_L4:;
 
   /* "piqs/cy/dicke.pyx":1270
- *             collect_y = yCY * 0.25 * ap( j, m) * am( j, m - 1)
+ *             collect_y = yCY * 0.25 * am( j, m) * am( j, m - 1)
  * 
  *         g17 = collect_x + collect_y             # <<<<<<<<<<<<<<
  * 
