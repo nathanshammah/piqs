@@ -409,6 +409,7 @@ cdef class Dicke(object):
             jmm1_17 = (j, m  + 2, m1)
             jmm1_18 = (j, m, m1 - 2)
             jmm1_19 = (j, m, m1 + 2)
+                        
 #xy_ends
             g1 = self.gamma1(jmm1_1)
             c1 = jmm1_inv[jmm1_1]
@@ -566,7 +567,9 @@ cdef class Dicke(object):
                 lindblad_row.append(int(r))
                 lindblad_col.append(int(c19))
                 lindblad_data.append(g19)
+                                              
 #xy_ends            
+
 
         cdef lindblad_matrix = csr_matrix((lindblad_data, (lindblad_row, lindblad_col)),
                                           shape=(nds**2, nds**2))
@@ -732,7 +735,7 @@ cdef class Dicke(object):
         if (yE == 0) or (j <= 0):
             losses = 0.0
         else:
-            losses = yE * 0.5 * np.sqrt((j + m) * (j + m - 1) * (j + m1) * (j + m1 - 1)) * (N / 2 + j + 1) / (j * (2 * j + 1))
+            losses = yE * 0.5 * (N / 2 + j + 1) / (j * (2 * j + 1)) * np.sqrt((j + m) * (j + m - 1) * (j + m1) * (j + m1 - 1)) 
 
 #xy_starts
         if (yX == 0) or (j <= 0):
@@ -1238,7 +1241,7 @@ cdef class Dicke(object):
 
         g16 = collect_x + collect_y
 
-        return (g16)
+        return (g16/2)
 
 #17
     @cython.boundscheck(False)
@@ -1260,16 +1263,16 @@ cdef class Dicke(object):
         if (yCX == 0):
             collect_x = 0.0
         else:
-            collect_x = (-1) * yCX * 0.25 * ap( j, m) * am( j, m - 1)
+            collect_x = (-1) * yCX * 0.25 * am( j, m) * am( j, m - 1)
 
         if (yCY == 0):
             collect_y = 0.0
         else:
-            collect_y = yCY * 0.25 * ap( j, m) * am( j, m - 1)
+            collect_y = yCY * 0.25 * am( j, m) * am( j, m - 1)
 
         g17 = collect_x + collect_y
 
-        return (g17)
+        return (g17/2)
 
 #18
     @cython.boundscheck(False)
@@ -1299,7 +1302,7 @@ cdef class Dicke(object):
 
         g18 = collect_x + collect_y
 
-        return (g18)
+        return (g18/2)
 
 #19
     @cython.boundscheck(False)
@@ -1330,7 +1333,7 @@ cdef class Dicke(object):
 
         g19 = collect_x + collect_y
 
-        return (g19)
+        return (g19/2)
 
 #xy_ends
 
