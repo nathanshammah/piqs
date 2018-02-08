@@ -1081,7 +1081,7 @@ def superradiant(N, basis = "dicke"):
         jmm1 = {(N/2, 0.5, 0.5):1.}
     return dicke_basis(N, jmm1)
 
-def css(N, theta =np.pi/2, phi=0, basis = "dicke"):
+def css(N, x =1/np.sqrt(2), y=1/np.sqrt(2), basis = "dicke", coordinates = "cartesian"):
     """
     Loads the coherent spin state (CSS).
     It can be defined as |CSS>= Prod_i^N(a|1>_i + b|0>_i)
@@ -1089,8 +1089,13 @@ def css(N, theta =np.pi/2, phi=0, basis = "dicke"):
     The default basis is that of Dicke space |j, m> < j, m'|. 
     The default state is the symmetric CSS, |CSS> = |+>.
     """
-    a = np.cos(0.5*theta) * np.exp(1j * phi)
-    b = np.sin(0.5*theta)
+
+    if coordinates == "polar":
+        a = np.cos(0.5*x) * np.exp(1j * y)
+        b = np.sin(0.5*x)
+    else :
+        a = x
+        b = y
 
     if basis == "uncoupled":
         return _uncoupled_css(N, a, b)
