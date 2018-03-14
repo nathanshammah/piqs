@@ -1425,7 +1425,7 @@ class Pim(object):
         output.states = []
         output.states.append(Qobj(rho0))
         rhs_generate = lambda y, tt, M: M.dot(y)
-        rho0_flat = np.real(np.diag(rho0.full()))
+        rho0_flat = np.diag(np.real(rho0.full()))
         L = self.generate_matrix()
         rho_t = odeint(rhs_generate, rho0_flat, tlist, args=(L,))
         for r in rho_t[1:]:
