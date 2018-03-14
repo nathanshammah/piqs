@@ -14,11 +14,13 @@ from decimal import Decimal
 import numpy as np
 
 from scipy import constants
-from scipy.sparse import dok_matrix, block_diag
-
+from scipy.integrate import odeint
+from scipy.sparse import dok_matrix, block_diag, lil_matrix
+from qutip.solver import Options, Result
 from qutip import (Qobj, spre, spost, tensor, identity, ket2dm,
                    vector_to_operator)
 from qutip import sigmax, sigmay, sigmaz, sigmap, sigmam
+
 from qutip.cy.piqs import Dicke as _Dicke
 from qutip.cy.piqs import (jmm1_dictionary, _num_dicke_states,
                            _num_dicke_ladders, get_blocks, j_min,
@@ -156,14 +158,14 @@ class Dicke(object):
         Collective (superradiant) emmission coefficient.
         default: 0.0
 
+    collective_dephasing: float
+        Collective dephasing coefficient.
+        default: 0.0
+
     collective_pumping: float
         Collective pumping coefficient.
         default: 0.0
 
-    collective_dephasing: float
-        Collective dephasing coefficient.
-        default: 0.0
-        
     nds: int
         The number of Dicke states.
 
@@ -1083,8 +1085,9 @@ def ground(N, basis="dicke"):
     """
     Generate the density matrix of the ground state.
 
-    This state is given by |N/2, -N/2> in the Dicke basis. If the argument `basis`
-    is "uncoupled" then it generates the state in a 2**N dim Hilbert space.
+    This state is given by |N/2, -N/2> in the Dicke basis. If the argument
+    `basis` is "uncoupled" then it generates the state in a 2**N dim Hilbert
+    space.
 
     Parameters
     ----------
@@ -1160,3 +1163,386 @@ def block_matrix(N):
         square_blocks.append(np.ones((i, i)))
         k = k + 1
     return block_diag(square_blocks)
+
+# ============================================================================
+# Adding a faster version to make a Permutational Invariant matrix
+# ============================================================================
+def tau_column(tau, k, j):
+    """
+    Determine the column index for the non-zero elements of the matrix for a
+    particular row `k` and the value of `j` from the Dicke space.
+
+    Parameters
+    ----------
+    tau: str
+        The tau function to check for this `k` and `j`.
+
+    k: int
+        The row of the matrix M for which the non zero elements have
+        to be calculated.
+
+    j: float
+        The value of `j` for this row.
+    """
+    # In the notes, we indexed from k = 1, here we do it from k = 0
+    k = k + 1
+    mapping = {"tau3": k-(2 * j + 3),
+               "tau2": k-1,
+               "tau4": k+(2 * j - 1),
+               "tau5": k-(2 * j + 2),
+               "tau1": k,
+               "tau6": k+(2 * j),
+               "tau7": k-(2 * j + 1),
+               "tau8": k+1,
+               "tau9": k+(2 * j + 1)}
+    # we need to decrement k again as indexing is from 0
+    return int(mapping[tau] - 1)
+
+
+class Pim(object):
+    """
+    The Permutation Invariant Matrix class.
+
+    Initialize the class with the parameters for generating a Permutation
+    Invariant matrix which evolves a given diagonal initial state `p` as:
+
+                                dp/dt = Mp
+
+    Parameters
+    ----------
+    N: int
+        The number of two-level systems.
+
+    emission: float
+        Incoherent emission coefficient (also nonradiative emission).
+        default: 0.0
+
+    dephasing: float
+        Local dephasing coefficient.
+        default: 0.0
+
+    pumping: float
+        Incoherent pumping coefficient.
+        default: 0.0
+
+    collective_emission: float
+        Collective (superradiant) emmission coefficient.
+        default: 0.0
+
+    collective_pumping: float
+        Collective pumping coefficient.
+        default: 0.0
+
+    collective_dephasing: float
+        Collective dephasing coefficient.
+        default: 0.0
+
+    Attributes
+    ----------
+    N: int
+        The number of two-level systems.
+
+    emission: float
+        Incoherent emission coefficient (also nonradiative emission).
+        default: 0.0
+
+    dephasing: float
+        Local dephasing coefficient.
+        default: 0.0
+
+    pumping: float
+        Incoherent pumping coefficient.
+        default: 0.0
+
+    collective_emission: float
+        Collective (superradiant) emmission coefficient.
+        default: 0.0
+
+    collective_dephasing: float
+        Collective dephasing coefficient.
+        default: 0.0
+
+    collective_pumping: float
+        Collective pumping coefficient.
+        default: 0.0
+
+    M: dict
+        A nested dictionary of the structure {row: {col: val}} which holds
+        non zero elements of the matrix M
+    """
+    def __init__(self, N, emission=0., dephasing=0, pumping=0,
+                 collective_emission=0, collective_pumping=0,
+                 collective_dephasing=0):
+        self.N = N
+        self.emission = emission
+        self.dephasing = dephasing
+        self.pumping = pumping
+        self.collective_pumping = collective_pumping
+        self.collective_dephasing = collective_dephasing
+        self.collective_emission = collective_emission
+        self.M = {}
+
+    def isdicke(self, dicke_row, dicke_col):
+        """
+        Check if an element in a matrix is a valid element in the Dicke space.
+        Dicke row: j value index. Dicke column: m value index.
+        The function returns True if the element exists in the Dicke space and
+        False otherwise.
+
+        Parameters
+        ----------
+        dicke_row, dicke_col : int
+            Index of the element in Dicke space which needs to be checked
+        """
+        rows = self.N + 1
+        cols = 0
+
+        if (self.N % 2) == 0:
+            cols = int(self.N/2 + 1)
+        else:
+            cols = int(self.N/2 + 1/2)
+        if (dicke_row > rows) or (dicke_row < 0):
+            return (False)
+        if (dicke_col > cols) or (dicke_col < 0):
+            return (False)
+        if (dicke_row < int(rows/2)) and (dicke_col > dicke_row):
+            return False
+        if (dicke_row >= int(rows/2)) and (rows - dicke_row <= dicke_col):
+            return False
+        else:
+            return True
+
+    def tau_valid(self, dicke_row, dicke_col):
+        """
+        Find the Tau functions which are valid for this value of (dicke_row,
+        dicke_col) given the number of TLS. This calculates the valid tau
+        values and reurns a dictionary specifying the tau function name and
+        the value.
+
+        Parameters
+        ----------
+        dicke_row, dicke_col : int
+            Index of the element in Dicke space which needs to be checked.
+
+        Returns
+        -------
+        taus: dict
+            A dictionary of key, val as {tau: value} consisting of the valid
+            taus for this row and column of the Dicke space element.
+        """
+        tau_functions = [self.tau3, self.tau2, self.tau4,
+                         self.tau5, self.tau1, self.tau6,
+                         self.tau7, self.tau8, self.tau9]
+        N = self.N
+        if self.isdicke(dicke_row, dicke_col) is False:
+            return False
+        # The 3x3 sub matrix surrounding the Dicke space element to
+        # run the tau functions
+        indices = [(dicke_row + x, dicke_col + y) for x in range(-1, 2)
+                   for y in range(-1, 2)]
+        taus = {}
+        for idx, tau in zip(indices, tau_functions):
+            if self.isdicke(idx[0], idx[1]):
+                j, m = self.calculate_j_m(idx[0], idx[1])
+                taus[tau.__name__] = tau(j, m)
+        return taus
+
+    def calculate_j_m(self, dicke_row, dicke_col):
+        """
+        Get the value of j and m for the particular Dicke space element.
+
+        Parameters
+        ----------
+        dicke_row, dicke_col: int
+            The row and column from the Dicke space matrix
+
+        Returns
+        -------
+        j, m: float
+            The j and m values.
+        """
+        N = self.N
+        j = N/2 - dicke_col
+        m = N/2 - dicke_row
+        return(j, m)
+
+    def calculate_k(self, dicke_row, dicke_col):
+        """
+        Get k value from the current row and column element in the Dicke space.
+
+        Parameters
+        ----------
+        dicke_row, dicke_col: int
+            The row and column from the Dicke space matrix
+        Returns
+        -------
+        k: int
+            The row index for the matrix M for given Dicke space
+            element
+        """
+        N = self.N
+        if dicke_row == 0:
+            k = dicke_col
+        else:
+            k = int(((dicke_col)/2) * (2 * (N + 1) - 2 * (dicke_col - 1)) +
+                                      (dicke_row - (dicke_col)))
+        return k
+
+    def generate_matrix(self):
+        """
+        Generate the matrix M governing the dynamics.
+        """
+        N = self.N
+        nds = num_dicke_states(N)
+        rows = self.N + 1
+        cols = 0
+
+        sparse_M = lil_matrix((nds, nds), dtype=float)
+        if (self.N % 2) == 0:
+            cols = int(self.N/2 + 1)
+        else:
+            cols = int(self.N/2 + 1/2)
+        for (dicke_row, dicke_col) in np.ndindex(rows, cols):
+            if self.isdicke(dicke_row, dicke_col):
+                k = int(self.calculate_k(dicke_row, dicke_col))
+                row = {}
+                taus = self.tau_valid(dicke_row, dicke_col)
+                for tau in taus:
+                    j, m = self.calculate_j_m(dicke_row, dicke_col)
+                    current_col = tau_column(tau, k, j)
+                    sparse_M[k, int(current_col)] = taus[tau]
+        return sparse_M.tocsr()
+
+    def solve(self, rho0, tlist, options=None):
+        """
+        Solve the ODE for the evolution of diagonal states and Hamiltonians.
+        """
+        if options is None:
+            options = Options()
+        output = Result()
+        output.solver = "pim"
+        output.times = tlist
+        output.states = []
+        output.states.append(Qobj(rho0))
+        rhs_generate = lambda y, tt, M: M.dot(y)
+        rho0_flat = np.diag(np.real(rho0.full()))
+        L = self.generate_matrix()
+        rho_t = odeint(rhs_generate, rho0_flat, tlist, args=(L,))
+        for r in rho_t[1:]:
+            diag = np.diag(r)
+            output.states.append(Qobj(diag))
+        return output
+
+    def tau1(self, j, m):
+        """
+        Calculate tau1 for value of j and m.
+        """
+        yS = self.collective_emission
+        yL = self.emission
+        yD = self.dephasing
+        yP = self.pumping
+        yCP = self.collective_pumping
+        N = float(self.N)
+        spontaneous = yS * (1 + j - m) * (j + m)
+        losses = yL * (N/2 + m)
+        pump = yP * (N/2 - m)
+        collective_pump = yCP * (1 + j + m) * (j - m)
+        if j == 0:
+            dephase = yD * N/4
+        else:
+            dephase = yD * (N/4 - m**2 * ((1 + N/2)/(2 * j * (j+1))))
+        t1 = spontaneous + losses + pump + dephase + collective_pump
+        return -t1
+
+    def tau2(self, j, m):
+        """
+        Calculate tau2 for given j and m
+        """
+        yS = self.collective_emission
+        yL = self.emission
+        N = float(self.N)
+        spontaneous = yS * (1 + j - m) * (j + m)
+        losses = yL * (((N/2 + 1) * (j - m + 1) * (j + m))/(2 * j * (j+1)))
+        t2 = spontaneous + losses
+        return t2
+
+    def tau3(self, j, m):
+        """
+        Calculate tau3.
+        """
+        yL = self.emission
+        N = float(self.N)
+        num = (j + m - 1) * (j + m) * (j + 1 + N/2)
+        den = 2 * j * (2 * j + 1)
+        t3 = yL * (num/den)
+        return t3
+
+    def tau4(self, j, m):
+        """
+        Calculate tau4.
+        """
+        yL = self.emission
+        N = float(self.N)
+        num = (j - m + 1) * (j - m + 2) * (N/2 - j)
+        den = 2 * (j + 1) * (2 * j + 1)
+        t4 = yL * (num/den)
+        return t4
+
+    def tau5(self, j, m):
+        """
+        Calculate tau5.
+        """
+        yD = self.dephasing
+        N = float(self.N)
+        num = (j - m) * (j + m) * (j + 1 + N/2)
+        den = 2 * j * (2 * j + 1)
+        t5 = yD * (num/den)
+        return t5
+
+    def tau6(self, j, m):
+        """
+        Calculate tau6.
+        """
+        yD = self.dephasing
+        N = float(self.N)
+        num = (j - m + 1) * (j + m + 1) * (N/2 - j)
+        den = 2 * (j + 1) * (2 * j + 1)
+        t6 = yD * (num/den)
+        return t6
+
+    def tau7(self, j, m):
+        """
+        Calculate tau7.
+        """
+        yP = self.pumping
+        N = float(self.N)
+        num = (j - m - 1) * (j - m) * (j + 1 + N/2)
+        den = 2 * j * (2 * j + 1)
+        t7 = yP * (float(num)/den)
+        return t7
+
+    def tau8(self, j, m):
+        """
+        Calculate tau8.
+        """
+        yP = self.pumping
+        yCP = self.collective_pumping
+        N = float(self.N)
+
+        num = (1 + N/2) * (j-m) * (j + m + 1)
+        den = 2 * j * (j+1)
+        pump = yP * (float(num)/den)
+        collective_pump = yCP * (j-m) * (j+m+1)
+        t8 = pump + collective_pump
+        return t8
+
+    def tau9(self, j, m):
+        """
+        Calculate tau9.
+        """
+        yP = self.pumping
+        N = float(self.N)
+        num = (j+m+1) * (j+m+2) * (N/2 - j)
+        den = 2 * (j+1) * (2*j + 1)
+        t9 = yP * (float(num)/den)
+        return t9
