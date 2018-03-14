@@ -14,13 +14,12 @@ from decimal import Decimal
 import numpy as np
 
 from scipy import constants
-from scipy.integrate import ode
+from scipy.integrate import odeint
 from scipy.sparse import dok_matrix, block_diag, lil_matrix
 from qutip.solver import Options, Result
 from qutip import (Qobj, spre, spost, tensor, identity, ket2dm,
                    vector_to_operator)
 from qutip import sigmax, sigmay, sigmaz, sigmap, sigmam
-from qutip.cy.spmatfuncs import cy_ode_rhs
 
 from qutip.cy.piqs import Dicke as _Dicke
 from qutip.cy.piqs import (jmm1_dictionary, _num_dicke_states,
@@ -1398,7 +1397,7 @@ class Pim(object):
         rows = self.N + 1
         cols = 0
 
-        sparse_M = lil_matrix((nds, nds), dtype=np.complex)
+        sparse_M = lil_matrix((nds, nds), dtype=float)
         if (self.N % 2) == 0:
             cols = int(self.N/2 + 1)
         else:
@@ -1425,23 +1424,13 @@ class Pim(object):
         output.times = tlist
         output.states = []
         output.states.append(Qobj(rho0))
-        rho0_flat = np.array(np.diag(np.real(rho0.full())), dtype=np.complex)
-        r = ode(cy_ode_rhs)
+        rhs_generate = lambda y, tt, M: M.dot(y)
+        rho0_flat = np.real(np.diag(rho0.full()))
         L = self.generate_matrix()
-        r.set_f_params(L.data, L.indices, L.indptr)
-        r.set_integrator('zvode', method=options.method, order=options.order,
-                         atol=options.atol, rtol=options.rtol,
-                         nsteps=options.nsteps, first_step=options.first_step,
-                         min_step=options.min_step, max_step=options.max_step)
-
-        r.set_initial_value(rho0_flat, tlist[0])
-        dt = np.diff(tlist)
-        n_tsteps = len(tlist)
-        for t_idx, t in enumerate(tlist):
-            if t_idx < n_tsteps - 1:
-                r.integrate(r.t + dt[t_idx])
-                diag = np.diag(r.y)
-                output.states.append(Qobj(diag))
+        rho_t = odeint(rhs_generate, rho0_flat, tlist, args=(L,))
+        for r in rho_t[1:]:
+            diag = np.diag(r)
+            output.states.append(Qobj(diag))
         return output
 
     def tau1(self, j, m):
