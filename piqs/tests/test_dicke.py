@@ -1093,5 +1093,73 @@ class TestDicke:
         assert_array_almost_equal(pruned_eig_values, eigvals)
         assert_array_almost_equal(pruned_eig_states[-1].full(), estate_last)
 
+
+class TestPim:
+    """
+    A test class for the Permutation invariance matrix generation
+    """
+    def test_gamma(self):
+        """
+        Test the calculation of various gamma values for diagonal system.
+
+        For N = 6 |j, m> would be :
+
+        | 3, 3>
+        | 3, 2> | 2, 2>
+        | 3, 1> | 2, 1> | 1, 1>
+        | 3, 0> | 2, 0> | 1, 0> |0, 0>
+        | 3,-1> | 2,-1> | 1,-1>
+        | 3,-2> | 2,-2>
+        | 3,-3>
+        """
+        N = 6
+        collective_emission = 1.
+        emission = 1.
+        dephasing = 1.
+        pumping = 1.
+        collective_pumping = 1.
+        model = Pim(N, collective_emission=collective_emission,
+                       emission=emission, dephasing=dephasing,
+                       pumping=pumping, collective_pumping=collective_pumping)
+        tau_calculated = [model.tau3(3, 1),
+                          model.tau2(2, 1),
+                          model.tau4(1, 1),
+                          model.tau5(3, 0),
+                          model.tau1(2, 0),
+                          model.tau6(1, 0),
+                          model.tau7(3, -1),
+                          model.tau8(2, -1),
+                          model.tau9(1, -1)]
+        tau_real = [2., 8., 0.333333,
+                    1.5, -19.5, 0.666667,
+                    2., 8., 0.333333]
+        assert_array_almost_equal(tau_calculated, tau_real)
+
+    def test_isdicke(self):
+        """
+        Tests the `isdicke` function
+        """
+        N1 = 1
+        g0=.01
+        nth=.01
+        gP=g0*nth
+        gL=g0*(0.1+nth)
+        gS= 0.1
+        gD= 0.1
+
+        pim1 = Pim(N1, gS, gL, gD, gP)
+
+        test_indices1 = [(0, 0), (0, 1), (1, 0), (-1, -1), (2, -1)]
+        dicke_labels = [pim1.isdicke(x[0], x[1]) for x in test_indices1]
+
+        N2 = 4
+        
+        pim2 = Pim(N2, gS, gL, gD, gP)
+        test_indices2 = [(0, 0), (4, 4), (2, 0), (1, 3), (2, 2)]
+        dicke_labels = [pim2.isdicke(x[0], x[1]) for x in test_indices2]
+
+        assert_array_equal(dicke_labels, [True, False, True, False, True])
+
+
 if __name__ == "__main__":
     run_module_suite()
