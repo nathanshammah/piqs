@@ -1178,9 +1178,20 @@ class TestPim:
         """
         Test the warning for diagonal Hamiltonians to use internal solver
         """
-        jx, jy, jz, jp, jm = j_algebra(2)
-        hamiltonian = jz
-        assert_raises(Warning, Dicke, 2, hamiltonian, 0.1)
+        jx, jy, jz, jp, jm = j_algebra(4)
+        non_diag_hamiltonian = jx
+        diag_hamiltonian = jz
+
+        non_diag_system = Dicke(4, non_diag_hamiltonian, emission=0.1)
+        diag_system = Dicke(4, diag_hamiltonian, emission=0.1)
+
+        diag_initial_state = dicke(4, 1, 0)
+        non_diag_initial_state = ghz(4)
+        tlist = np.linspace(0, 10, 100)
+
+        assert_raises(ValueError, non_diag_system.pisolve, diag_initial_state, tlist)
+        assert_raises(ValueError, non_diag_system.pisolve, non_diag_initial_state, tlist)
+        assert_raises(ValueError, diag_system.pisolve, non_diag_initial_state, tlist)
 
 
 if __name__ == "__main__":
