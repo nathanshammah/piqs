@@ -1160,6 +1160,42 @@ class TestPim:
 
         assert_array_equal(dicke_labels, [True, False, True, False, True])
 
+    def test_isdiagonal(self):
+        """
+        Test the isdiagonal function
+        """
+        mat1 = np.array([[1, 2], [3, 4]])
+        mat2 = np.array([[1, 0.], [0., 2]])
+        mat3 = np.array([[1+1j, 0.], [0.-2j, 2-2j]])
+        mat4 = np.array([[1+1j, 0.], [0., 2-2j]])
+
+        assert_equal(isdiagonal(mat1), False)
+        assert_equal(isdiagonal(mat2), True)
+        assert_equal(isdiagonal(mat3), False)
+        assert_equal(isdiagonal(mat4), True)
+
+    def test_pisolve(self):
+        """
+        Test the warning for diagonal Hamiltonians to use internal solver
+        """
+        jx, jy, jz, jp, jm = j_algebra(4)
+        non_diag_hamiltonian = jx
+        diag_hamiltonian = jz
+
+        non_diag_system = Dicke(4, non_diag_hamiltonian, emission=0.1)
+        diag_system = Dicke(4, diag_hamiltonian, emission=0.1)
+
+        diag_initial_state = dicke(4, 1, 0)
+        non_diag_initial_state = ghz(4)
+        tlist = np.linspace(0, 10, 100)
+
+        assert_raises(ValueError, non_diag_system.pisolve, diag_initial_state, tlist)
+        assert_raises(ValueError, non_diag_system.pisolve, non_diag_initial_state, tlist)
+        assert_raises(ValueError, diag_system.pisolve, non_diag_initial_state, tlist)
+
+        non_dicke_initial_state = excited(4, basis='uncoupled')
+        assert_raises(ValueError, diag_system.pisolve, non_dicke_initial_state, tlist)
+
 
 if __name__ == "__main__":
     run_module_suite()

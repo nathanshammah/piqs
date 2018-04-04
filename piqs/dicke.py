@@ -82,6 +82,25 @@ def num_tls(nds):
         N = 2*(np.sqrt(nds + 1/4)-1)
     return int(N)
 
+def isdiagonal(mat):
+    """
+    Check if the input matrix is diagonal
+
+    Parameters
+    ==========
+    mat: ndarray/Qobj
+        A 2D numpy array
+
+    Returns
+    =======
+    diag: bool
+        True/False depending on whether the input matrix is diagonal
+    """
+    if isinstance(mat, Qobj):
+        mat = mat.full()
+
+    return np.all(mat == np.diag(np.diagonal(mat)))
+
 
 class Dicke(object):
     """The Dicke class which builds the Lindbladian and Liouvillian matrix.
@@ -247,6 +266,49 @@ class Dicke(object):
                 spre(hamiltonian) + 1j * spost(hamiltonian)
             liouv = lindblad + hamiltonian_superoperator
         return liouv
+
+    def pisolve(self, initial_state, tlist, options=None):
+        """
+        Solve for diagonal Hamiltonians and initial states faster.
+
+        Parameters
+        ==========
+        initial_state: :class: qutip.Qobj
+            An initial state specified as a density matrix of `qutip.Qbj` type
+
+        tlist: ndarray
+            A 1D numpy array of list of timesteps to integrate
+
+        options: :class: qutip.solver.Options
+            The options for the solver.
+
+        Returns
+        =======
+        result: list
+            A dictionary of the type `qutip.solver.Result` which holds the
+            results of the evolution.
+        """
+        if isdiagonal(initial_state) == False:
+            msg = "`pisolve` requires a diagonal initial density matrix. "
+            msg += "In general construct the Liouvillian using `piqs.liouvillian`"
+            msg += " and use qutip.mesolve."
+            raise ValueError(msg)
+
+        if isdiagonal(self.hamiltonian.full()) == False:
+            msg = "`pisolve` should only be used for diagonal Hamiltonians. "
+            msg += "Construct the Liouvillian using `piqs.liouvillian` and use"
+            msg += " `qutip.mesolve`."
+            raise ValueError(msg)
+
+        if initial_state.full().shape != self.dshape:
+            msg = "Initial density matrix should be diagonal."
+            raise ValueError(msg)
+
+        pim = Pim(self.N, self.emission, self.dephasing, self.pumping,
+                  self.collective_emission, self.collective_pumping,
+                  self.collective_dephasing)
+        result = pim.solve(initial_state, tlist, options=None)
+        return result
 
     def prune_eigenstates(self, liouvillian):
         """Remove spurious eigenvalues and eigenvectors of the Liouvillian.
@@ -1388,9 +1450,12 @@ class Pim(object):
                                       (dicke_row - (dicke_col)))
         return k
 
-    def generate_matrix(self):
+    def coefficient_matrix(self):
         """
         Generate the matrix M governing the dynamics.
+
+        If the initial density matrix and the Hamiltonian is diagonal, the
+        evolution of the system is given by the simple ODE: dp/dt = Mp.
         """
         N = self.N
         nds = num_dicke_states(N)
@@ -1420,13 +1485,13 @@ class Pim(object):
         if options is None:
             options = Options()
         output = Result()
-        output.solver = "pim"
+        output.solver = "pisolve"
         output.times = tlist
         output.states = []
         output.states.append(Qobj(rho0))
         rhs_generate = lambda y, tt, M: M.dot(y)
         rho0_flat = np.diag(np.real(rho0.full()))
-        L = self.generate_matrix()
+        L = self.coefficient_matrix()
         rho_t = odeint(rhs_generate, rho0_flat, tlist, args=(L,))
         for r in rho_t[1:]:
             diag = np.diag(r)
