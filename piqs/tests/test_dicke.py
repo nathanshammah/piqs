@@ -10,7 +10,7 @@ from qutip import Qobj
 from piqs.cy.dicke import (get_blocks, j_min, j_vals, m_vals,
                      _num_dicke_states, _num_dicke_ladders,
                      get_index, jmm1_dictionary)
-from qutip.cy.dicke import Dicke as _Dicke
+from piqs.cy.dicke import Dicke as _Dicke
 from piqs import *
 
 
@@ -285,7 +285,7 @@ class TestDicke:
                     2., 8., 0.333333]
         assert_array_almost_equal(tau_calculated, tau_real)
 
-    def test_j_algebra(self):
+    def test_jspin(self):
         """
         Test calculation of the j algebra relation for the total operators.
 
@@ -297,7 +297,7 @@ class TestDicke:
 
         for nn in N_list:
             # tests 1
-            [jx, jy, jz, jp, jm] = j_algebra(nn)
+            [jx, jy, jz, jp, jm] = jspin(nn)
             test_jxjy = jx * jy - jy * jx
             true_jxjy = 1j * jz
             test_jpjm = jp * jm - jm * jp
@@ -307,7 +307,7 @@ class TestDicke:
             assert_array_equal(test_jpjm, true_jpjm)
 
             # tests 2
-            [jx, jy, jz, jp, jm] = j_algebra(nn)
+            [jx, jy, jz, jp, jm] = jspin(nn)
             test_jxjy = jx * jy - jy * jx
             true_jxjy = 1j * jz
             test_jpjm = jp * jm - jm * jp
@@ -316,12 +316,12 @@ class TestDicke:
             assert_array_equal(test_jxjy, true_jxjy)
             assert_array_equal(test_jpjm, true_jpjm)
 
-            assert_array_equal(j_algebra(nn, "x"), jx)
-            assert_array_equal(j_algebra(nn, "y"), jy)
-            assert_array_equal(j_algebra(nn, "z"), jz)
-            assert_array_equal(j_algebra(nn, "+"), jp)
-            assert_array_equal(j_algebra(nn, "-"), jm)
-            assert_raises(TypeError, j_algebra, nn, "q")
+            assert_array_equal(jspin(nn, "x"), jx)
+            assert_array_equal(jspin(nn, "y"), jy)
+            assert_array_equal(jspin(nn, "z"), jz)
+            assert_array_equal(jspin(nn, "+"), jp)
+            assert_array_equal(jspin(nn, "-"), jm)
+            assert_raises(TypeError, jspin, nn, "q")
 
     def test_j_min_(self):
         """
@@ -521,11 +521,11 @@ class TestDicke:
                  [1. + 0.j, 0. + 0.j, 0. + 0.j, 0. + 0.j],
                  [0. + 0.j, 1. + 0.j, 1. + 0.j, 0. + 0.j]]
 
-        assert_array_equal(j_algebra(2, "x", basis="uncoupled").full(), jx_n2)
-        assert_array_equal(j_algebra(2, "y", basis="uncoupled").full(), jy_n2)
-        assert_array_equal(j_algebra(2, "z", basis="uncoupled").full(), jz_n2)
-        assert_array_equal(j_algebra(2, "+", basis="uncoupled").full(), jp_n2)
-        assert_array_equal(j_algebra(2, "-", basis="uncoupled").full(), jm_n2)
+        assert_array_equal(jspin(2, "x", basis="uncoupled").full(), jx_n2)
+        assert_array_equal(jspin(2, "y", basis="uncoupled").full(), jy_n2)
+        assert_array_equal(jspin(2, "z", basis="uncoupled").full(), jz_n2)
+        assert_array_equal(jspin(2, "+", basis="uncoupled").full(), jp_n2)
+        assert_array_equal(jspin(2, "-", basis="uncoupled").full(), jm_n2)
 
         # error
         assert_raises(TypeError, spin_algebra, 2, "q")
@@ -1057,7 +1057,7 @@ class TestDicke:
         gCE = kappa /(N/2)
         gE = 1
         gD = 1
-        [jx, jy, jz, jp, jm] = j_algebra(N)
+        [jx, jy, jz, jp, jm] = jspin(N)
         H = w0 * jx
 
         ensemble = Dicke(N=N, hamiltonian=H, collective_emission=gCE,
@@ -1178,7 +1178,7 @@ class TestPim:
         """
         Test the warning for diagonal Hamiltonians to use internal solver
         """
-        jx, jy, jz, jp, jm = j_algebra(4)
+        jx, jy, jz, jp, jm = jspin(4)
         non_diag_hamiltonian = jx
         diag_hamiltonian = jz
 

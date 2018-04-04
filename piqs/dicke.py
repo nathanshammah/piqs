@@ -107,9 +107,9 @@ class Dicke(object):
 
     Example
     -------
-    >> from qutip.models.piqs import Dicke, j_algebra
+    >> from qutip.models.piqs import Dicke, jspin
     >> N = 2
-    >> jx, jy, jz, jp, jm = j_algebra(N)
+    >> jx, jy, jz, jp, jm = jspin(N)
     >> ensemble = Dicke(N, emission=1.)
     >> L = ensemble.liouvillian()
 
@@ -123,7 +123,7 @@ class Dicke(object):
 
         The matrix dimensions are (nds, nds), with nds being the number of
         dicke states. The hamiltonian can be built with the operators given
-        by the `j_algebra` function in the "dicke" basis.
+        by the `jspin` function in the "dicke" basis.
 
     emission: float
         Incoherent emission coefficient (also nonradiative emission).
@@ -159,7 +159,7 @@ class Dicke(object):
 
         The matrix dimensions are (nds, nds), with nds being the number of
         dicke states. The hamiltonian can be built with the operators given
-        by the `j_algebra` function in the "dicke" basis.
+        by the `jspin` function in the "dicke" basis.
 
     emission: float
         Incoherent emission coefficient (also nonradiative emission).
@@ -550,7 +550,7 @@ def spin_algebra(N, op=None):
     else:
         raise TypeError('Invalid type')
 
-def _j_algebra_uncoupled(N, op=None):
+def _jspin_uncoupled(N, op=None):
     """Construct the the collective spin algebra in the uncoupled basis.
 
     jx, jy, jz, jp, jm are constructed in the uncoupled basis of the
@@ -607,7 +607,7 @@ def _j_algebra_uncoupled(N, op=None):
     else:
         raise TypeError('Invalid type')
 
-def j_algebra(N, op=None, basis="dicke"):
+def jspin(N, op=None, basis="dicke"):
     """
     Calculate the list of collective operators of the total algebra.
 
@@ -635,7 +635,7 @@ def j_algebra(N, op=None, basis="dicke"):
         the "dicke" or "uncoupled" basis or a single operator requested.
     """
     if basis == "uncoupled":
-        return _j_algebra_uncoupled(N, op)
+        return _jspin_uncoupled(N, op)
 
     nds = num_dicke_states(N)
     num_ladders = num_dicke_ladders(N)
@@ -737,7 +737,7 @@ def c_ops_tls(N, emission=0., dephasing=0., pumping=0.,
         raise Warning(msg)
 
     [sx, sy, sz, sp, sm] = spin_algebra(N)
-    [jx, jy, jz, jp, jm] = _j_algebra_uncoupled(N)
+    [jx, jy, jz, jp, jm] = _jspin_uncoupled(N)
 
     c_ops = []
 
@@ -867,7 +867,7 @@ def _uncoupled_excited(N):
         The density matrix for the excited state in the uncoupled basis.
     """
     N = int(N)
-    jz = _j_algebra_uncoupled(N)[2]
+    jz = _jspin_uncoupled(N)[2]
     en, vn = jz.eigenstates()
     psi0 = vn[2**N - 1]
     return ket2dm(psi0)
@@ -889,7 +889,7 @@ def _uncoupled_superradiant(N):
         space.
     """
     N = int(N)
-    jz = _j_algebra_uncoupled(N, "z")
+    jz = _jspin_uncoupled(N, "z")
     en, vn = jz.eigenstates()
     psi0 = vn[2**N - (N+1)]
     return ket2dm(psi0)
@@ -910,7 +910,7 @@ def _uncoupled_ground(N):
         The density matrix for the ground state in the full Hilbert space.
     """
     N = int(N)
-    jz = _j_algebra_uncoupled(N, "z")
+    jz = _jspin_uncoupled(N, "z")
     en, vn = jz.eigenstates()
     psi0 = vn[0]
     return ket2dm(psi0)
