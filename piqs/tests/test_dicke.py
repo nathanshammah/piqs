@@ -1178,7 +1178,7 @@ class TestPim:
         """
         Test the warning for diagonal Hamiltonians to use internal solver
         """
-        jx, jy, jz, jp, jm = j_algebra(4)
+        jx, jy, jz, jp, jm = jspin(4)
         non_diag_hamiltonian = jx
         diag_hamiltonian = jz
 
