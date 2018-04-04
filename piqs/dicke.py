@@ -194,14 +194,6 @@ class Dicke(object):
                  collective_pumping=0.):
         self.N = N
         self.hamiltonian = hamiltonian
-
-        if hamiltonian and isdiagonal(self.hamiltonian.full()):
-            warn_msg = "Diagonal Hamiltonian detected. For a diagonal initial"
-            warn_msg += " state, use the faster internal solver instead of "
-            warn_msg += " building the full Liouvillian by calling "
-            warn_msg += "piqs.solve(initial_state, tlist)"
-            raise Warning(warn_msg)
-
         self.emission = emission
         self.dephasing = dephasing
         self.pumping = pumping
@@ -272,7 +264,7 @@ class Dicke(object):
             liouv = lindblad + hamiltonian_superoperator
         return liouv
 
-    def solve(self, initial_state, tlist, options=None):
+    def pisolve(self, initial_state, tlist, options=None):
         """
         Solve for diagonal Hamiltonians and initial states faster.
 
@@ -294,7 +286,21 @@ class Dicke(object):
             results of the evolution.
         """
         if isdiagonal(initial_state) == False:
-            raise ValueError("Initial state must be diagonal")
+            msg = "`pisolve` should only be used for diagonal initial states."
+            msg += "Construct the Liouvillian using `piqs.liouvillian` and use"
+            msg += " qutip.mesolve"
+            raise ValueError(msg)
+
+        if isdiagonal(self.hamiltonian.full()) == False:
+            msg = "`pisolve` should only be used for diagonal Hamiltonians."
+            msg += "Construct the Liouvillian using `piqs.liouvillian` and use"
+            msg += " qutip.mesolve"
+            raise ValueError(msg)
+
+        if initial_state.full().shape != self.dshape:
+            msg = "Initial state should be in the `dicke` basis"
+            raise ValueError(msg)
+
         pim = Pim(self.N, self.emission, self.dephasing, self.pumping,
                   self.collective_emission, self.collective_pumping,
                   self.collective_dephasing)

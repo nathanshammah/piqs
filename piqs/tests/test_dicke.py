@@ -1174,7 +1174,7 @@ class TestPim:
         assert_equal(isdiagonal(mat3), False)
         assert_equal(isdiagonal(mat4), True)
 
-    def test_warning(self):
+    def test_pisolve(self):
         """
         Test the warning for diagonal Hamiltonians to use internal solver
         """
@@ -1192,6 +1192,9 @@ class TestPim:
         assert_raises(ValueError, non_diag_system.pisolve, diag_initial_state, tlist)
         assert_raises(ValueError, non_diag_system.pisolve, non_diag_initial_state, tlist)
         assert_raises(ValueError, diag_system.pisolve, non_diag_initial_state, tlist)
+
+        non_dicke_initial_state = excited(4, basis='uncoupled')
+        assert_raises(ValueError, diag_system.pisolve, non_dicke_initial_state, tlist)
 
 
 if __name__ == "__main__":
