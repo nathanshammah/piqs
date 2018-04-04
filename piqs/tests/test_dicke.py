@@ -1160,6 +1160,28 @@ class TestPim:
 
         assert_array_equal(dicke_labels, [True, False, True, False, True])
 
+    def test_isdiagonal(self):
+        """
+        Test the isdiagonal function
+        """
+        mat1 = np.array([[1, 2], [3, 4]])
+        mat2 = np.array([[1, 0.], [0., 2]])
+        mat3 = np.array([[1+1j, 0.], [0.-2j, 2-2j]])
+        mat4 = np.array([[1+1j, 0.], [0., 2-2j]])
+
+        assert_equal(isdiagonal(mat1), False)
+        assert_equal(isdiagonal(mat2), True)
+        assert_equal(isdiagonal(mat3), False)
+        assert_equal(isdiagonal(mat4), True)
+
+    def test_warning(self):
+        """
+        Test the warning for diagonal Hamiltonians to use internal solver
+        """
+        jx, jy, jz, jp, jm = j_algebra(2)
+        hamiltonian = jz
+        assert_raises(Warning, Dicke, 2, hamiltonian, 0.1)
+
 
 if __name__ == "__main__":
     run_module_suite()

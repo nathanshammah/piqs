@@ -82,6 +82,22 @@ def num_tls(nds):
         N = 2*(np.sqrt(nds + 1/4)-1)
     return int(N)
 
+def isdiagonal(mat):
+    """
+    Check if the input matrix is diagonal
+
+    Parameters
+    ==========
+    mat: ndarray
+        A 2D numpy array
+
+    Returns
+    =======
+    diag: bool
+        True/False depending on whether the input matrix is diagonal
+    """
+    return np.all(mat == np.diag(np.diagonal(mat)))
+
 
 class Dicke(object):
     """The Dicke class which builds the Lindbladian and Liouvillian matrix.
@@ -178,6 +194,14 @@ class Dicke(object):
                  collective_pumping=0.):
         self.N = N
         self.hamiltonian = hamiltonian
+
+        if hamiltonian and isdiagonal(self.hamiltonian.full()):
+            warn_msg = "Diagonal Hamiltonian detected. For a diagonal initial"
+            warn_msg += " state, use the faster internal solver instead of "
+            warn_msg += " building the full Liouvillian by calling "
+            warn_msg += "piqs.solve(initial_state, tlist)"
+            raise Warning(warn_msg)
+
         self.emission = emission
         self.dephasing = dephasing
         self.pumping = pumping
@@ -247,6 +271,35 @@ class Dicke(object):
                 spre(hamiltonian) + 1j * spost(hamiltonian)
             liouv = lindblad + hamiltonian_superoperator
         return liouv
+
+    def solve(self, initial_state, tlist, options=None):
+        """
+        Solve for diagonal Hamiltonians and initial states faster.
+
+        Parameters
+        ==========
+        initial_state: :class: qutip.Qobj
+            An initial state specified as a density matrix of `qutip.Qbj` type
+
+        tlist: ndarray
+            A 1D numpy array of list of timesteps to integrate
+
+        options: :class: qutip.solver.Options
+            The options for the solver.
+
+        Returns
+        =======
+        result: list
+            A dictionary of the type `qutip.solver.Result` which holds the
+            results of the evolution.
+        """
+        if isdiagonal(initial_state) == False:
+            raise ValueError("Initial state must be diagonal")
+        pim = Pim(self.N, self.emission, self.dephasing, self.pumping,
+                  self.collective_emission, self.collective_pumping,
+                  self.collective_dephasing)
+        result = pim.solve(initial_state, tlist, options=None)
+        return result
 
     def prune_eigenstates(self, liouvillian):
         """Remove spurious eigenvalues and eigenvectors of the Liouvillian.
