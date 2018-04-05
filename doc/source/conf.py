@@ -20,8 +20,8 @@
 # -- Project information -----------------------------------------------------
 
 project = 'piqs'
-copyright = '2018, Shahnawaz Ahmed, Nathan Shammah'
-author = 'Shahnawaz Ahmed, Nathan Shammah'
+copyright = '2018, Nathan Shammah, Shahnawaz Ahmed'
+author = 'Nathan Shammah, Shahnawaz Ahmed'
 
 # The short X.Y version
 version = ''
@@ -48,6 +48,7 @@ extensions = [
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
+    'sphinx.ext.mathjax',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -142,7 +143,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'piqs.tex', 'piqs Documentation',
-     'Shahnawaz Ahmed, Nathan Shammah', 'manual'),
+     'Nathan Shammah, Shahnawaz Ahmed', 'manual'),
 ]
 
 
