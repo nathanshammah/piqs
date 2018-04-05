@@ -1,6 +1,6 @@
 # Permutational Invariant Quantum Solver (PIQS) 
 
-<img src="https://github.com/nathanshammah/piqs/blob/master/doc/notebooks/piqs_logo.png" width="60" height="60"/>
+<img src="https://github.com/nathanshammah/piqs/blob/master/doc/notebooks/piqs_logo.png" width="80" height="80"/>
 
 [![DOI](https://zenodo.org/badge/104438298.svg)](https://zenodo.org/badge/latestdoi/104438298)
 
