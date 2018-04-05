@@ -297,7 +297,7 @@ class Dicke(object):
             msg += " and use qutip.mesolve."
             raise ValueError(msg)
 
-        if isdiagonal(self.hamiltonian.full()) == False:
+        if self.hamiltonian and isdiagonal(self.hamiltonian) == False:
             msg = "`pisolve` should only be used for diagonal Hamiltonians. "
             msg += "Construct the Liouvillian using `piqs.liouvillian` and use"
             msg += " `qutip.mesolve`."

@@ -1198,6 +1198,10 @@ class TestPim:
         non_dicke_initial_state = excited(4, basis='uncoupled')
         assert_raises(ValueError, diag_system.pisolve, non_dicke_initial_state, tlist)
 
+        # no Hamiltonian
+        no_hamiltonian_system = Dicke(4, emission=0.1)
+        result = no_hamiltonian_system.pisolve(diag_initial_state, tlist)
+        assert_equal(True, len(result.states)>0)
 
 if __name__ == "__main__":
     run_module_suite()
