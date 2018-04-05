@@ -11,14 +11,12 @@ A major feature of PIQS is that it allows to build the Liouvillian of the system
 
 
 ## A wide range of applications
-
 - The time evolution of the total density matrix of quantum optics and cavity QED systems for permutationally symmetric initial states (such as the GHZ state, Dicke states, coherent spin states).
 - Quantum phase transitions (QPT) of driven-dissipative out-of-equilibrium quantum systems.  
 - Correlation functions of collective systems in quantum optics experiments, such as the spectral density and second-order correlation functions.
 - Various quantum optics phenomena such as steady-state superradiance, superradiant light emission, superradiant phase transition, spin squeezing, boundary time crystals, resonance fluorescence.
 
 ## Installation
-
 In the terminal enter the following commands (you just need `git` and `python` installed)
 ```
 git clone https://github.com/nathanshammah/piqs.git
@@ -27,25 +25,20 @@ python setup.py install
 ```
 
 ## Use
-
 ```
-from piqs import Piqs
+from piqs import Dicke
 from qutip import steadystate
 
 N = 10
-
-gamma = 1.
-system = Piqs(N, emission = gamma)
+system = Dicke(N, emission = 1, pumping = 3)
 
 L = system.liouvillian()
-steady_state = steadystate(L)
+steady = steadystate(L)
 ```
 For more details and examples on the use of *PIQS* see the doc/notebook folder. 
 
 ## License
-
 PIQS is licensed under the terms of the BSD license.
-
 
 ## Resources
 The code and an introductory notebook can be found in Ref. [1]. A paper detailing the theoretical aspects and illustrating many applications is in Ref. [2]. Related open-source libraries for open quantum dynamics that exploit permutational invariance are *Permutations* [3] by Peter Kirton and *PsiQuaSP* by Michael Gegg [4].
