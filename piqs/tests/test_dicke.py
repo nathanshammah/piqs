@@ -728,7 +728,7 @@ class TestDicke:
         assert_array_almost_equal(test_css_uncoupled.full(), css_uncoupled)
         assert_array_almost_equal(test_css_dicke.full(), css_dicke)
 
-    def test_c_ops_tls(self):
+    def test_collapse_uncoupled(self):
         """
         Test the calculation of the correct collapse operators (c_ops) list.
 
@@ -740,7 +740,9 @@ class TestDicke:
         c2 = Qobj([[0, 0, 0, 0], [1, 0, 0, 0], [0, 0, 0, 0],
                    [0, 0, 1, 0]], dims=[[2, 2], [2, 2]])
         true_c_ops = [c1, c2]
-        assert_equal(true_c_ops, c_ops_tls(N=2, emission=1))
+        assert_equal(true_c_ops, collapse_uncoupled(N=2, emission=1))
+        system = Dicke(N=2, emission=1)
+        assert_equal(true_c_ops, system.c_ops())
 
     def test_get_blocks(self):
         """
