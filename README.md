@@ -1,7 +1,5 @@
 # Permutational Invariant Quantum Solver (PIQS)
 
-[![Build Status](https://travis-ci.org/nathanshammah/piqs.png?branch=master)](https://travis-ci.org/nathanshammah/piqs)
-
 PIQS is an open-source Python solver to study the exact Lindbladian dynamics of open quantum systems consisting of identical qubits.
 
 ## Exponential reduction 
