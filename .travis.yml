@@ -9,6 +9,7 @@ matrix:
 
 # command to install dependencies
 install:
+    - pip install numpy scipy nose cython qutip
     - pip install coverage coveralls
     - python setup.py install;
  
