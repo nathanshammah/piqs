@@ -15,7 +15,7 @@ A major feature of PIQS is that it allows to build the Liouvillian of the system
 - The time evolution of the total density matrix of quantum optics and cavity QED systems for permutationally symmetric initial states (such as the GHZ state, Dicke states, coherent spin states).
 - Quantum phase transitions (QPT) of driven-dissipative out-of-equilibrium quantum systems.  
 - Correlation functions of collective systems in quantum optics experiments, such as the spectral density and second-order correlation functions.
-- Various quantum optics phenomena such as steady-state superradiance, superradiant light emission, superradiant phase transition, spin squeezing, boundary time crystals, optical bistability.
+- Various quantum optics phenomena such as steady-state superradiance, superradiant light emission, superradiant phase transition, spin squeezing, boundary time crystals, resonance fluorescence.
 
 ## Installation
 
@@ -40,7 +40,7 @@ system = Piqs(N, emission = gamma)
 L = system.liouvillian()
 steady_state = steadystate(L)
 ```
-For more details and examples on the use of *PIQS* see the notebook repository. 
+For more details and examples on the use of *PIQS* see the doc/notebook folder. 
 
 ## License
 
@@ -48,14 +48,12 @@ PIQS is licensed under the terms of the BSD license.
 
 
 ## Resources
-The code and an introductory notebook can be found in [1]. A paper detailing the theoretical aspects and illustrating many applications is in [2]. The original permutational invariant theory can be found in Ref. [3]. Related open-source libraries for open quantum dynamics that exploit permutational invariance are *Permutations* [4] by Peter Kirton and *PsiQuaSP* by Michael Gegg [5].
+The code and an introductory notebook can be found in Ref. [1]. A paper detailing the theoretical aspects and illustrating many applications is in Ref. [2]. Related open-source libraries for open quantum dynamics that exploit permutational invariance are *Permutations* [4] by Peter Kirton and *PsiQuaSP* by Michael Gegg [5].
 
 [1] https://github.com/nathanshammah/notebooks
 
 [2] N. Shammah, S. Ahmed, N. Lambert, S. De Liberato, and F. Nori, *to be submitted*
 
-[3] B.A. Chase and J.M. Geremia *Phys. Rev. A* **78**, 052101 (2008)
+[4] https://github.com/peterkirton/permutations P. Kirton and J. Keeling *Phys. Rev. Lett.*  **118**, 123602 (2017)
 
-[4] https://github.com/peterkirton/permutations and P. Kirton and J. Keeling *Phys. Rev. Lett.*  **118**, 123602 (2017)
-
-[5] https://github.com/modmido/psiquasp and M. Gegg and M. Richter, *Sci. Rep.* **7**, 16304 (2017)
+[5] https://github.com/modmido/psiquasp M. Gegg and M. Richter, *Sci. Rep.* **7**, 16304 (2017)
