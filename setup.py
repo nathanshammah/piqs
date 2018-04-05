@@ -45,8 +45,8 @@ except:
 from Cython.Build import cythonize
 from Cython.Distutils import build_ext
 
-MAJOR = 0
-MINOR = 1
+MAJOR = 1
+MINOR = 0
 MICRO = 0
 ISRELEASED = False
 VERSION = '%d.%d.%d' % (MAJOR, MINOR, MICRO)
