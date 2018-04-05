@@ -21,8 +21,8 @@ from qutip import (Qobj, spre, spost, tensor, identity, ket2dm,
                    vector_to_operator)
 from qutip import sigmax, sigmay, sigmaz, sigmap, sigmam
 
-from qutip.cy.piqs import Dicke as _Dicke
-from qutip.cy.piqs import (jmm1_dictionary, _num_dicke_states,
+from piqs.cy.dicke import Dicke as _Dicke
+from piqs.cy.dicke import (jmm1_dictionary, _num_dicke_states,
                            _num_dicke_ladders, get_blocks, j_min,
                            m_vals, j_vals)
 
@@ -119,11 +119,12 @@ class Dicke(object):
         The number of two-level systems.
 
     hamiltonian: :class: qutip.Qobj
-        A Hamiltonian in the reduced Dicke basis set.
+        A Hamiltonian in the Dicke basis.
 
-        The matrix dimensions are (nds, nds), with nds being the number of
-        dicke states. The hamiltonian can be built with the operators given
-        by the `jspin` function in the "dicke" basis.
+        The matrix dimensions are (nds, nds), 
+        with nds being the number of Dicke states. 
+        The Hamiltonian can be built with the operators 
+        given by the `jspin` functions.
 
     emission: float
         Incoherent emission coefficient (also nonradiative emission).
@@ -155,10 +156,11 @@ class Dicke(object):
         The number of two-level systems.
 
     hamiltonian: :class: qutip.Qobj
-        A Hamiltonian in the reduced Dicke basis set.
+        A Hamiltonian in the Dicke basis.
 
-        The matrix dimensions are (nds, nds), with nds being the number of
-        dicke states. The hamiltonian can be built with the operators given
+        The matrix dimensions are (nds, nds), 
+        with nds being the number of Dicke states. 
+        The Hamiltonian can be built with the operators given
         by the `jspin` function in the "dicke" basis.
 
     emission: float
@@ -189,7 +191,8 @@ class Dicke(object):
         The number of Dicke states.
 
     dshape: tuple
-        The tuple (nds, nds).
+        The shape of the Hilbert space in the Dicke or uncoupled basis. 
+        default: (nds, nds).
     """
     def __init__(self, N, hamiltonian=None,
                  emission=0., dephasing=0., pumping=0.,
@@ -249,7 +252,7 @@ class Dicke(object):
         return cythonized_dicke.lindbladian()
 
     def liouvillian(self):
-        """Build the total Liouvillian in the Dicke basis.
+        """Build the total Liouvillian using the Dicke basis.
 
         Returns
         -------
@@ -357,8 +360,25 @@ class Dicke(object):
         correct_eigenstates = correct_eig_val, correct_eig_vec
         return correct_eigenstates
 
+    def c_ops(self):
+        """Build collapse operators in the full Hilbert space 2^N.
 
-# Utility functions for operators in the Dicke basis
+        Returns
+        -------
+        c_ops_list: list
+            The list with the collapse operators in the 2^N Hilbert space.
+        """
+        c_ops_list = collapse_uncoupled(N=self.N, 
+                                        emission=self.emission,
+                                        dephasing=self.dephasing,
+                                        pumping=self.pumping,
+                                        collective_emission=self.collective_emission,
+                                        collective_dephasing=self.collective_dephasing,
+                                        collective_pumping=self.collective_pumping)
+        return c_ops_list
+
+
+# Utility functions for properties of the Dicke space
 def energy_degeneracy(N, m):
     """Calculate the number of Dicke states with same energy.
 
@@ -679,11 +699,11 @@ def jspin(N, op=None, basis="dicke"):
     else:
         raise TypeError('Invalid type')
 
-def c_ops_tls(N, emission=0., dephasing=0., pumping=0.,
+def collapse_uncoupled(N, emission=0., dephasing=0., pumping=0.,
               collective_emission=0., collective_dephasing=0.,
               collective_pumping=0.):
     """
-    Create the collapse operators (c_ops) of the Lindbladian.
+    Create the collapse operators (c_ops) of the Lindbladian in the uncoupled basis.
 
     These operators are in the uncoupled basis of the two-level system
     (TLS) SU(2) Pauli matrices.
@@ -692,7 +712,7 @@ def c_ops_tls(N, emission=0., dephasing=0., pumping=0.,
     -----
     The collapse operator list can be given to `qutip.mesolve`.
     Notice that the operators are placed in a Hilbert space of dimension 2^N.
-    Thus the method is suitable only for small N (upto 10).
+    Thus the method is suitable only for small N (of the order of 10).
 
     Parameters
     ----------
@@ -732,12 +752,12 @@ def c_ops_tls(N, emission=0., dephasing=0., pumping=0.,
 
     if N > 10:
         msg = "N > 10. dim(H) = 2^N. "
-        msg += "Better use `qutip.models.piqs` to reduce Hilbert space "
-        msg += "dimension and exploit permutational symmetry"
+        msg += "Better use `piqs.lindbladian` to reduce Hilbert space "
+        msg += "dimension and exploit permutational symmetry."
         raise Warning(msg)
 
     [sx, sy, sz, sp, sm] = spin_algebra(N)
-    [jx, jy, jz, jp, jm] = _jspin_uncoupled(N)
+    [jx, jy, jz, jp, jm] = jspin(N, basis="uncoupled")
 
     c_ops = []
 
@@ -889,7 +909,7 @@ def _uncoupled_superradiant(N):
         space.
     """
     N = int(N)
-    jz = _jspin_uncoupled(N, "z")
+    jz = jspin(N, "z", basis="uncoupled")
     en, vn = jz.eigenstates()
     psi0 = vn[2**N - (N+1)]
     return ket2dm(psi0)
@@ -910,7 +930,7 @@ def _uncoupled_ground(N):
         The density matrix for the ground state in the full Hilbert space.
     """
     N = int(N)
-    jz = _jspin_uncoupled(N, "z")
+    jz = jspin(N, "z", basis="uncoupled")
     en, vn = jz.eigenstates()
     psi0 = vn[0]
     return ket2dm(psi0)
