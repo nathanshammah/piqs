@@ -1,5 +1,5 @@
 """
-Tests for Permutation Invariance methods
+Tests for Permutation Invariance methods.
 """
 import numpy as np
 from numpy.testing import (assert_, run_module_suite, assert_raises,
