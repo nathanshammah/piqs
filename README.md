@@ -35,7 +35,7 @@ system = Dicke(N, emission = 1, pumping = 3)
 L = system.liouvillian()
 steady = steadystate(L)
 ```
-For more details and examples on the use of *PIQS* see the doc/notebook folder. 
+For more details and examples on the use of *PIQS* see the nathanshammah/notebooks folder. 
 
 ![Density matrices in the Dicke basis.](https://github.com/nathanshammah/notebooks/blob/master/plots/states_N.png)
 ## License
