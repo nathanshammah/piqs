@@ -14,7 +14,8 @@ import inspect
 from qutip.utilities import _blas_info
 import qutip.settings
 from qutip.hardware_info import hardware_info
-
+import piqs
+import qutip
 
 def about():
     """
