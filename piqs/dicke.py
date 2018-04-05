@@ -6,7 +6,7 @@ processes by exploiting permutational symmetry and using the Dicke basis.
 """
 
 # Authors: Nathan Shammah, Shahnawaz Ahmed
-# Contact: shahnawaz.ahmed95@gmail.com
+# Contact: nathan.shammah@gmail.com, shahnawaz.ahmed95@gmail.com
 
 from math import factorial
 from decimal import Decimal
