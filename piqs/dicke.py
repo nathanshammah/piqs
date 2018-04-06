@@ -109,7 +109,9 @@ class Dicke(object):
     -------
     >> from qutip.models.piqs import Dicke, jspin
     >> N = 2
-    >> jx, jy, jz, jp, jm = jspin(N)
+    >> jx, jy, jz = jspin(N)
+    >> jp = jspin(N, "+")
+    >> jm = jspin(N, "-")
     >> ensemble = Dicke(N, emission=1.)
     >> L = ensemble.liouvillian()
 
@@ -476,7 +478,7 @@ def am(j, m):
     return a_minus
 
 def spin_algebra(N, op=None):
-    """Create the list [sx, sy, sz, sp, sm] with the spin operators.
+    """Create the list [sx, sy, sz] with the spin operators.
 
     The operators are constructed for a collection of N two-level systems
     (TLSs). Each element of the list, i.e., sx, is a vector of `qutip.Qobj`
@@ -496,7 +498,7 @@ def spin_algebra(N, op=None):
     Returns
     -------
     spin_operators: list or :class: qutip.Qobj
-        A list of `qutip.Qobj` operators - [sx, sy, sz, sp, sm] or the
+        A list of `qutip.Qobj` operators - [sx, sy, sz] or the
         requested operator.
     """
     # 1. Define N TLS spin-1/2 matrices in the uncoupled basis
@@ -533,7 +535,7 @@ def spin_algebra(N, op=None):
         sp[i] = sp[0].permute(b[i])
         sm[i] = sm[0].permute(b[i])
 
-    spin_operators = [sx, sy, sz, sp, sm]
+    spin_operators = [sx, sy, sz]
 
     if not op:
         return spin_operators
@@ -565,7 +567,7 @@ def _jspin_uncoupled(N, op=None):
     op: str
         The operator to return 'x','y','z','+','-'.
         If no operator given, then output is the list of operators
-        for ['x','y','z', '+', '-'].
+        for ['x','y','z',].
 
     Returns
     -------
@@ -576,13 +578,8 @@ def _jspin_uncoupled(N, op=None):
     # 1. Define N TLS spin-1/2 matrices in the uncoupled basis
     N = int(N)
 
-    si_TLS = spin_algebra(N)
-
-    sx = si_TLS[0]
-    sy = si_TLS[1]
-    sz = si_TLS[2]
-    sp = si_TLS[3]
-    sm = si_TLS[4]
+    sx, sy, sz = spin_algebra(N)
+    sp, sm = spin_algebra(N, "+"), spin_algebra(N, "-")
 
     jx = sum(sx)
     jy = sum(sy)
@@ -590,7 +587,7 @@ def _jspin_uncoupled(N, op=None):
     jp = sum(sp)
     jm = sum(sm)
 
-    collective_operators = [jx, jy, jz, jp, jm]
+    collective_operators = [jx, jy, jz]
 
     if not op:
         return collective_operators
@@ -622,7 +619,7 @@ def jspin(N, op=None, basis="dicke"):
     op: str
         The operator to return 'x','y','z','+','-'.
         If no operator given, then output is the list of operators
-        for ['x','y','z', '+', '-'].
+        for ['x','y','z'].
 
     basis: str
         The basis of the operators - "dicke" or "uncoupled"
@@ -665,7 +662,7 @@ def jspin(N, op=None, basis="dicke"):
     jm = Qobj(jm_operator)
 
     if not op:
-        return [jx, jy, jz, jp, jm]
+        return [jx, jy, jz]
     if op == '+':
         return jp
     elif op == '-':
@@ -736,8 +733,10 @@ def c_ops_tls(N, emission=0., dephasing=0., pumping=0.,
         msg += "dimension and exploit permutational symmetry"
         raise Warning(msg)
 
-    [sx, sy, sz, sp, sm] = spin_algebra(N)
-    [jx, jy, jz, jp, jm] = _jspin_uncoupled(N)
+    [sx, sy, sz] = spin_algebra(N)
+    sp, sm = spin_algebra(N, "+"), spin_algebra(N, "-")
+    [jx, jy, jz] = _jspin_uncoupled(N)
+    jp, jm = _jspin_uncoupled(N, "+"), _jspin_uncoupled(N, "-")
 
     c_ops = []
 
