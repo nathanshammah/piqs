@@ -1,5 +1,5 @@
 """
-Tests for Permutation Invariance methods
+Tests for Permutation Invariance methods.
 """
 import numpy as np
 from numpy.testing import (assert_, run_module_suite, assert_raises,
@@ -730,7 +730,7 @@ class TestDicke:
         assert_array_almost_equal(test_css_uncoupled.full(), css_uncoupled)
         assert_array_almost_equal(test_css_dicke.full(), css_dicke)
 
-    def test_c_ops_tls(self):
+    def test_collapse_uncoupled(self):
         """
         Test the calculation of the correct collapse operators (c_ops) list.
 
@@ -742,7 +742,9 @@ class TestDicke:
         c2 = Qobj([[0, 0, 0, 0], [1, 0, 0, 0], [0, 0, 0, 0],
                    [0, 0, 1, 0]], dims=[[2, 2], [2, 2]])
         true_c_ops = [c1, c2]
-        assert_equal(true_c_ops, c_ops_tls(N=2, emission=1))
+        assert_equal(true_c_ops, collapse_uncoupled(N=2, emission=1))
+        system = Dicke(N=2, emission=1)
+        assert_equal(true_c_ops, system.c_ops())
 
     def test_get_blocks(self):
         """
@@ -1165,7 +1167,7 @@ class TestPim:
 
     def test_isdiagonal(self):
         """
-        Test the isdiagonal function
+        Test the isdiagonal function.
         """
         mat1 = np.array([[1, 2], [3, 4]])
         mat2 = np.array([[1, 0.], [0., 2]])
@@ -1180,6 +1182,27 @@ class TestPim:
     def test_pisolve(self):
         """
         Test the warning for diagonal Hamiltonians to use internal solver
+        """
+        jx, jy, jz = jspin(4)
+        jp, jm = jspin(4, "+"), jspin(4, "-")
+
+    def test_coefficient_matrix(self):
+        """
+        Test the coefficient matrix used by 'pisolve' for diagonal problems.
+        """
+        N = 2
+        ensemble = Pim(N, emission=1)
+        test_matrix = ensemble.coefficient_matrix().todense()
+        ensemble2 = Dicke(N, emission=1)
+        test_matrix2 = ensemble.coefficient_matrix().todense()
+        true_matrix = [[-2, 0, 0, 0], [ 1, -1, 0, 0], [ 0, 1, 0, 1.], [ 1, 0, 0, -1.]]
+        
+        assert_array_almost_equal(test_matrix, true_matrix)
+        assert_array_almost_equal(test_matrix2, true_matrix)
+
+    def test_pisolve(self):
+        """
+        Test the warning for diagonal Hamiltonians to use internal solver.
         """
         jx, jy, jz = jspin(4)
         jp, jm = jspin(4, "+"), jspin(4, "-")
@@ -1199,6 +1222,11 @@ class TestPim:
 
         non_dicke_initial_state = excited(4, basis='uncoupled')
         assert_raises(ValueError, diag_system.pisolve, non_dicke_initial_state, tlist)
+
+        # no Hamiltonian
+        no_hamiltonian_system = Dicke(4, emission=0.1)
+        result = no_hamiltonian_system.pisolve(diag_initial_state, tlist)
+        assert_equal(True, len(result.states)>0)
 
 
 if __name__ == "__main__":

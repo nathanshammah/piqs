@@ -1,0 +1,47 @@
+language: python
+  python:
+    - "3.6"
+
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - gcc-4.8
+    - g++-4.8
+
+before_install:
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
+      wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
+    else
+      wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+    fi
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - hash -r
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  - conda info -a
+
+install:
+  # Issues have been encountered with installing numpy and scipy on 
+  # Travis CI e.g. https://gist.github.com/dan-blanchard/7045057.
+  # Miniconda is recommended as the way to install these. See also:
+  # http://conda.pydata.org/docs/travis.html
+  # The following adopts approaches suggested in the above links.
+  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
+  - source activate test-environment
+  # recipy setup.py fails to install flask for as-yet-unknown reason,
+  # and fails if it is not present, so install it explicitly.
+  - conda install cython
+  - conda install numpy scipy qutip
+  - python setup.py install
+  - which python
+  - which pip
+  - which py.test
+  - py.test --version
+  - pip freeze
+
+# command to run tests
+script: 
+    - nosetests --verbosity=2
