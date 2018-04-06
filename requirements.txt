@@ -1,4 +1,0 @@
-qutip>=4.2
-numpy>=1.8
-scipy>=0.1
-cython>=0.21
