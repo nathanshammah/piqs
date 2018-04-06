@@ -377,6 +377,26 @@ class Dicke(object):
                                         collective_pumping=self.collective_pumping)
         return c_ops_list
 
+    def coefficient_matrix(self):
+        """Build coefficient matrix for ODE for a diagonal problem.
+
+        Returns
+        -------
+        M: ndarray
+            The matrix M of the coefficients for the ODE dp/dt = M p.
+            p is the vector of the diagonal matrix elements
+            of the density matrix rho in the Dicke basis.  
+        """
+        diagonal_system = Pim(N=self.N,
+                              emission=self.emission,
+                              dephasing=self.dephasing,
+                              pumping=self.pumping,
+                              collective_emission=self.collective_emission,
+                              collective_dephasing=self.collective_dephasing,
+                              collective_pumping=self.collective_pumping)
+        coef_matrix = diagonal_system.coefficient_matrix()
+        return coef_matrix
+
 
 # Utility functions for properties of the Dicke space
 def energy_degeneracy(N, m):

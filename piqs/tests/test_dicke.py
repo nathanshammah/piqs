@@ -1164,7 +1164,7 @@ class TestPim:
 
     def test_isdiagonal(self):
         """
-        Test the isdiagonal function
+        Test the isdiagonal function.
         """
         mat1 = np.array([[1, 2], [3, 4]])
         mat2 = np.array([[1, 0.], [0., 2]])
@@ -1176,9 +1176,23 @@ class TestPim:
         assert_equal(isdiagonal(mat3), False)
         assert_equal(isdiagonal(mat4), True)
 
+    def test_coefficient_matrix(self):
+        """
+        Test the coefficient matrix used by 'pisolve' for diagonal problems.
+        """
+        N = 2
+        ensemble = Pim(N, emission=1)
+        test_matrix = ensemble.coefficient_matrix().todense()
+        ensemble2 = Dicke(N, emission=1)
+        test_matrix2 = ensemble.coefficient_matrix().todense()
+        true_matrix = [[-2, 0, 0, 0], [ 1, -1, 0, 0], [ 0, 1, 0, 1.], [ 1, 0, 0, -1.]]
+        
+        assert_array_almost_equal(test_matrix, true_matrix)
+        assert_array_almost_equal(test_matrix2, true_matrix)
+
     def test_pisolve(self):
         """
-        Test the warning for diagonal Hamiltonians to use internal solver
+        Test the warning for diagonal Hamiltonians to use internal solver.
         """
         jx, jy, jz, jp, jm = jspin(4)
         non_diag_hamiltonian = jx
