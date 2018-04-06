@@ -47,7 +47,7 @@ For more details and examples on the use of *PIQS* see the [notebooks](https://g
 PIQS is licensed under the terms of the BSD license.
 
 ## Resources
-The code and an introductory notebook can be found in Ref. [1]. A paper detailing the theoretical aspects and illustrating many applications is in Ref. [2]. Related open-source libraries for open quantum dynamics that exploit permutational invariance are *Permutations* [3] by Peter Kirton and *PsiQuaSP* by Michael Gegg [4].
+Example notebooks can be found at [1]. Theoretical aspects and applications are in Ref. [2]. Other open-source codes using permutational invariance to study open quantum systems and related research papers can be found in [3-4].
 
 [1] https://github.com/nathanshammah/notebooks
 
