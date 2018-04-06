@@ -289,7 +289,7 @@ class TestDicke:
         """
         Test calculation of the j algebra relation for the total operators.
 
-        The [jx, jy, jz, jp, jm] for a given N in the (j, m, m1) basis should
+        The jx, jy, jz, jp and jm for a given N in the (j, m, m1) basis should
         follow the following algebra
         [jx, jy] == 1j * jz, [jp, jm] == 2 * jz, jx^2 + jy^2 + jz^2 == j2^2.
         """
@@ -297,7 +297,8 @@ class TestDicke:
 
         for nn in N_list:
             # tests 1
-            [jx, jy, jz, jp, jm] = jspin(nn)
+            [jx, jy, jz] = jspin(nn)
+            jp, jm = jspin(nn, "+"), jspin(nn, "-")
             test_jxjy = jx * jy - jy * jx
             true_jxjy = 1j * jz
             test_jpjm = jp * jm - jm * jp
@@ -307,7 +308,8 @@ class TestDicke:
             assert_array_equal(test_jpjm, true_jpjm)
 
             # tests 2
-            [jx, jy, jz, jp, jm] = jspin(nn)
+            [jx, jy, jz] = jspin(nn)
+            jp, jm = jspin(nn, "+"), jspin(nn, "-")
             test_jxjy = jx * jy - jy * jx
             true_jxjy = 1j * jz
             test_jpjm = jp * jm - jm * jp
@@ -492,7 +494,7 @@ class TestDicke:
         """
         Tests the generation of the collective algebra in uncoupled basis.
 
-        The list [jx, jy, jz, jp, jm] created in the 2^N Hilbert space is
+        The list [jx, jy, jz] created in the 2^N Hilbert space is
         checked for N = 2.
         """
 
@@ -1059,7 +1061,8 @@ class TestDicke:
         gCE = kappa /(N/2)
         gE = 1
         gD = 1
-        [jx, jy, jz, jp, jm] = jspin(N)
+        [jx, jy, jz] = jspin(N)
+        jp, jm = jspin(N, "+"), jspin(N, "-")
         H = w0 * jx
 
         ensemble = Dicke(N=N, hamiltonian=H, collective_emission=gCE,
@@ -1176,6 +1179,13 @@ class TestPim:
         assert_equal(isdiagonal(mat3), False)
         assert_equal(isdiagonal(mat4), True)
 
+    def test_pisolve(self):
+        """
+        Test the warning for diagonal Hamiltonians to use internal solver
+        """
+        jx, jy, jz = jspin(4)
+        jp, jm = jspin(4, "+"), jspin(4, "-")
+
     def test_coefficient_matrix(self):
         """
         Test the coefficient matrix used by 'pisolve' for diagonal problems.
@@ -1194,7 +1204,8 @@ class TestPim:
         """
         Test the warning for diagonal Hamiltonians to use internal solver.
         """
-        jx, jy, jz, jp, jm = jspin(4)
+        jx, jy, jz = jspin(4)
+        jp, jm = jspin(4, "+"), jspin(4, "-")
         non_diag_hamiltonian = jx
         diag_hamiltonian = jz
 
@@ -1216,6 +1227,7 @@ class TestPim:
         no_hamiltonian_system = Dicke(4, emission=0.1)
         result = no_hamiltonian_system.pisolve(diag_initial_state, tlist)
         assert_equal(True, len(result.states)>0)
+
 
 if __name__ == "__main__":
     run_module_suite()
