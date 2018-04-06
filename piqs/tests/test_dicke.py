@@ -1216,12 +1216,16 @@ class TestPim:
         non_diag_initial_state = ghz(4)
         tlist = np.linspace(0, 10, 100)
 
-        assert_raises(ValueError, non_diag_system.pisolve, diag_initial_state, tlist)
-        assert_raises(ValueError, non_diag_system.pisolve, non_diag_initial_state, tlist)
-        assert_raises(ValueError, diag_system.pisolve, non_diag_initial_state, tlist)
+        assert_raises(ValueError, non_diag_system.pisolve,
+                      diag_initial_state, tlist)
+        assert_raises(ValueError, non_diag_system.pisolve,
+                      non_diag_initial_state, tlist)
+        assert_raises(ValueError, diag_system.pisolve,
+                      non_diag_initial_state, tlist)
 
         non_dicke_initial_state = excited(4, basis='uncoupled')
-        assert_raises(ValueError, diag_system.pisolve, non_dicke_initial_state, tlist)
+        assert_raises(ValueError, diag_system.pisolve,
+                      non_dicke_initial_state, tlist)
 
         # no Hamiltonian
         no_hamiltonian_system = Dicke(4, emission=0.1)
