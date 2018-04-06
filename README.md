@@ -19,7 +19,7 @@ A major feature of PIQS is that it allows to build the Liouvillian of the system
 - Correlation functions of collective systems in quantum optics experiments, such as the spectral density and second-order correlation functions.
 - Various quantum optics phenomena such as resonance fluorescence, steady-state superradiance, superradiant light emission.
 - Spin squeezing for quantum metrology, long-range interaction in noisy spin models, decoherence in quantum information processing. 
-- Nonlinearities of dissipative cavity QED systems in the ultrastrong coupling regime.
+- Nonlinearities of dissipative cavity QED systems up to the ultrastrong coupling regime.
 
 ## Installation
 In the terminal enter the following commands (you just need `git` and `python` installed)
