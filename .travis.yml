@@ -21,15 +21,15 @@ before_install:
   # Useful for debugging any issues with conda
   - conda info -a
   - conda config --add channels conda-forge
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION cython numpy scipy qutip nose
-  - pip install coverage coveralls
+  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
 
 install:
   - source activate test-environment
+  - conda install -c conda-forge cython numpy scipy qutip nose codecov
   - python setup.py install
 
 script:
   - nosetests --verbosity=2 --with-coverage --cover-package=piqs piqs
 
 after_success:
-  - coveralls
+  - codecov
