@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/nathanshammah/piqs.svg?branch=master)](https://travis-ci.org/nathanshammah/piqs)
 [![DOI](https://zenodo.org/badge/104438298.svg)](https://zenodo.org/badge/latestdoi/104438298)
-[![codecov](https://codecov.io/gh/nathanshammah/piqs/branch/master/graphs/badge.svg?branch=master)
+[![codecov](https://codecov.io/gh/nathanshammah/piqs/branch/master/graph/badge.svg)](https://codecov.io/gh/nathanshammah/piqs)
 
 PIQS is an open-source Python solver to study the exact Lindbladian dynamics of open quantum systems consisting of identical qubits. The documentation for the package can be found in [piqs.readthedocs.io](piqs.readthedocs.io). Notebooks on how to use the library can be found in [notebooks](https://github.com/nathanshammah/notebooks).
 
