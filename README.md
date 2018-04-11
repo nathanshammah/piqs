@@ -1,4 +1,4 @@
-# Permutational Invariant Quantum Solver (PIQS) 
+# Permutational Invariant Quantum Solver (PIQS) [![Build Status](https://travis-ci.org/nathanshammah/piqs.svg?branch=master)](https://travis-ci.org/nathanshammah/piqs)
 
 <img src="https://github.com/nathanshammah/piqs/blob/master/doc/piqs_logo.png" width="80" height="80"/>
 
