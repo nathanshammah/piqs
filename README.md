@@ -1,10 +1,10 @@
-# Permutational Invariant Quantum Solver (PIQS) [![Build Status](https://travis-ci.org/nathanshammah/piqs.svg?branch=master)](https://travis-ci.org/nathanshammah/piqs)
+# Permutational Invariant Quantum Solver (PIQS) <img src="https://github.com/nathanshammah/piqs/blob/master/doc/piqs_logo.png" width="80" height="80"/>
 
-<img src="https://github.com/nathanshammah/piqs/blob/master/doc/piqs_logo.png" width="80" height="80"/>
-
+[![Build Status](https://travis-ci.org/nathanshammah/piqs.svg?branch=master)](https://travis-ci.org/nathanshammah/piqs)
 [![DOI](https://zenodo.org/badge/104438298.svg)](https://zenodo.org/badge/latestdoi/104438298)
 
-PIQS is an open-source Python solver to study the exact Lindbladian dynamics of open quantum systems consisting of identical qubits.
+
+PIQS is an open-source Python solver to study the exact Lindbladian dynamics of open quantum systems consisting of identical qubits. The documentation for the package can be found in [piqs.readthedocs.io]. Notebooks on how to use the library can be found in [notebooks](https://github.com/nathanshammah/notebooks).
 
 ## Exponential reduction 
 In the case where local processes are included in the model of a system's dynamics, numerical simulation requires dealing with density matrices of size $2^N$. This becomes infeasible for a large number of qubits. We can simplify the calculations by exploiting the permutational invariance of indistinguishable quantum particles which allows the user to study hundreds of qubits.
@@ -22,7 +22,7 @@ A major feature of PIQS is that it allows to build the Liouvillian of the system
 - Nonlinearities of dissipative cavity QED systems up to the ultrastrong coupling regime.
 
 ## Installation
-In the terminal enter the following commands (you just need `git` and `python` installed)
+In the terminal enter the following commands (you just need `git` and `python` installed). If you do not have git installed, just download the folder from Github and run the `setup.py` file with python. We will soon publish the code in the Python Packaging Index (`pip`) and also make a `conda` package for easy installation on Windows. If you have any problems installing the tool, please open an issue or write to us.
 ```
 git clone https://github.com/nathanshammah/piqs.git
 cd piqs
