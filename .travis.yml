@@ -4,8 +4,8 @@ python:
   - "3.5"
   - "3.6"
 
-install:
-  - sudo apt-get update
+before_install:
+    - sudo apt-get update
   # We do this conditionally because it saves us some downloading if the
   # version is the same.
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
@@ -21,8 +21,9 @@ install:
   # Useful for debugging any issues with conda
   - conda info -a
   - conda config --add channels conda-forge
-
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION cython numpy scipy qutip
+
+install:
   - source activate test-environment
   - python setup.py install
 
