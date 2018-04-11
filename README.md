@@ -4,7 +4,7 @@
 [![DOI](https://zenodo.org/badge/104438298.svg)](https://zenodo.org/badge/latestdoi/104438298)
 
 
-PIQS is an open-source Python solver to study the exact Lindbladian dynamics of open quantum systems consisting of identical qubits. The documentation for the package can be found in [piqs.readthedocs.io]. Notebooks on how to use the library can be found in [notebooks](https://github.com/nathanshammah/notebooks).
+PIQS is an open-source Python solver to study the exact Lindbladian dynamics of open quantum systems consisting of identical qubits. The documentation for the package can be found in [piqs.readthedocs.io](piqs.readthedocs.io). Notebooks on how to use the library can be found in [notebooks](https://github.com/nathanshammah/notebooks).
 
 ## Exponential reduction 
 In the case where local processes are included in the model of a system's dynamics, numerical simulation requires dealing with density matrices of size $2^N$. This becomes infeasible for a large number of qubits. We can simplify the calculations by exploiting the permutational invariance of indistinguishable quantum particles which allows the user to study hundreds of qubits.
