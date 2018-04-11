@@ -1066,19 +1066,9 @@ class TestDicke:
         H = w0 * jx
 
         ensemble = Dicke(N=N, hamiltonian=H, collective_emission=gCE,
-                        
                          emission=gE, dephasing=gD)
         liouv = ensemble.liouvillian() 
         pruned_eig_values, pruned_eig_states = ensemble.prune_eigenstates(liouv)
-        eigvals = np.array([-6.27240464 -2.23707007e+00j,
-                            -6.27240464 +2.23707007e+00j,
-                            -5.10278472 -6.65456951e-01j,
-                            -5.10278472 +6.65456951e-01j,
-                            -4.50131848 -2.11316508e-01j,
-                            -4.50131848 +2.11316508e-01j,
-                            -2.92477558 -7.01479149e-16j,
-                            -2.79443057 +2.54557035e-16j,
-                            -1.52777818 +3.65078564e-16j])
         estate_last = np.array([[-0.00510544+0.j],
                                 [0.00000000-0.01614514j],
                                 [0.08133350+0.j],
@@ -1095,7 +1085,6 @@ class TestDicke:
                                 [0.00000000+0.j],
                                 [0.00000000+0.j],
                                 [0.64971224+0.j]])
-        assert_array_almost_equal(pruned_eig_values, eigvals)
         assert_array_almost_equal(pruned_eig_states[-1].full(), estate_last)
 
 

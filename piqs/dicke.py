@@ -971,13 +971,11 @@ def _uncoupled_ghz(N):
         The density matrix for the GHZ state in the full Hilbert space.
     """
     N = int(N)
-
     rho = np.zeros((2**N, 2**N))
     rho[0, 0] = 1/2
     rho[2**N - 1, 0] = 1/2
     rho[0, 2**N - 1] = 1/2
     rho[2**N - 1, 2**N - 1] = 1/2
-
     spin_dim = [2 for i in range(0, N)]
     spins_dims = list((spin_dim, spin_dim))
     rho = Qobj(rho, dims=spins_dims)
