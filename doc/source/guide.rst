@@ -29,55 +29,39 @@ The system under study is defined by creating an object of the
 :code:`Dicke` class, e.g. simply named 
 :code:`system`, whose first attribute is 
 
-- 
-:code:`system.N`, the number of TLSs of the system :math:`N`.
+- :code:`system.N`, the number of TLSs of the system :math:`N`.
 
 The rates for collective and local processes are simply defined as 
 
-- 
-:code:`collective_emission` defines :math:`\gamma_\text{CE}`, collective (superradiant) emission
+- :code:`collective_emission` defines :math:`\gamma_\text{CE}`, collective (superradiant) emission
 
 
-- 
-:code:`collective_dephasing` defines :math:`\gamma_\text{CD}`, collective dephasing 
+- :code:`collective_dephasing` defines :math:`\gamma_\text{CD}`, collective dephasing 
 
 
-- 
-:code:`collective_pumping` defines :math:`\gamma_\text{CP}`, collective pumping. 
+- :code:`collective_pumping` defines :math:`\gamma_\text{CP}`, collective pumping. 
 
 
-- 
-:code:`emission` defines :math:`\gamma_\text{E}`, incoherent emission (losses) 
+- :code:`emission` defines :math:`\gamma_\text{E}`, incoherent emission (losses) 
 
 
-- 
-:code:`dephasing` defines :math:`\gamma_\text{D}`, local dephasing 
+- :code:`dephasing` defines :math:`\gamma_\text{D}`, local dephasing 
 
 
-- 
-:code:`pumping`  defines :math:`\gamma_\text{P}`, incoherent pumping. 
+- :code:`pumping`  defines :math:`\gamma_\text{P}`, incoherent pumping. 
 
-Then the 
-:code:`system.lindbladian()` creates the total TLS Linbladian superoperator matrix.
+Then the :code:`system.lindbladian()` creates the total TLS Linbladian superoperator matrix. Similarly, :code:`system.hamiltonian` defines the TLS hamiltonian of the system :math:`H_\text{TLS}`.
 
-Similarly, :code:`system.hamiltonian` defines the TLS hamiltonian of the system :math:`H_\text{TLS}`.
+The system's Liouvillian can be built using :code:`system.liouvillian()`. The properties of a Piqs object can be visualized by simply calling 
+:code:`system`. We give two basic examples on the use of *PIQS*. In the first example the incoherent emission of $N$ driven TLSs is considered.
 
-The system's Liouvillian can be built using 
-:code:`system.liouvillian()`. The properties of a Piqs object can be visualized by simply calling 
-:code:`system`. 
+.. code-block:: python
 
-We give two basic examples on the use of *PIQS*. In the first example the incoherent emission of $N$ driven TLSs is considered.
+	from piqs import Dicke
+	from qutip import steadystate
 
-```
-from piqs import Dicke
-from qutip import steadystate
+	N = 10
+	system = Dicke(N, emission = 1, pumping = 3)
 
-N = 10
-system = Dicke(N, emission = 1, pumping = 3)
-
-L = system.liouvillian()
-steady = steadystate(L)
-```
-
-
-
+	L = system.liouvillian()
+	steady = steadystate(L)
