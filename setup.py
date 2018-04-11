@@ -51,7 +51,7 @@ MICRO = 0
 ISRELEASED = False
 VERSION = '%d.%d.%d' % (MAJOR, MINOR, MICRO)
 REQUIRES = ['numpy (>=1.8)', 'scipy (>=0.15)', 'cython (>=0.21)', 'qutip (>=4.2)']
-INSTALL_REQUIRES = ['cython>=0.21']
+INSTALL_REQUIRES = ['numpy>=1.8', 'scipy>=0.15', 'cython>=0.21', 'qutip>=4.2']
 PACKAGES = ['piqs', 'piqs/cy']
 PACKAGE_DATA = {
     'piqs': ['configspec.ini'],
