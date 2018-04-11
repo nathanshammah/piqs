@@ -4,10 +4,10 @@
 [![DOI](https://zenodo.org/badge/104438298.svg)](https://zenodo.org/badge/latestdoi/104438298)
 [![codecov](https://codecov.io/gh/nathanshammah/piqs/branch/master/graph/badge.svg)](https://codecov.io/gh/nathanshammah/piqs)
 
-PIQS is an open-source Python solver to study the exact Lindbladian dynamics of open quantum systems consisting of identical qubits. The documentation for the package can be found in [piqs.readthedocs.io](piqs.readthedocs.io). Notebooks on how to use the library can be found in [notebooks](https://github.com/nathanshammah/notebooks).
+PIQS is an open-source Python solver to study the exact Lindbladian dynamics of open quantum systems consisting of identical qubits. The documentation for the package can be found in [piqs.readthedocs.io](piqs.readthedocs.io). Example notebooks on how to use the library can be found [here](https://github.com/nathanshammah/notebooks).
 
 ## Exponential reduction 
-In the case where local processes are included in the model of a system's dynamics, numerical simulation requires dealing with density matrices of size $2^N$. This becomes infeasible for a large number of qubits. We can simplify the calculations by exploiting the permutational invariance of indistinguishable quantum particles which allows the user to study hundreds of qubits.
+In the case where local processes are included in the model of a system's dynamics, numerical simulation requires dealing with density matrices of exponential sizes. This becomes infeasible for a large number of qubits. We can simplify the calculations by exploiting the permutational invariance of indistinguishable quantum particles which allows the user to study hundreds of qubits.
 
 ## Integrated with QuTiP
 A major feature of PIQS is that it allows to build the Liouvillian of the system in an optimal way. It uses Cython to optimize performance and by taking full advangtage of the sparsity of the matrix it can deal with large systems. Since it is compatible with the `quantum object` class of [QuTiP](http://qutip.org/) one can take full advantage of existing features of this excellent open-source library.
