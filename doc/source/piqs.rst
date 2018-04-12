@@ -1,30 +1,26 @@
 piqs package
 ============
 
-.. toctree::
-
-    piqs.cy
-
-piqs.about module
------------------
-
-.. automodule:: piqs.about
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-piqs.cite module
-----------------
-
-.. automodule:: piqs.cite
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-piqs.dicke module
+piqs.dicke
 -----------------
 
 .. automodule:: piqs.dicke
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+piqs.cy.dicke
+----------------
+
+.. automodule:: piqs.cy.dicke
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+piqs.cite
+----------------
+
+.. automodule:: piqs.cite
     :members:
     :undoc-members:
     :show-inheritance:
