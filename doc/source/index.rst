@@ -13,7 +13,7 @@ Welcome to piqs's documentation!
    intro
    install
    guide
-   api
+   piqs
    developers
    references
 
