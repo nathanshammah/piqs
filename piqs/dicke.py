@@ -107,13 +107,13 @@ class Dicke(object):
 
     Example
     -------
-    >> from qutip.models.piqs import Dicke, jspin
-    >> N = 2
-    >> jx, jy, jz = jspin(N)
-    >> jp = jspin(N, "+")
-    >> jm = jspin(N, "-")
-    >> ensemble = Dicke(N, emission=1.)
-    >> L = ensemble.liouvillian()
+    >>> from piqs import Dicke, jspin
+    >>> N = 2
+    >>> jx, jy, jz = jspin(N)
+    >>> jp = jspin(N, "+")
+    >>> jm = jspin(N, "-")
+    >>> ensemble = Dicke(N, emission=1.)
+    >>> L = ensemble.liouvillian()
 
     Parameters
     ----------

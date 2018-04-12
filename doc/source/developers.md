@@ -1,7 +1,7 @@
 # Developers
 
 - Nathan Shammah
-nathanshammah@gmail.com
+nathan.shammah@gmail.com
 
 - Shahnawaz Ahmed
 shahnawaz.ahmed95@gmail.com
