@@ -1,44 +1,85 @@
 ============================================================
 Superradiant Light Emission 
 ============================================================
-The intravoxel incoherent motion (IVIM) model describes diffusion
-and perfusion in the signal acquired with a diffusion MRI sequence
-that contains multiple low b-values. The IVIM model can be understood
-as an adaptation of the work of Stejskal and Tanner [Stejskal65]_
-in biological tissue, and was proposed by Le Bihan [LeBihan84]_.
-The model assumes two compartments: a slow moving compartment,
-where particles diffuse in a Brownian fashion as a consequence of thermal
-energy, and a fast moving compartment (the vascular compartment), where
-blood moves as a consequence of a pressure gradient. In the first compartment,
-the diffusion coefficient is :math:`\mathbf{D}` while in the second compartment, a
-pseudo diffusion term $\mathbf{D^*}$ is introduced that describes the
-displacement of the blood elements in an assumed randomly laid out vascular
-network, at the macroscopic level. According to [LeBihan84]_,
-:math:`\mathbf{D^*}` is greater.
-
-The IVIM model expresses the MRI signal as follows:
+We consider a system of :math:`N` two-level systems (TLSs) with identical frequency :math:`\omega_{0}`, which can emit collectively at a rate :math:`\gamma_\text{CE}`, and suffer from dephasing and local losses at rates :math:`\gamma_\text{D}` and :math:`\gamma_\text{E}`, respectively. The dynamics can be written as
 
  .. math::
-    S(b)=S_0(fe^{-bD^*}+(1-f)e^{-bD})
+    \dot{\rho} =-i\lbrack \omega_{0}J_z,\rho \rbrack
+    +\frac{\gamma_\text {CE}}{2}\mathcal{L}_{J_{-}}[\rho]
+    +\sum_{n=1}^{N}\frac{\gamma_\text{D}}{2}\mathcal{L}_{J_{z,n}}[\rho]
+    +\frac{\gamma_\text{E}}{2}\mathcal{L}_{J_{-,n}}[\rho].
 
-In the following example we show how to fit the IVIM model on a
-diffusion-weighteddataset and visualize the diffusion and pseudo
-diffusion coefficients. First, we import all relevant modules:
+When :math:`\gamma_\text{E}=\gamma_\text{D}=0` this dynamics is the classical superradiant master equation.
+In this limit, a system initially prepared in the fully-excited state undergoes superradiant light emission whose peak intensity scales proportionally to :math:`N^2`.
 
 .. code-block:: python
-  
+    from qutip import *
+    from piqs import *
     import matplotlib.pyplot as plt
-    from dipy.reconst.ivim import IvimModel
-    from dipy.data.fetcher import read_ivim
+    N = 20
+    [jx, jy, jz] = jspin(N)
+    jp = jspin(N, "+")
+    jm = jp.dag()
+    # spin hamiltonian
+    w0 = 1
+    h = w0 * jz
+    # dissipation
+    gCE = 1
+    gD = 1
+    gE = 0
+    # set initial conditions for spins
+    system = Dicke(N = N,hamiltonian = h)
+    system.dephasing = gD
+    system.collective_emission = gCE
+    # build the Liouvillian matrix  
+    liouv = system.liouvillian()
 
-.. figure:: images/piqs_logo.png
+Now that the system Liouvillian is defined, we can use QuTiP to solve the dynamics.
+We use as integration time a multiple of the superradiant delay time, :math:`t_\text{D}=\log(N)/(N \gamma_\text{CE})`.
+
+.. code-block:: python
+    nt = 1001
+    td0 = np.log(N)/(N*gCE)
+    tmax = 10 * td0
+    t = np.linspace(0, tmax, nt)
+    # initial state
+    excited_rho = excited(N)
+    # alternative states 
+    superradiant_rho = dicke(N, N/2, 0)
+    subradiant_rho = dicke(N, 0, 0)
+    css_symmetric = css(N)
+    a = 1/np.sqrt(2)
+    css_antisymmetric = css(N, a, -a)
+    ghz_rho = ghz(N)
+    rho0 = excited_rho
+    result = mesolve(liouv, rho0, t, [], e_ops = [jz, jp*jm, jz**2], 
+                      options = Options(store_states=True))
+    rhot = result.states
+    jz_t = result.expect[0]
+    jpjm_t = result.expect[1]
+    jz2_t = result.expect[2]
+
+We can then plot the results of the time evolution of the expectation values of the collective spin operators for different initial states. 
+
+.. code-block:: python
+    jmax = (0.5 * N)
+    fig1 = plt.figure()
+    plt.plot(t/td0, jz_t/jmax)
+    plt.show()
+    plt.close()
+
+
+.. figure:: images/srle.png
    :align: center
 
 
 References:
 
-.. [Stejskal65] Stejskal, E. O.; Tanner, J. E. (1 January 1965).
-                "Spin Diffusion Measurements: Spin Echoes in the Presence
-                of a Time-Dependent Field Gradient". The Journal of Chemical
-                Physics 42 (1): 288. Bibcode: 1965JChPh..42..288S.
-                doi:10.1063/1.1695690.
+.. [Dicke54] Dicke, R. H.
+                "Coherence in Spontaneous Radiation Processes". 
+                Phys. Rev. 93, 91 (1954)
+                doi/10.1103/PhysRev.93.99.
+.. [Bonifacio71] Bonifacio, R. and Schwendimann, P. and Haake, Fritz.
+                "Quantum Statistical Theory of Superradiance. I."
+                Phys. Rev. A 4, 302 (1971)
+                doi:10.1103/PhysRevA.4.302
