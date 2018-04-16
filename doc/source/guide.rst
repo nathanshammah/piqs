@@ -46,12 +46,11 @@ The system's Liouvillian can be built using :code:`system.liouvillian()`. The pr
 :code:`system`. We give two basic examples on the use of *PIQS*. In the first example the incoherent emission of N driven TLSs is considered.
 
 .. code-block: python
-
-	from piqs import Dicke
+    from piqs import Dicke
 	from qutip import steadystate
 
 	N = 10
-	system = Dicke(N, emission = 1, pumping = 3)
+	system = Dicke(N, emission = 1, pumping = 2)
 
 	L = system.liouvillian()
 	steady = steadystate(L)
@@ -62,58 +61,24 @@ The system's Liouvillian can be built using :code:`system.liouvillian()`. The pr
 +--------------------------+----------------------------+----------------------------------------+
 | Operators                | Command (# means optional) | Inputs                                 |
 +==========================+============================+========================================+
-| Charge operator          | ``charge(N,M=-N)``         | Diagonal operator with entries         |
-|                          |                            | from M..0..N.                          |
+| Collective spin Jx       | ``jspin(N, "x")``          | N = number of two-level systems        |
+|                          |                            | "x" = axis of the spin                 |+--------------------------+----------------------------+----------------------------------------+
+| Collective spin Jy       | ``jspin(N, "y")``          | N = number of two-level systems        |
+|                          |                            | "y" = axis of the spin                 |+--------------------------+----------------------------+----------------------------------------+
+| Collective spin Jz       | ``jspin(N, "z")``          | N = number of two-level systems        |
+|                          |                            | "z" = axis of the spin                 |+--------------------------+----------------------------+----------------------------------------+
+| Dicke state,  |j, m>     | ``dikce(N, j, m)``         | N = number of two-level systems        |
+|                          |                            | j = total spin, m = spin z-projection  |+--------------------------+----------------------------+----------------------------------------+
+| Coherent spin state      | ``css(N, #a, #b)``         | N = number of two-level systems        |
+|                          |                            | a = coefficient of |1>_i               |
+|                          |                            | b = coefficient of |0>_i               |
 +--------------------------+----------------------------+----------------------------------------+
-| Commutator               | ``commutator(A, B, kind)`` | Kind = 'normal' or 'anti'.             |
+| GHZ state                | ``ghz(N)``                 | N = number of two-level systems        |
 +--------------------------+----------------------------+----------------------------------------+
-| Diagonals operator       | ``qdiags(N)``              | Quantum object created from arrays of  |
-|                          |                            | diagonals at given offsets.            |
+| Number of Dicke states   | ``num_dicke_states(N)``    | N = number of two-level systems        |
 +--------------------------+----------------------------+----------------------------------------+
-| Displacement operator    | ``displace(N,alpha)``      | N=number of levels in Hilbert space,   |
-| (Single-mode)            |                            | alpha = complex displacement amplitude.|
+|Number of TLSs            | ``num_tls(N)``             | nds = number of Dicke states           |
 +--------------------------+----------------------------+----------------------------------------+
-| Higher spin operators    | ``jmat(j,#s)``             | j = integer or half-integer            |
-|                          |                            | representing spin, s = 'x', 'y', 'z',  |
-|                          |                            | '+', or '-'                            |
-+--------------------------+----------------------------+----------------------------------------+
-| Identity                 | ``qeye(N)``                | N = number of levels in Hilbert space. |
-+--------------------------+----------------------------+----------------------------------------+
-| Lowering (destruction)   | ``destroy(N)``             | same as above                          |
-| operator                 |                            |                                        |
-+--------------------------+----------------------------+----------------------------------------+
-| Momentum operator        | ``momentum(N)``            | same as above                          |
-+--------------------------+----------------------------+----------------------------------------+
-| Number operator          | ``num(N)``                 | same as above                          |
-+--------------------------+----------------------------+----------------------------------------+
-| Phase operator           | ``phase(N, phi0)``         | Single-mode Pegg-Barnett phase         |
-| (Single-mode)            |                            | operator with ref phase phi0.          |
-+--------------------------+----------------------------+----------------------------------------+
-| Position operator        | ``position(N)``            | same as above                          |
-+--------------------------+----------------------------+----------------------------------------+
-| Raising (creation)       | ``create(N)``              | same as above                          |
-| operator                 |                            |                                        |
-+--------------------------+----------------------------+----------------------------------------+
-| Squeezing operator       | ``squeeze(N, sp)``         | N=number of levels in Hilbert space,   |
-| (Single-mode)            |                            | sp = squeezing parameter.              |
-+--------------------------+----------------------------+----------------------------------------+
-| Squeezing operator       | ``squeezing(q1, q2, sp)``  | q1,q2 = Quantum operators (Qobj)       |
-| (Generalized)            |                            | sp = squeezing parameter.              |
-+--------------------------+----------------------------+----------------------------------------+
-| Sigma-X                  | ``sigmax()``               |                                        |
-+--------------------------+----------------------------+----------------------------------------+
-| Sigma-Y                  | ``sigmay()``               |                                        |
-+--------------------------+----------------------------+----------------------------------------+
-| Sigma-Z                  | ``sigmaz()``               |                                        |
-+--------------------------+----------------------------+----------------------------------------+
-| Sigma plus               | ``sigmap()``               |                                        |
-+--------------------------+----------------------------+----------------------------------------+
-| Sigma minus              | ``sigmam()``               |                                        |
-+--------------------------+----------------------------+----------------------------------------+
-| Tunneling operator       | ``tunneling(N,m)``         | Tunneling operator with elements of the|
-|                          |                            | form :math:`|N><N+m| + |N+m><N|`.      |
-+--------------------------+----------------------------+----------------------------------------+
-
 
 .. toctree::
    :maxdepth: 2
