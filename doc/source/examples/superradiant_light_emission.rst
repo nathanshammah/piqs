@@ -1,5 +1,5 @@
 ============================================================
-Example 1
+Superradiant Light Emission 
 ============================================================
 The intravoxel incoherent motion (IVIM) model describes diffusion
 and perfusion in the signal acquired with a diffusion MRI sequence

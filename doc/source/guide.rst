@@ -118,6 +118,6 @@ The system's Liouvillian can be built using :code:`system.liouvillian()`. The pr
 .. toctree::
    :maxdepth: 2
 
-   examples/example1
-   examples/example2
+   examples/superradiant_light_emission
+   examples/superradiance
 
