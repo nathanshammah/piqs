@@ -46,13 +46,17 @@ For more details and examples on the use of *PIQS* see the [notebooks](https://g
 ## License
 PIQS is licensed under the terms of the BSD license.
 
-## Resources
-Example notebooks can be found at [1]. Theoretical aspects and applications are in Ref. [2]. Other open-source codes using permutational invariance to study open quantum systems and related research papers can be found in [3-4].
+## Documentation
+PIQS documentation can be found at http://piqs.readthedocs.io/.
 
-[1] https://github.com/nathanshammah/notebooks
+## Notebooks
+A collection of Jupyter notebooks can be found at https://github.com/nathanshammah/notebooks.
 
-[2] N. Shammah, S. Ahmed, N. Lambert, S. De Liberato, and F. Nori, *to be submitted*
+## Additional Resources
+Theoretical aspects and applications are in Ref. [1]. Other open-source codes using permutational invariance to study open quantum systems and related research papers can be found in [2-3].
 
-[3] https://github.com/peterkirton/permutations P. Kirton and J. Keeling *Phys. Rev. Lett.*  **118**, 123602 (2017)
+[1] N. Shammah, S. Ahmed, N. Lambert, S. De Liberato, and F. Nori, *to be submitted*
 
-[4] https://github.com/modmido/psiquasp M. Gegg and M. Richter, *Sci. Rep.* **7**, 16304 (2017)
+[2] https://github.com/peterkirton/permutations P. Kirton and J. Keeling *Phys. Rev. Lett.*  **118**, 123602 (2017)
+
+[3] https://github.com/modmido/psiquasp M. Gegg and M. Richter, *Sci. Rep.* **7**, 16304 (2017)
