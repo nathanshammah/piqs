@@ -13,6 +13,7 @@ When :math:`\gamma_\text{E}=\gamma_\text{D}=0` this dynamics is the classical su
 In this limit, a system initially prepared in the fully-excited state undergoes superradiant light emission whose peak intensity scales proportionally to :math:`N^2`.
 
 .. code-block:: python
+
     from qutip import *
     from piqs import *
     import matplotlib.pyplot as plt
@@ -38,6 +39,7 @@ Now that the system Liouvillian is defined, we can use QuTiP to solve the dynami
 We use as integration time a multiple of the superradiant delay time, :math:`t_\text{D}=\log(N)/(N \gamma_\text{CE})`.
 
 .. code-block:: python
+
     nt = 1001
     td0 = np.log(N)/(N*gCE)
     tmax = 10 * td0
@@ -62,6 +64,7 @@ We use as integration time a multiple of the superradiant delay time, :math:`t_\
 We can then plot the results of the time evolution of the expectation values of the collective spin operators for different initial states. 
 
 .. code-block:: python
+
     jmax = (0.5 * N)
     fig1 = plt.figure()
     plt.plot(t/td0, jz_t/jmax)

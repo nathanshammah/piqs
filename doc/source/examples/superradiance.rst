@@ -1,25 +1,27 @@
 ============================================================
 Superradiance
 ============================================================
-We consider a system of :math:`N:math:` two-level systems (TLSs) coupled to a cavity mode. This is known as the Dicke model 
+We consider a system of :math:`N` two-level systems (TLSs) coupled to a cavity mode. This is known as the Dicke model 
 
-\begin{eqnarray}
-H&=&\omega_{0}J_z +  \omega_{c}a^\dagger a + g\left(a^\dagger + a\right)\left(J_{+} + J_{-}\right)
-\end{eqnarray}
+.. math::
+
+	H = \omega_{0}J_z +  \omega_{c}a^\dagger a + g\left(a^\dagger + a\right)\left(J_{+} + J_{-}\right)
+
 
 where each TLS has identical frequency :math:`\omega_{0}`. The light matter coupling can be in the ultrastrong coupling (USC) regime, :math:`g/omega_{0}>0.1`.
 
 If we study this model as an open quantum system, the cavity can leak photons and the TLSs are subject to local processes. For example the system can be incoherently pumped at a rate :math:`\gamma_\text{P}`, the TLSs are subject to dephaisng at a rate :math:`\gamma_\text{D}`, and local incoherent emission occurs at a rate :math:`\gamma_\text{E}`. The dynamics of the coupled light-matter system is governed by
 
-\begin{eqnarray}
-\dot{\rho} &=& 
--i\lbrack \omega_{0}J_z +  \omega_{a}a^\dagger a + g\left(a^\dagger + a\right)\left(J_{+} + J_{-}\right),\rho \rbrack
-+\frac{\kappa}{2}\mathcal{L}_{a}[\rho]
-+\sum_{n=1}^{N}\left(\frac{\gamma_\text{P}}{2}\mathcal{L}_{J_{+,n}}[\rho] 
-+\frac{\gamma_\text{E}}{2}\mathcal{L}_{J_{+,n}}[\rho]
-+\frac{\gamma_\text{D}}{2}\mathcal{L}_{J_{+,n}}[\rho]\right)
-\ \ \ \ \ \ (1)
-\end{eqnarray}
+.. math::
+
+	\dot{\rho} = -i\lbrack \omega_{0}J_z +  \omega_{a}a^\dagger a + g\left(a^\dagger + a\right)\left(J_{+} + J_{-}\right),\rho \rbrack
+	
+	+\frac{\kappa}{2}\mathcal{L}_{a}[\rho]
+	+\sum_{n=1}^{N}\left(\frac{\gamma_\text{P}}{2}\mathcal{L}_{J_{+,n}}[\rho] 
+	+\frac{\gamma_\text{E}}{2}\mathcal{L}_{J_{+,n}}[\rho]
+	+\frac{\gamma_\text{D}}{2}\mathcal{L}_{J_{+,n}}[\rho]\right)
+	\ \ \ \ \ \ (1)
+
 
 When only the dissipation of the cavity is present, beyond a critical value of the coupling :math:`g`, the steady state of the system becomes superradiant. This is visible by looking at the Wigner function of the photonic part of the density matrix, which displays two displaced lobes in the :math:`x` and :math:`p` plane.   
 
@@ -27,25 +29,6 @@ As it has been shown in Ref. [1], the presence of dephasing suppresses the super
 
 In order to study this system using QuTiP and :math:`PIQS`, we will first build the TLS Liouvillian, then we will build the photonic Liouvillian and finally we will build the light-matter interaction. The total dynamics of the system is thus defined in a Liouvillian space that has both TLS and photonic degrees of freedom. 
 
-The IVIM model expresses the MRI signal as follows:
-
- .. math::
-    S(b)=S_0(fe^{-bD^*}+(1-f)e^{-bD})
-
-In the following example we show how to fit the IVIM model on a
-diffusion-weighteddataset and visualize the diffusion and pseudo
-diffusion coefficients. First, we import all relevant modules:
-
-.. code-block:: python
-  
-    import matplotlib.pyplot as plt
-    from dipy.reconst.ivim import IvimModel
-    from dipy.data.fetcher import read_ivim
-
-.. figure:: images/piqs_logo.png
-   :align: center
-
-
 References:
 
-[Kirton17] Kirton, Peter, and Jonathan Keeling. "Suppressing and restoring the dicke superradiance transition by dephasing and decay." Physical review letters 118.12 (2017): 123602.
+.. [Kirton17] Kirton, Peter, and Jonathan Keeling. "Suppressing and restoring the dicke superradiance transition by dephasing and decay." Physical review letters 118.12 (2017): 123602.
