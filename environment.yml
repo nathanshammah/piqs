@@ -5,3 +5,4 @@ dependencies:
   - cython>=0.21
   - numpy>=1.8
   - scipy>=0.15
+  - qutip>=4.2
