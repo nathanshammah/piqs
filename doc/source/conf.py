@@ -193,3 +193,29 @@ napoleon_use_admonition_for_references = False
 napoleon_use_ivar = False
 napoleon_use_param = True
 napoleon_use_rtype = True
+
+
+# ============================================================================
+if on_rtd:
+    warn('debug -syspath -edit: %s'%os.path.abspath('../..'))
+    sys.path.insert(0, os.path.abspath('../..'))
+
+    class Mock(MagicMock):
+
+        @classmethod
+        def __getattr__(cls, name):
+            return Mock()
+
+        @classmethod
+        def __getitem__(cls, name):
+            return Mock()
+
+
+    MOCK_MODULES = ['numpy',
+                    'cython',
+                    'scipy',
+                    'qutip',
+                    ]
+
+    for mod_name in MOCK_MODULES:
+        sys.modules.update({mod_name: Mock()})
