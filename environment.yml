@@ -1,0 +1,8 @@
+name: piqs_environment
+
+dependencies:
+  - python=3.6
+  - numpy
+  - cython
+  - scipy
+  - qutip
