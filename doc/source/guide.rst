@@ -66,7 +66,28 @@ The system's Liouvillian can be built using :code:`system.liouvillian()`. The pr
 
    * - Operators
      - Command
-     - Inputs
+     - Description
    * - Collective spin Jx  
      - ``jspin(N, "x")``          
-     - N number of two-level systems, "x"
+     - The collective spin operator Jx. Requires N number of TLS
+   * - Collective spin J+
+     - ``jspin(N, "+")``          
+     - The collective spin operator J+.
+   * - Collective spin J-
+     - ``jspin(N, "-")``          
+     - The collective spin operator Jz.
+   * - Collective spin Jx in uncoupled basis
+     - ``jspin(N, "z", basis='uncoupled')``          
+     - The collective spin operator Jz in the uncoupled basis
+   * - Dicke state |j, m>
+     - ``dicke(N, j, m)``
+     - A Dicke state given by |j, m>
+   * - Excited state in uncoupled basis
+     - ``excited(N, basis="uncoupled")``
+     - The excited state in the uncoupled basis
+   * - GHZ state in the Dicke basis
+     - ``ghz(N)``
+     - The GHZ state in the Dicke (default) basis for N number of TLS
+   * - Collapse operators of the ensemble
+     - ``Dicke.c_ops()``
+     - The collapse operators for the ensemble can be called by the `c_ops` method of the dicke class.
