@@ -197,11 +197,11 @@ napoleon_use_rtype = True
 
 
 # ============================================================================
-# if on_rtd:
-#     class Mock(MagicMock):
-#         @classmethod
-#         def __getattr__(cls, name):
-#             return MagicMock()
+if on_rtd:
+    class Mock(MagicMock):
+        @classmethod
+        def __getattr__(cls, name):
+            return MagicMock()
 
-#     MOCK_MODULES = ['numpy', 'cython', 'scipy', 'qutip']
-#     sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+    MOCK_MODULES = ['numpy', 'cython', 'scipy', 'qutip']
+    sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
