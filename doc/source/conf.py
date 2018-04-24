@@ -14,7 +14,7 @@
 #
 import os
 import sys
-from unittest.mock import MagicMock
+from mock import Mock as MagicMock
 
 on_rtd = os.environ.get('READTHEDOCS') == 'True'
 
@@ -198,25 +198,10 @@ napoleon_use_rtype = True
 
 # ============================================================================
 if on_rtd:
-    print(os.path.abspath('../..'))
-    sys.path.insert(0, os.path.abspath('../..'))
-
     class Mock(MagicMock):
-
         @classmethod
         def __getattr__(cls, name):
-            return Mock()
+            return MagicMock()
 
-        @classmethod
-        def __getitem__(cls, name):
-            return Mock()
-
-
-    MOCK_MODULES = ['numpy',
-                    'cython',
-                    'scipy',
-                    'qutip',
-                    ]
-
-    for mod_name in MOCK_MODULES:
-        sys.modules.update({mod_name: Mock()})
+    MOCK_MODULES = ['numpy', 'cython', 'scipy', 'qutip']
+    sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
