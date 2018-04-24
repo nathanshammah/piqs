@@ -14,6 +14,8 @@
 #
 import os
 import sys
+from unittest.mock import MagicMock
+
 on_rtd = os.environ.get('READTHEDOCS') == 'True'
 
 # -- Project information -----------------------------------------------------
