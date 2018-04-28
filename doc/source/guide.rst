@@ -59,6 +59,9 @@ The system's Liouvillian can be built using :code:`system.liouvillian()`. The pr
 
    examples/superradiant_light_emission
    examples/superradiance
+   examples/spin_squeezing
+   examples/boundary_time_crystal
+   examples/negative_temp
 
 .. list-table:: PIQS functions
    :widths: 15 10 30
