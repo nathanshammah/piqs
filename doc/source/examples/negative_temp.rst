@@ -37,3 +37,9 @@ Secondly, we will exploit the permutational invariance of the local processes in
 In the following we might use in plots thefollowing equivalent notation :math:`\gamma_\text {CE}=\gamma_\Downarrow`,
 :math:`\gamma_\text {CP}=\gamma_\Uparrow`, :math:`\gamma_\text {E}=\gamma_\downarrow`, :math:`\gamma_\text {P}=\gamma_\uparrow`, and 
 :math:`\gamma_\text {D}=\gamma_\phi`.
+
+References:
+
+.. [1] 
+
+.. [2]
