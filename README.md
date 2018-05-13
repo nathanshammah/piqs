@@ -54,6 +54,9 @@ PIQS documentation can be found at http://piqs.readthedocs.io/.
 ## Notebooks
 A collection of Jupyter notebooks can be found at https://github.com/nathanshammah/notebooks.
 
+## Citation
+DOI:10.5281/zenodo.1212802
+
 ## Additional Resources
 Theoretical aspects and applications are in Ref. [1]. Other open-source codes using permutational invariance to study open quantum systems and related research papers can be found in [2-3].
 
