@@ -44,7 +44,7 @@ steady = steadystate(L)
 ```
 For more details and examples on the use of *PIQS* see the [notebooks](https://github.com/nathanshammah/notebooks) folder. 
 
-![Density matrices in the Dicke basis.](https://github.com/nathanshammah/notebooks/blob/master/plots/states_N.png)
+![Density matrices in the Dicke basis.](https://github.com/nathanshammah/notebooks/blob/master/piqs_notebooks/figures/states_N.pdf)
 ## License
 PIQS is licensed under the terms of the BSD license.
 
