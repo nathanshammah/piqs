@@ -52,15 +52,26 @@ PIQS is licensed under the terms of the BSD license.
 PIQS documentation can be found at http://piqs.readthedocs.io/.
 
 ## Notebooks
+### PIQS Notebooks include Jupyter notebooks for the paper https://arxiv.org/abs/1805.05129
+- Superradiant light emission
+- Steady-state superradiance
+- Superradiant phase transition out of equilibrium
+- Spin squeezing
+- Ultrastrong light-matter coupling 
+- Multiple ensembles of qubits
+- Boundary time crystals
+- Performance of PIQS 
+
 A collection of Jupyter notebooks can be found at https://github.com/nathanshammah/notebooks.
+
 
 ## Citation
 DOI:10.5281/zenodo.1212802
 
-## Additional Resources
+## Resources
 Theoretical aspects and applications are in Ref. [1]. Other open-source codes using permutational invariance to study open quantum systems and related research papers can be found in [2-3].
 
-[1] N. Shammah, S. Ahmed, N. Lambert, S. De Liberato, and F. Nori, *to be submitted*
+[1] N. Shammah, S. Ahmed, N. Lambert, S. De Liberato, and F. Nori, https://arxiv.org/abs/1805.05129
 
 [2] https://github.com/peterkirton/permutations P. Kirton and J. Keeling *Phys. Rev. Lett.*  **118**, 123602 (2017)
 
