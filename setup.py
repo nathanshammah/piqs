@@ -46,13 +46,13 @@ from Cython.Build import cythonize
 from Cython.Distutils import build_ext
 
 MAJOR = 1
-MINOR = 1
+MINOR = 2
 MICRO = 0
-ISRELEASED = False
+ISRELEASED = True
 VERSION = '%d.%d.%d' % (MAJOR, MINOR, MICRO)
 REQUIRES = ['numpy (>=1.8)', 'scipy (>=0.15)', 'cython (>=0.21)', 'qutip (>=4.2)']
 INSTALL_REQUIRES = ['numpy>=1.8', 'scipy>=0.15', 'cython>=0.21', 'qutip>=4.2']
-PACKAGES = ['piqs', 'piqs/cy']
+PACKAGES = ['piqs', 'piqs/cy', 'piqs/tests']
 PACKAGE_DATA = {
     'piqs': ['configspec.ini'],
     'piqs/tests': ['*.ini'],
