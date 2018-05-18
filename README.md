@@ -10,26 +10,27 @@ PIQS is an open-source Python library that allows to study the exact Lindbladian
 In the case where local processes are included in the model of a system's dynamics, numerical simulation requires dealing with density matrices of exponential sizes. This becomes infeasible for a large number of qubits. We can simplify the calculations by exploiting the permutational invariance of indistinguishable quantum particles which allows the user to study hundreds of qubits.
 
 ## Integrated with QuTiP
-A major feature of PIQS is that it allows to build the Liouvillian of the system in an optimal way. It uses Cython to optimize performance and by taking full advangtage of the sparsity of the matrix it can deal with large systems. Since it is compatible with the `quantum object` class of [QuTiP](http://qutip.org/) one can take full advantage of existing features of this excellent open-source library.
+A major feature of PIQS is that it allows to build the Liouvillian of the system in an optimal way. It uses Cython to optimize performance and by defining sparse matrices it can deal with large systems. Since it is compatible with the `quantum object` class of [QuTiP](http://qutip.org/) one can take full advantage of existing features of this excellent open-source library.
 
 
 ## A wide range of applications
 - The time evolution of the total density matrix of quantum optics and cavity QED systems for permutationally symmetric initial states (such as the GHZ state, Dicke states, coherent spin states).
-- Quantum phase transitions (QPT) of driven-dissipative out-of-equilibrium quantum systems.  
+- Phase transitions of driven-dissipative out-of-equilibrium quantum systems.  
 - Correlation functions of collective systems in quantum optics experiments, such as the spectral density and second-order correlation functions.
 - Various quantum optics phenomena such as resonance fluorescence, steady-state superradiance, superradiant light emission.
 - Spin squeezing for quantum metrology, long-range interaction in noisy spin models, decoherence in quantum information processing. 
 - Nonlinearities of dissipative cavity QED systems up to the ultrastrong coupling regime.
 
 ## Installation
-In the terminal enter the following commands (you just need `git` and `python` installed). If you do not have git installed, just download the folder from Github and run the `setup.py` file with python. Please install `cython`, `numpy`, `scipy` and `qutip` as `piqs` depends on these packages.
-
-We will soon publish the code in the Python Packaging Index (`pip`) and also make a `conda` package for easy installation on Windows. If you have any problems installing the tool, please open an issue or write to us.
+In the terminal enter the following commands (you just need `git` and `python` installed), 
 ```
 git clone https://github.com/nathanshammah/piqs.git
 cd piqs
 python setup.py install
 ```
+If you do not have git installed, just download the folder from Github and run the `setup.py` file with python. Please install `cython`, `numpy`, `scipy` and `qutip` as `piqs` depends on these packages.
+
+We will soon publish the code in the Python Packaging Index (`pip`) and also make a `conda` package for easy installation on Windows. If you have any problems installing the tool, please open an issue or write to us.
 
 ## Use
 ```
@@ -63,7 +64,6 @@ PIQS documentation can be found at http://piqs.readthedocs.io/.
 - Performance of PIQS 
 
 A collection of Jupyter notebooks can be found at https://github.com/nathanshammah/notebooks.
-
 
 ## Citation
 DOI:10.5281/zenodo.1212802
