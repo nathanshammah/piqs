@@ -1,9 +1,19 @@
-# Installation
-In the terminal enter the following commands (you just need `git` and `python` installed). If you do not have git installed, just download the folder from Github and run the `setup.py` file with python. Please install `cython`, `numpy`, `scipy` and `qutip` as `piqs` depends on these packages.
-
-We will soon publish the code in the Python Packaging Index (`pip`) and also make a `conda` package for easy installation on Windows. If you have any problems installing the tool, please open an issue or write to us.
+## Installation
+### Linux and MacOS
+We have made the package available in [conda-forge](https://conda-forge.org/). Download and install Anaconda or Miniconda from [https://www.anaconda.com/download/](https://www.anaconda.com/download/) and then install `piqs` from the conda-forge repository with,
 ```
-git clone https://github.com/nathanshammah/piqs.git
-cd piqs
+conda config --add channels conda-forge
+conda install conda-forge piqs
+```
+Then you can fire up a Jupyter notebook and run `piqs` out of your browser.
+
+### Windows
+We will add a Windows version soon but if you are on Windows, you can build piqs from source by first installing conda. You can add the conda-forge channel with `conda config --add channels conda-forge`. Then, please install `cython`, `numpy`, `scipy` and `qutip` as `piqs` depends on these packages. The command is simply,
+
+```conda install cython numpy scipy qutip```
+
+Finally, you can download the [source code](https://github.com/nathanshammah/piqs/archive/v1.2.tar.gz), unzip it and run the setup file inside with,
+```
 python setup.py install
 ```
+If you have any problems installing the tool, please open an issue or write to us.

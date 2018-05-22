@@ -16,10 +16,3 @@ Welcome to piqs's documentation!
    piqs
    developers
    references
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
