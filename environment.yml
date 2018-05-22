@@ -4,7 +4,10 @@ channels:
   - conda-forge
 
 dependencies:
+  - python=3.5
   - cython
   - numpy
   - scipy
   - qutip
+  - sphinx
+  - sphinx-autobuild
