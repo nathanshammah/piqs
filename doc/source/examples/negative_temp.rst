@@ -1,6 +1,6 @@
-====================================
-Spin ensembles: Negative temperature
-====================================
+=======================
+Multiple Spin Ensembles
+=======================
 We consider a system of two two-level systems (TLSs) :math:`N_1` and :math:`N_2` with identical frequency :math:`\omega_0` with collective pumping and collective emission at identical rates, :math:`\gamma_\text{CE} = (1+\bar{n})\gamma_0` and :math:`\gamma_\text{CP}=\bar{n}\gamma_0`, respectively, with :math:`\bar{n}=\frac{1}{e^{\hbar\omega_0/k_\mathrm{B}T}-1}` and 
 
 .. math::

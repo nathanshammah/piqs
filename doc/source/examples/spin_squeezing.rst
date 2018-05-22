@@ -1,5 +1,5 @@
 ==============
-Spin squeezing
+Spin Squeezing
 ==============
 `PIQS` can be used to study spin squeezing and the effect of collective and local processes on a spin squeezing Hamiltonian such as:
 

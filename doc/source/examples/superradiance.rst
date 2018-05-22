@@ -1,6 +1,6 @@
-============================================================
-Superradiance: Qubits in a cavity
-============================================================
+===============================
+Superradiance: Open Dicke Model
+===============================
 We consider a system of :math:`N` two-level systems (TLSs) coupled to a cavity mode. This is known as the Dicke model 
 
 .. math::
