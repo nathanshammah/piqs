@@ -11,3 +11,4 @@ dependencies:
   - qutip
   - sphinx
   - sphinx-autobuild
+  - piqs
