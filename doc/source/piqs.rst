@@ -32,3 +32,13 @@ About
     :members:
     :undoc-members:
     :show-inheritance:
+
+Source
+------
+.. toctree::
+   :maxdepth: 0
+
+   _modules/index.html
+   _modules/piqs/about.html
+   _modules/piqs/cite.html
+   _modules/piqs/dicke.html
