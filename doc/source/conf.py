@@ -16,7 +16,7 @@ import os
 import sys
 from unittest.mock import MagicMock
 
-sys.path.insert(0, os.path.abspath('../../piqs/piqs'))
+sys.path.insert(0, os.path.abspath('../../'))
 
 on_rtd = os.environ.get('READTHEDOCS') == 'True'
 
