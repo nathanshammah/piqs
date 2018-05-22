@@ -62,7 +62,7 @@ After defining all the parameters, we can build a Liouvillian for the TLS ensemb
 
 We can then make a light-matter superoperator to address the total system of N spins and the photonic cavity by the `super_tensor` function in QuTiP. Similarly, the Liouvillian for the interaction Hamiltonian can be constructed with the `spre` and `spost` functions representing pre and post multiplication super-operators to finally construct the total Liouvillian of the combined light-matter system.
 
-.. code-block::python
+.. code-block:: python
 
 	# identity operators
 	id_tls = to_super(qeye(nds))
@@ -78,7 +78,7 @@ We can then make a light-matter superoperator to address the total system of N s
 
 A similar treatment is possible for any operator and we construct the total :math:`J_z, J_+ J_-` superoperators.
 
-.. code-block::python
+.. code-block:: python
 
 	#total operators
 

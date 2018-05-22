@@ -488,12 +488,15 @@ def ap(j, m):
     """Calculate the operator `ap` used later.
 
     The action of ap is given by:
-    :math:`J_{+}|j, m\\rangle = A_{+}(jm)|j, m+1\\rangle`
+    :math:`J_{+}|j, m\\rangle = A_{+}(j, m)|j, m+1\\rangle`
 
     Parameters
     ----------
-    j, m: float
-        The value for j and m in the dicke basis |j,m>.
+    j : float
+        The value for j.
+
+    m : float
+        The value for m.
 
     Returns
     -------
@@ -507,13 +510,15 @@ def am(j, m):
     """Calculate the operator `am` used later.
 
     The action of ap is given by:
-    :math:`J_{-}|j, m\\rangle = A_{-}(jm)|j, m-1\\rangle`
+    :math:`J_{-}|j, m\\rangle = A_{-}(j, m)|j, m-1\\rangle`
 
     Parameters
     ----------
-    j, m: float
-        The value for j and m in the dicke basis
-        :math:`|j, m\\rangle>.
+    j : float
+        The value for j.
+
+    m : float
+        The value for m.
 
     Returns
     -------

@@ -9,6 +9,3 @@ dependencies:
   - numpy
   - scipy
   - qutip
-  - sphinx
-  - sphinx-autobuild
-  - piqs
