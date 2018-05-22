@@ -84,7 +84,7 @@ def num_tls(nds):
 
 def isdiagonal(mat):
     """
-    Check if the input matrix is diagonal
+    Check if the input matrix is diagonal.
 
     Parameters
     ==========
@@ -94,7 +94,7 @@ def isdiagonal(mat):
     Returns
     =======
     diag: bool
-        True/False depending on whether the input matrix is diagonal
+        True/False depending on whether the input matrix is diagonal.
     """
     if isinstance(mat, Qobj):
         mat = mat.full()
@@ -485,7 +485,7 @@ def m_degeneracy(N, m):
     return int(degeneracy)
 
 def ap(j, m):
-    """Calculate the operator `ap` used later.
+    """Calculate the coefficient `ap` by applying J_+ |j, m>.
 
     The action of ap is given by:
     :math:`J_{+}|j, m\\rangle = A_{+}(j, m)|j, m+1\\rangle`
@@ -507,9 +507,9 @@ def ap(j, m):
     return a_plus
 
 def am(j, m):
-    """Calculate the operator `am` used later.
+    """Calculate the coefficient `am` by applying J_- |j, m>.
 
-    The action of ap is given by:
+    The action of am is given by:
     :math:`J_{-}|j, m\\rangle = A_{-}(j, m)|j, m-1\\rangle`
 
     Parameters
@@ -823,7 +823,7 @@ def dicke_basis(N, jmm1=None):
     Initialize the density matrix of a Dicke state for several (j, m, m1).
 
     This function can be used to build arbitrary states in the Dicke basis
-    :math:`|j, m\\rangle \\langle j, m1|`. We create coefficients for each
+    :math:`|j, m\\rangle \\langle j, m^{\\prime}|`. We create coefficients for each
     (j, m, m1) value in the dictionary jmm1. The mapping for the (i, k)
     index of the density matrix to the |j, m> values is given by the
     cythonized function `jmm1_dictionary`. A density matrix is created from
@@ -1102,7 +1102,7 @@ def css(N, x=1/np.sqrt(2), y=1/np.sqrt(2),
     It can be defined as,
     :math:`|CSS \\rangle = \\prod_i^N(a|1\\rangle_i + b|0\\rangle_i)`
     with :math:`a = sin(\\frac{\\theta}{2})`,
-    :math:`b = e^(i \\phi)\\cos(\\frac{\\theta}{2}).
+    :math:`b = e^{i \\phi}\\cos(\\frac{\\theta}{2})`.
     The default basis is that of Dicke space
     :math:`|j, m\\rangle \\langle j, m'|`.
     The default state is the symmetric CSS,
@@ -1513,7 +1513,7 @@ class Pim(object):
 
     def coefficient_matrix(self):
         """
-        Generate the matrix M governing the dynamics.
+        Generate the matrix M governing the dynamics for diagonal cases.
 
         If the initial density matrix and the Hamiltonian is diagonal, the
         evolution of the system is given by the simple ODE: dp/dt = Mp.
@@ -1561,7 +1561,7 @@ class Pim(object):
 
     def tau1(self, j, m):
         """
-        Calculate tau1.
+        Calculate the element of the coefficient matrix relative to p_jmm.
         """
         yS = self.collective_emission
         yL = self.emission
@@ -1582,7 +1582,7 @@ class Pim(object):
 
     def tau2(self, j, m):
         """
-        Calculate tau2.
+        Calculate the element of the coefficient matrix relative to p_jm+1m+1.
         """
         yS = self.collective_emission
         yL = self.emission
@@ -1594,7 +1594,7 @@ class Pim(object):
 
     def tau3(self, j, m):
         """
-        Calculate tau3.
+        Calculate the element of the coefficient matrix relative to p_j+1m+1m+1.
         """
         yL = self.emission
         N = float(self.N)
@@ -1605,7 +1605,7 @@ class Pim(object):
 
     def tau4(self, j, m):
         """
-        Calculate tau4.
+        Calculate the element of the coefficient matrix relative to p_j-1m+1m+1.
         """
         yL = self.emission
         N = float(self.N)
@@ -1616,7 +1616,7 @@ class Pim(object):
 
     def tau5(self, j, m):
         """
-        Calculate tau5.
+        Calculate the element of the coefficient matrix relative to p_j+1mm.
         """
         yD = self.dephasing
         N = float(self.N)
@@ -1627,7 +1627,7 @@ class Pim(object):
 
     def tau6(self, j, m):
         """
-        Calculate tau6.
+        Calculate the element of the coefficient matrix relative to p_j-1mm.
         """
         yD = self.dephasing
         N = float(self.N)
@@ -1638,7 +1638,7 @@ class Pim(object):
 
     def tau7(self, j, m):
         """
-        Calculate tau7.
+        Calculate the element of the coefficient matrix relative to p_j+1m-1m-1.
         """
         yP = self.pumping
         N = float(self.N)
@@ -1649,7 +1649,7 @@ class Pim(object):
 
     def tau8(self, j, m):
         """
-        Calculate tau8.
+        Calculate the element of the coefficient matrix relative to p_jm-1m-1.
         """
         yP = self.pumping
         yCP = self.collective_pumping
@@ -1664,7 +1664,7 @@ class Pim(object):
 
     def tau9(self, j, m):
         """
-        Calculate tau9.
+        Calculate the element of the coefficient matrix relative to p_j-1m-1m-1.
         """
         yP = self.pumping
         N = float(self.N)
