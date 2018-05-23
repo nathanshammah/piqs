@@ -16,8 +16,6 @@ import os
 import sys
 from unittest.mock import MagicMock
 
-sys.path.insert(0, os.path.abspath('../..'))
-
 on_rtd = os.environ.get('READTHEDOCS') == 'True'
 
 # -- Project information -----------------------------------------------------
@@ -206,5 +204,5 @@ if on_rtd:
             return MagicMock()
 
     MOCK_MODULES = ['numpy', 'cython', 'scipy', 'qutip', 'qutip.solver',
-                    'scipy.sparse', 'scipy.integrate', 'piqs', 'piqs.dicke']
+                    'scipy.sparse', 'scipy.integrate']
     sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
