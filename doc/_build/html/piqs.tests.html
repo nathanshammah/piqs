@@ -1,0 +1,462 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>piqs.tests package &#8212; piqs  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="piqs.cy package" href="piqs.cy.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="piqs-tests-package">
+<h1>piqs.tests package<a class="headerlink" href="#piqs-tests-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-piqs.tests.test_dicke">
+<span id="piqs-tests-test-dicke-module"></span><h2>piqs.tests.test_dicke module<a class="headerlink" href="#module-piqs.tests.test_dicke" title="Permalink to this headline">¶</a></h2>
+<p>Tests for Permutation Invariance methods.</p>
+<dl class="class">
+<dt id="piqs.tests.test_dicke.TestDicke">
+<em class="property">class </em><code class="descclassname">piqs.tests.test_dicke.</code><code class="descname">TestDicke</code><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A test class for the Permutational Invariant Quantum Solver.</p>
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_am">
+<code class="descname">test_am</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_am"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_am" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests the calculation of the real coefficient A_{-}(j,m).</p>
+<p>For a Dicke state,  J_{-} <a href="#id1"><span class="problematic" id="id2">|</span></a>j, m&gt; = A_{+}(j,m) <a href="#id3"><span class="problematic" id="id4">|</span></a>j, m - 1&gt;.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_ap">
+<code class="descname">test_ap</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_ap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_ap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests the calculation of the real coefficient A_{+}(j,m).</p>
+<p>For given values of j, m. For a Dicke state,
+J_{+} <a href="#id5"><span class="problematic" id="id6">|</span></a>j, m&gt; = A_{+}(j,m) <a href="#id7"><span class="problematic" id="id8">|</span></a>j, m + 1&gt;.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_block_matrix">
+<code class="descname">test_block_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_block_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_block_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests the calculation of the block-diagonal matrix for given N.</p>
+<p>If the matrix element <a href="#id23"><span class="problematic" id="id24">|j,m&gt;&lt;j,m'|</span></a> is allowed it is 1, otherwise 0.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_collapse_uncoupled">
+<code class="descname">test_collapse_uncoupled</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_collapse_uncoupled"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_collapse_uncoupled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the calculation of the correct collapse operators (c_ops) list.</p>
+<p>In the “uncoupled” basis of N two-level system (TLS).
+The test is performed for N = 2 and emission = 1.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_collective_algebra">
+<code class="descname">test_collective_algebra</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_collective_algebra"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_collective_algebra" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests the generation of the collective algebra in uncoupled basis.</p>
+<p>The list [jx, jy, jz] created in the 2^N Hilbert space is
+checked for N = 2.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_css">
+<code class="descname">test_css</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_css"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_css" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the calculation of the CSS state.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_dicke">
+<code class="descname">test_dicke</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_dicke"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_dicke" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the calculation of the Dicke state as a pure state.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_dicke_basis">
+<code class="descname">test_dicke_basis</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_dicke_basis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_dicke_basis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if the Dicke basis (j, m, m’) is constructed correctly.</p>
+<p>We test the state with for N = 2,</p>
+<p>0   0   0.3 0
+0   0.5 0   0
+0.3 0   0   0
+0   0   0   0.5</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_energy_degeneracy">
+<code class="descname">test_energy_degeneracy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_energy_degeneracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_energy_degeneracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the energy degeneracy (m) of Dicke state | j, m &gt;.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_excited">
+<code class="descname">test_excited</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_excited"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_excited" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests the calculation of the totally excited state density matrix.</p>
+<p>The matrix has size (O(N^2), O(N^2)) in Dicke basis (‘dicke’).
+The matrix has size (2^N, 2^N) in the uncoupled basis (‘uncoupled’).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_gamma">
+<code class="descname">test_gamma</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_gamma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_gamma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the calculation of various gamma values for diagonal system.</p>
+<p>For N = 6 <a href="#id9"><span class="problematic" id="id10">|</span></a>j, m&gt; would be :</p>
+<div class="line-block">
+<div class="line">3, 3&gt;</div>
+<div class="line">3, 2&gt; | 2, 2&gt;</div>
+<div class="line">3, 1&gt; | 2, 1&gt; | 1, 1&gt;</div>
+<div class="line">3, 0&gt; | 2, 0&gt; | 1, 0&gt; <a href="#id11"><span class="problematic" id="id12">|</span></a>0, 0&gt;</div>
+<div class="line">3,-1&gt; | 2,-1&gt; | 1,-1&gt;</div>
+<div class="line">3,-2&gt; | 2,-2&gt;</div>
+<div class="line">3,-3&gt;</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_gamma1">
+<code class="descname">test_gamma1</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_gamma1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_gamma1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the calculation of gamma1.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_gamma2">
+<code class="descname">test_gamma2</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_gamma2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_gamma2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the calculation of gamma2. Test performed for N = 4.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_gamma3">
+<code class="descname">test_gamma3</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_gamma3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_gamma3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the calculation of gamma3. Test performed for N = 4.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_gamma4">
+<code class="descname">test_gamma4</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_gamma4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_gamma4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the calculation of gamma4. Test performed for N = 4.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_gamma5">
+<code class="descname">test_gamma5</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_gamma5"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_gamma5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the calculation of gamma5. Test performed for N = 4.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_gamma6">
+<code class="descname">test_gamma6</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_gamma6"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_gamma6" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the calculation of gamma6. Test performed for N = 4.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_gamma7">
+<code class="descname">test_gamma7</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_gamma7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_gamma7" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the calculation of gamma7. Test performed for N = 4.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_gamma8">
+<code class="descname">test_gamma8</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_gamma8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_gamma8" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the calculation of gamma8. Test performed for N = 4.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_gamma9">
+<code class="descname">test_gamma9</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_gamma9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_gamma9" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the calculation of gamma9. Test performed for N = 4.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_get_blocks">
+<code class="descname">test_get_blocks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_get_blocks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_get_blocks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the calculation of list of cumulative elements at each block.</p>
+<p>For N = 4</p>
+<p>1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1
+1 1 1 1 1</p>
+<blockquote>
+<div><p>1 1 1
+1 1 1
+1 1 1</p>
+<blockquote>
+<div>1</div></blockquote>
+</div></blockquote>
+<p>Thus, the blocks are [5, 8, 9] denoting that after the first block 5
+elements have been accounted for and so on.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_get_index">
+<code class="descname">test_get_index</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_get_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_get_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the index fetching function for given j, m, m1 value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_ghz">
+<code class="descname">test_ghz</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_ghz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_ghz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the calculation of the density matrix of the GHZ state.</p>
+<p>Test for N = 2 in the ‘dicke’ and in the ‘uncoupled’ basis.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_ground">
+<code class="descname">test_ground</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_ground"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_ground" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the calculation of the density matrix of the ground state.</p>
+<p>Test for N = 2 in the ‘dicke’ and in the ‘uncoupled’ basis.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_identity_uncoupled">
+<code class="descname">test_identity_uncoupled</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_identity_uncoupled"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_identity_uncoupled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the calculation of the identity in a 2^N dim Hilbert space.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_j_min_">
+<code class="descname">test_j_min_</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_j_min_"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_j_min_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the <cite>j_min</cite> function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_j_vals">
+<code class="descname">test_j_vals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_j_vals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_j_vals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test calculation of j values for given N.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_jmm1_dictionary">
+<code class="descname">test_jmm1_dictionary</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_jmm1_dictionary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_jmm1_dictionary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the function to generate the mapping from jmm1 to ik matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_jspin">
+<code class="descname">test_jspin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_jspin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_jspin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test calculation of the j algebra relation for the total operators.</p>
+<p>The jx, jy, jz, jp and jm for a given N in the (j, m, m1) basis should
+follow the following algebra
+[jx, jy] == 1j * jz, [jp, jm] == 2 * jz, jx^2 + jy^2 + jz^2 == j2^2.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_lindbladian">
+<code class="descname">test_lindbladian</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_lindbladian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_lindbladian" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the generation of the Lindbladian matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_lindbladian_dims">
+<code class="descname">test_lindbladian_dims</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_lindbladian_dims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_lindbladian_dims" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the calculation of the lindbladian matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_liouvillian">
+<code class="descname">test_liouvillian</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_liouvillian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_liouvillian" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the calculation of the liouvillian matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_m_degeneracy">
+<code class="descname">test_m_degeneracy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_m_degeneracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_m_degeneracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the degeneracy of TLS states with same m eigenvalue.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_m_vals">
+<code class="descname">test_m_vals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_m_vals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_m_vals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test calculation of m values for a particular j.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_num_dicke_ladders">
+<code class="descname">test_num_dicke_ladders</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_num_dicke_ladders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_num_dicke_ladders" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the <cite>_num_dicke_ladders</cite> function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_num_dicke_states">
+<code class="descname">test_num_dicke_states</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_num_dicke_states"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_num_dicke_states" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the <cite>num_dicke_state</cite> function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_num_tls">
+<code class="descname">test_num_tls</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_num_tls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_num_tls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the <cite>num_two_level</cite> function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_prune_eigenstates">
+<code class="descname">test_prune_eigenstates</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_prune_eigenstates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_prune_eigenstates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the eigenstate pruning</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_spin_algebra">
+<code class="descname">test_spin_algebra</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_spin_algebra"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_spin_algebra" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests the function that creates the SU2 algebra in uncoupled basis.
+The list [sx, sy, sz, sp, sm] is checked for N = 2.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_state_degeneracy">
+<code class="descname">test_state_degeneracy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_state_degeneracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_state_degeneracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the calculation of the degeneracy of the Dicke state <a href="#id13"><span class="problematic" id="id14">|</span></a>j, m&gt;,
+state_degeneracy(N, j).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestDicke.test_superradiant">
+<code class="descname">test_superradiant</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestDicke.test_superradiant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestDicke.test_superradiant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the calculation of the superradiant state density matrix.</p>
+<p>The state is <a href="#id15"><span class="problematic" id="id16">|</span></a>N/2, 0&gt; for N even and <a href="#id17"><span class="problematic" id="id18">|</span></a>N/2, 0.5&gt; for N odd.
+The matrix has size (O(N^2), O(N^2)) in Dicke basis (‘dicke’).
+The matrix has size (2^N, 2^N) in the uncoupled basis (‘uncoupled’).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="piqs.tests.test_dicke.TestPim">
+<em class="property">class </em><code class="descclassname">piqs.tests.test_dicke.</code><code class="descname">TestPim</code><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestPim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestPim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A test class for the Permutation invariance matrix generation</p>
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestPim.test_coefficient_matrix">
+<code class="descname">test_coefficient_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestPim.test_coefficient_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestPim.test_coefficient_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the coefficient matrix used by ‘pisolve’ for diagonal problems.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestPim.test_gamma">
+<code class="descname">test_gamma</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestPim.test_gamma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestPim.test_gamma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the calculation of various gamma values for diagonal system.</p>
+<p>For N = 6 <a href="#id19"><span class="problematic" id="id20">|</span></a>j, m&gt; would be :</p>
+<div class="line-block">
+<div class="line">3, 3&gt;</div>
+<div class="line">3, 2&gt; | 2, 2&gt;</div>
+<div class="line">3, 1&gt; | 2, 1&gt; | 1, 1&gt;</div>
+<div class="line">3, 0&gt; | 2, 0&gt; | 1, 0&gt; <a href="#id21"><span class="problematic" id="id22">|</span></a>0, 0&gt;</div>
+<div class="line">3,-1&gt; | 2,-1&gt; | 1,-1&gt;</div>
+<div class="line">3,-2&gt; | 2,-2&gt;</div>
+<div class="line">3,-3&gt;</div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestPim.test_isdiagonal">
+<code class="descname">test_isdiagonal</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestPim.test_isdiagonal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestPim.test_isdiagonal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the isdiagonal function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestPim.test_isdicke">
+<code class="descname">test_isdicke</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestPim.test_isdicke"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestPim.test_isdicke" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests the <cite>isdicke</cite> function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="piqs.tests.test_dicke.TestPim.test_pisolve">
+<code class="descname">test_pisolve</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/piqs/tests/test_dicke.html#TestPim.test_pisolve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#piqs.tests.test_dicke.TestPim.test_pisolve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the warning for diagonal Hamiltonians to use internal solver.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-piqs.tests">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-piqs.tests" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">piqs.tests package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-piqs.tests.test_dicke">piqs.tests.test_dicke module</a></li>
+<li><a class="reference internal" href="#module-piqs.tests">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="piqs.html">piqs package</a><ul>
+      <li>Previous: <a href="piqs.cy.html" title="previous chapter">piqs.cy package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/piqs.tests.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Nathan Shammah, Shahnawaz Ahmed.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/piqs.tests.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
