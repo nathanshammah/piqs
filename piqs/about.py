@@ -39,9 +39,9 @@ def about():
         matplotlib_ver = 'None'
     hinfo = qutip.hardware_info.hardware_info()['cpus']
     print("Matplotlib Version: {}".format(matplotlib_ver))
-    print("Python Version:     %d.%d.%d" % sys.version_info[0:3])
-    print("Number of CPUs:     {}".format(hinfo)
-    print("Platform Info:      %s (%s)" % (platform.system(),
+    print("Python Version:     {}.{}.{}".format(sys.version_info[0:3]))
+    print("Number of CPUs:     {}".format(hinfo))
+    print("Platform Info:      {} ({})".format(platform.system(),
                                            platform.machine()))
     # citation
     longbar = "=============================================================="
