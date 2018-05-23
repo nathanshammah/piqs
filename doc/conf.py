@@ -17,6 +17,7 @@ import sys
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../'))
 
+on_rtd = os.environ.get('READTHEDOCS') == 'True'
 
 
 # -- Project information -----------------------------------------------------
@@ -177,3 +178,26 @@ intersphinx_mapping = {'https://docs.python.org/': None}
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
+
+
+napoleon_google_docstring = False
+napoleon_numpy_docstring = True
+napoleon_include_init_with_doc = False
+napoleon_include_private_with_doc = False
+napoleon_include_special_with_doc = True
+napoleon_use_admonition_for_examples = False
+napoleon_use_admonition_for_notes = False
+napoleon_use_admonition_for_references = False
+napoleon_use_ivar = False
+napoleon_use_param = True
+napoleon_use_rtype = True
+
+if on_rtd:
+    class Mock(MagicMock):
+        @classmethod
+        def __getattr__(cls, name):
+            return MagicMock()
+
+    MOCK_MODULES = ['numpy', 'cython', 'scipy', 'qutip', 'qutip.solver',
+                    'scipy.sparse', 'scipy.integrate']
+    sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
