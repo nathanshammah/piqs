@@ -1,16 +1,13 @@
 piqs package
 ============
 
-Subpackages
------------
+piqs.dicke module
+-----------------
 
-.. toctree::
-
-    piqs.cy
-    piqs.tests
-
-Submodules
-----------
+.. automodule:: piqs.dicke
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 piqs.about module
 -----------------
@@ -28,13 +25,6 @@ piqs.cite module
     :undoc-members:
     :show-inheritance:
 
-piqs.dicke module
------------------
-
-.. automodule:: piqs.dicke
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 
 Module contents
