@@ -16,7 +16,10 @@ import os
 import sys
 from unittest.mock import MagicMock
 
+sys.path.remove('/Users/shahnawaz/dev/piqs')
+sys.path.remove('/Users/shahnawaz/miniconda3/lib/python3.6/site-packages/piqs-1.2.0-py3.6-macosx-10.7-x86_64.egg')
 sys.path.insert(0, os.path.abspath('../..'))
+
 
 on_rtd = os.environ.get('READTHEDOCS') == 'True'
 
@@ -206,5 +209,6 @@ if on_rtd:
             return MagicMock()
 
     MOCK_MODULES = ['numpy', 'cython', 'scipy', 'qutip', 'qutip.solver',
-                    'scipy.sparse', 'scipy.integrate']
+                    'scipy.sparse', 'scipy.integrate', 'piqs', 'piqs.dicke',
+                    'piqs.cy.dicke', 'piqs.about', 'piqs.cite']
     sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)

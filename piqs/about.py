@@ -11,9 +11,7 @@ import platform
 import numpy
 import scipy
 import inspect
-from qutip.utilities import _blas_info
-import qutip.settings
-from qutip.hardware_info import hardware_info
+import qutip
 import piqs
 import qutip
 
@@ -39,9 +37,10 @@ def about():
         matplotlib_ver = matplotlib.__version__
     except:
         matplotlib_ver = 'None'
-    print("Matplotlib Version: %s" % matplotlib_ver)
+    hinfo = qutip.hardware_info.hardware_info()['cpus']
+    print("Matplotlib Version: {}".format(matplotlib_ver))
     print("Python Version:     %d.%d.%d" % sys.version_info[0:3])
-    print("Number of CPUs:     %s" % hardware_info()['cpus'])
+    print("Number of CPUs:     {}".format(hinfo)
     print("Platform Info:      %s (%s)" % (platform.system(),
                                            platform.machine()))
     # citation
