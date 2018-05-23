@@ -16,10 +16,7 @@ import os
 import sys
 from unittest.mock import MagicMock
 
-sys.path.remove('/Users/shahnawaz/dev/piqs')
-sys.path.remove('/Users/shahnawaz/miniconda3/lib/python3.6/site-packages/piqs-1.2.0-py3.6-macosx-10.7-x86_64.egg')
 sys.path.insert(0, os.path.abspath('../..'))
-
 
 on_rtd = os.environ.get('READTHEDOCS') == 'True'
 
