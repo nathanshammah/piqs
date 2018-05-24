@@ -4,7 +4,6 @@
 [![DOI](https://zenodo.org/badge/104438298.svg)](https://zenodo.org/badge/latestdoi/104438298)
 [![codecov](https://codecov.io/gh/nathanshammah/piqs/branch/master/graph/badge.svg)](https://codecov.io/gh/nathanshammah/piqs)
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/piqs/badges/version.svg)](https://anaconda.org/conda-forge/piqs)
-[![Anaconda-Server Badge](https://anaconda.org/conda-forge/piqs/badges/platforms.svg)](https://anaconda.org/conda-forge/piqs)
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/piqs/badges/license.svg)](https://anaconda.org/conda-forge/piqs)
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/piqs/badges/installer/conda.svg)](https://conda.anaconda.org/conda-forge)
 
