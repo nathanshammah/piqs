@@ -52,9 +52,9 @@ Once we have defined our ensembles and constructed their Liouvillians, we can pl
 	rho0 = dicke(N, 10, 10)
 	t = np.linspace(0, 2.5, 1000)
 
-	result_collective = mesolve(liouv_collective, excited, t, [], 
+	result_collective = mesolve(liouv_collective, excited(N), t, [], 
 	                 e_ops = [jz, jy, jy**2,jz**2, jx])
-	result_local = mesolve(liouv_local, excited, t, [], 
+	result_local = mesolve(liouv_local, excited(N), t, [], 
 	                 e_ops = [jz, jy, jy**2,jz**2, jx])
 
 	# Get the expectation values
