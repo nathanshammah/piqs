@@ -10,7 +10,8 @@
 PIQS is an open-source Python library that allows to study the exact Lindbladian dynamics of open quantum systems consisting of identical qubits. The documentation for the package can be found in [piqs.readthedocs.io](http://piqs.readthedocs.io/en/latest/). Example notebooks on how to use the library can be found [here](https://github.com/nathanshammah/notebooks).
 
 ## Exponential reduction 
-In the case where local processes are included in the model of a system's dynamics, numerical simulation requires dealing with density matrices of exponential sizes. This becomes infeasible for a large number of qubits. We can simplify the calculations by exploiting the permutational invariance of indistinguishable quantum particles which allows the user to study hundreds of qubits.
+In the case where local processes are included in the model of a system's dynamics, numerical simulation requires dealing with density matrices of exponential sizes. This becomes infeasible for a large number of qubits. 
+We can simplify the calculations by exploiting the permutational invariance of indistinguishable quantum particles, which allows the user to study hundreds of qubits.
 
 ## Integrated with QuTiP
 A major feature of PIQS is that it allows to build the Liouvillian of the system in an optimal way. It uses Cython to optimize performance and by defining sparse matrices it can deal with large systems. Since it is compatible with the `quantum object` class of [QuTiP](http://qutip.org/) one can take full advantage of existing features of this excellent open-source library.
