@@ -89,15 +89,21 @@ DOI:10.5281/zenodo.1212802
 and
 N. Shammah, S. Ahmed, N. Lambert, S. De Liberato, and F. Nori, 
 Open quantum systems with local and collective incoherent processes: Efficient numerical simulation using permutational invariance, 
+
 *Phys. Rev. A* **98**, 063815 (2018)
+
 https://journals.aps.org/pra/abstract/10.1103/PhysRevA.98.063815
+
 DOI: 10.1103/PhysRevA.98.063815
+
 https://arxiv.org/abs/1805.05129
 
 ## Resources
 Theoretical aspects and applications are in Ref. [1]. Other open-source codes using permutational invariance to study open quantum systems and related research papers can be found in [2-3].
 
 [1] N. Shammah, S. Ahmed, N. Lambert, S. De Liberato, and F. Nori, *Phys. Rev. A* **98**, 063815 (2018)
+
+https://journals.aps.org/pra/abstract/10.1103/PhysRevA.98.063815
 
 [2] https://github.com/peterkirton/permutations P. Kirton and J. Keeling *Phys. Rev. Lett.*  **118**, 123602 (2017)
 
