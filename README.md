@@ -16,7 +16,6 @@ We can simplify the calculations by exploiting the permutational invariance of i
 ## Integrated with QuTiP
 A major feature of PIQS is that it allows to build the Liouvillian of the system in an optimal way. It uses Cython to optimize performance and by defining sparse matrices it can deal with large systems. Since it is compatible with the `quantum object` class of [QuTiP](http://qutip.org/) one can take full advantage of existing features of this excellent open-source library.
 
-
 ## A wide range of applications
 - The time evolution of the total density matrix of quantum optics and cavity QED systems for permutationally symmetric initial states (such as the GHZ state, Dicke states, coherent spin states).
 - Phase transitions of driven-dissipative out-of-equilibrium quantum systems.  
@@ -26,6 +25,13 @@ A major feature of PIQS is that it allows to build the Liouvillian of the system
 - Nonlinearities of dissipative cavity QED systems up to the ultrastrong coupling regime.
 
 ## Installation
+
+PIQS is integrated inside QuTiP, from QuTiP version 4.3.1, as the qutip.piqs module. If QuTiP is installed, no additional installation is required. The PIQS functions can be called as 
+```
+from qutip.piqs import *
+```
+PIQS can also  be installed as a stand-alone library and it is still maintained.  
+
 ### Linux and MacOS
 We have made the package available in [conda-forge](https://conda-forge.org/). Download and install Anaconda or Miniconda from [https://www.anaconda.com/download/](https://www.anaconda.com/download/) and then install `piqs` from the conda-forge repository with,
 ```
@@ -76,15 +82,22 @@ PIQS documentation can be found at http://piqs.readthedocs.io/.
 - Boundary time crystals
 - Performance of PIQS 
 
-A collection of Jupyter notebooks can be found at https://github.com/nathanshammah/notebooks.
+A collection of Jupyter notebooks can be found at https://github.com/nathanshammah/notebooks and at http://qutip.org/tutorials.html under the "Permutational invariant Lindblad dynamics" section.
 
 ## Citation
 DOI:10.5281/zenodo.1212802
+and
+N. Shammah, S. Ahmed, N. Lambert, S. De Liberato, and F. Nori, 
+Open quantum systems with local and collective incoherent processes: Efficient numerical simulation using permutational invariance, 
+*Phys. Rev. A* **98**, 063815 (2018)
+https://journals.aps.org/pra/abstract/10.1103/PhysRevA.98.063815
+DOI: 10.1103/PhysRevA.98.063815
+https://arxiv.org/abs/1805.05129
 
 ## Resources
 Theoretical aspects and applications are in Ref. [1]. Other open-source codes using permutational invariance to study open quantum systems and related research papers can be found in [2-3].
 
-[1] N. Shammah, S. Ahmed, N. Lambert, S. De Liberato, and F. Nori, https://arxiv.org/abs/1805.05129
+[1] N. Shammah, S. Ahmed, N. Lambert, S. De Liberato, and F. Nori, *Phys. Rev. A* **98**, 063815 (2018)
 
 [2] https://github.com/peterkirton/permutations P. Kirton and J. Keeling *Phys. Rev. Lett.*  **118**, 123602 (2017)
 
