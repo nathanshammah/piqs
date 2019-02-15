@@ -77,7 +77,7 @@ The system's Liouvillian can be built using :code:`system.liouvillian()`. The pr
    * - Collective spin J-
      - ``jspin(N, "-")``          
      - The collective spin operator Jz.
-   * - Collective spin Jx in uncoupled basis
+   * - Collective spin Jz in uncoupled basis
      - ``jspin(N, "z", basis='uncoupled')``          
      - The collective spin operator Jz in the uncoupled basis
    * - Dicke state |j, m>
