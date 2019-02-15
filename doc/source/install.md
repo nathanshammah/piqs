@@ -8,7 +8,7 @@ conda install conda-forge piqs
 Then you can fire up a Jupyter notebook and run `piqs` out of your browser.
 
 ### Windows
-We will add a Windows version soon but if you are on Windows, you can build piqs from source by first installing conda. If you have a python environment with `cython`, `numpy`, `scipy` and `qutip` installed then simply download the [source code](https://github.com/nathanshammah/piqs/archive/v1.2.tar.gz), unzip it and run the setup file inside with
+Windows is not officially supported, but if you are on Windows, you can build piqs from source by first installing conda. If you have a python environment with `cython`, `numpy`, `scipy` and `qutip` installed then simply download the [source code](https://github.com/nathanshammah/piqs/archive/v1.2.tar.gz), unzip it and run the setup file inside with
 
 ```
 python setup.py install
@@ -21,3 +21,6 @@ Alternatively, you can download the package from the [source](https://github.com
 ```
 python setup.py install
 ```
+
+### QuTiP
+A version of PIQS is already included in the excellent QuTiP library, from version 4.3. If you have QuTiP (>4.2), you can just import the module as `qutip.piqs`.   
