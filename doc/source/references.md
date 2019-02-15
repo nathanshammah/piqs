@@ -4,8 +4,8 @@ The code and an introductory notebook can be found in Ref. [1]. A paper detailin
 
 .. [1] https://github.com/nathanshammah/notebooks
 
-.. [2] Shammah, N., Ahmed, S., Lambert, N., De Liberato, S., & Nori, F.
-       (2018). Open quantum systems with local and collective incoherent processes: Efficient numerical simulation using permutational invariance. arXiv preprint arXiv:1805.05129.
+.. [2] https://journals.aps.org/pra/abstract/10.1103/PhysRevA.98.063815 
+N. Shammah, S. Ahmed, N. Lambert, S. De Liberato, and F. Nori, *Phys. Rev. A*  **98**, 063815 (2018). Open quantum systems with local and collective incoherent processes: Efficient numerical simulation using permutational invariance. arXiv preprint arXiv:1805.05129.
 
 .. [3] https://github.com/peterkirton/permutations P. Kirton and J. Keeling *Phys. Rev. Lett.*  **118**, 123602 (2017)
 
