@@ -20,8 +20,12 @@ def cite(path=None, verbose=True):
                and Simone De Liberato and Franco Nori},""",
                """Title = {Open quantum systems with local and collective incoherent
                processes: Efficient numerical simulation using permutational invariance},""",
-               """Year = {2018},""",
                """Eprint = {arXiv:1805.05129},""",
+               """journal = {Phys. Rev. A},""",
+               """volume = {98},""",
+               """pages = {063815},""",
+               """year = {2018},""",
+               """url={https://journals.aps.org/pra/abstract/10.1103/PhysRevA.98.063815},"""
                """}"""]
 
     if verbose:
