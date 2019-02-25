@@ -32,7 +32,7 @@ author = 'Nathan Shammah, Shahnawaz Ahmed'
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = '1.1-dev'
+release = '1.2'
 
 
 # -- General configuration ---------------------------------------------------
