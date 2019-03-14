@@ -6,6 +6,7 @@
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/piqs/badges/version.svg)](https://anaconda.org/conda-forge/piqs)
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/piqs/badges/license.svg)](https://anaconda.org/conda-forge/piqs)
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/piqs/badges/installer/conda.svg)](https://conda.anaconda.org/conda-forge)
+[![Anaconda-Server Badge](https://anaconda.org/conda-forge/piqs/badges/downloads.svg)](https://anaconda.org/conda-forge/piqs)
 
 PIQS is an open-source Python library that allows to study the exact Lindbladian dynamics of open quantum systems consisting of identical qubits. The documentation for the package can be found in [piqs.readthedocs.io](http://piqs.readthedocs.io/en/latest/). Example notebooks on how to use the library can be found [here](https://github.com/nathanshammah/notebooks).
 
