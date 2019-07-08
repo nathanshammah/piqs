@@ -99,6 +99,9 @@ DOI: 10.1103/PhysRevA.98.063815
 
 https://arxiv.org/abs/1805.05129
 
+## Disclaimer
+**The `Dicke.liouvillian()` object is not to be used directly to compute its spectral properties. Nonlinear functions, such as the Von Neumann entropy, should be calculated only in the full ($2^N$) basis.**
+
 ## Resources
 Theoretical aspects and applications are in Ref. [1]. Other open-source codes using permutational invariance to study open quantum systems and related research papers can be found in [2-3].
 
