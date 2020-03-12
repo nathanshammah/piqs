@@ -100,7 +100,7 @@ DOI: 10.1103/PhysRevA.98.063815
 https://arxiv.org/abs/1805.05129
 
 ## Disclaimer
-**The `Dicke.liouvillian()` object is not to be used directly to compute its spectral properties.**
+**The `Dicke.liouvillian()` object is not to be used directly to compute its full spectrum or the Liouvillian gap.**
 
 ## Resources
 Theoretical aspects and applications are in Ref. [1]. Other open-source codes using permutational invariance to study open quantum systems and related research papers can be found in [2-3].
