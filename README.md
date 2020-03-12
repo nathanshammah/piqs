@@ -10,8 +10,8 @@
 
 PIQS is an open-source Python library that allows to study the exact Lindbladian dynamics of open quantum systems consisting of identical qubits. The documentation for the package can be found in [piqs.readthedocs.io](http://piqs.readthedocs.io/en/latest/). Example notebooks on how to use the library can be found [here](https://github.com/nathanshammah/notebooks).
 
-## Exponential reduction 
-In the case where local processes are included in the model of a system's dynamics, numerical simulation requires dealing with density matrices of exponential sizes. This becomes infeasible for a large number of qubits. 
+## Exponential reduction
+In the case where local processes are included in the model of a system's dynamics, numerical simulation requires dealing with density matrices of exponential sizes. This becomes infeasible for a large number of qubits.
 We can simplify the calculations by exploiting the permutational invariance of indistinguishable quantum particles, which allows the user to study hundreds of qubits.
 
 ## Integrated with QuTiP
@@ -19,19 +19,19 @@ A major feature of PIQS is that it allows to build the Liouvillian of the system
 
 ## A wide range of applications
 - The time evolution of the total density matrix of quantum optics and cavity QED systems for permutationally symmetric initial states (such as the GHZ state, Dicke states, coherent spin states).
-- Phase transitions of driven-dissipative out-of-equilibrium quantum systems.  
+- Phase transitions of driven-dissipative out-of-equilibrium quantum systems.
 - Correlation functions of collective systems in quantum optics experiments, such as the spectral density and second-order correlation functions.
 - Various quantum optics phenomena such as resonance fluorescence, steady-state superradiance, superradiant light emission.
-- Spin squeezing for quantum metrology, long-range interaction in noisy spin models, decoherence in quantum information processing. 
+- Spin squeezing for quantum metrology, long-range interaction in noisy spin models, decoherence in quantum information processing.
 - Nonlinearities of dissipative cavity QED systems up to the ultrastrong coupling regime.
 
 ## Installation
 
-PIQS is integrated inside QuTiP, from QuTiP version 4.3.1, as the qutip.piqs module. If QuTiP is installed, no additional installation is required. The PIQS functions can be called as 
+PIQS is integrated inside QuTiP, from QuTiP version 4.3.1, as the qutip.piqs module. If QuTiP is installed, no additional installation is required. The PIQS functions can be called as
 ```
 from qutip.piqs import *
 ```
-PIQS can also  be installed as a stand-alone library and it is still maintained.  
+PIQS can also  be installed as a stand-alone library and it is still maintained.
 
 ### Linux and MacOS
 We have made the package available in [conda-forge](https://conda-forge.org/). Download and install Anaconda or Miniconda from [https://www.anaconda.com/download/](https://www.anaconda.com/download/) and then install `piqs` from the conda-forge repository with,
@@ -63,7 +63,7 @@ system = Dicke(N, emission = 1, pumping = 3)
 L = system.liouvillian()
 steady = steadystate(L)
 ```
-For more details and examples on the use of *PIQS* see the [notebooks](https://github.com/nathanshammah/notebooks) folder. 
+For more details and examples on the use of *PIQS* see the [notebooks](https://github.com/nathanshammah/notebooks) folder.
 
 ![Density matrices in the Dicke basis.](https://github.com/nathanshammah/piqs/blob/master/doc/source/examples/images/states_N.png)
 ## License
@@ -78,18 +78,18 @@ PIQS documentation can be found at http://piqs.readthedocs.io/.
 - Steady-state superradiance
 - Superradiant phase transition out of equilibrium
 - Spin squeezing
-- Ultrastrong light-matter coupling 
+- Ultrastrong light-matter coupling
 - Multiple ensembles of qubits
 - Boundary time crystals
-- Performance of PIQS 
+- Performance of PIQS
 
 A collection of Jupyter notebooks can be found at https://github.com/nathanshammah/notebooks and at http://qutip.org/tutorials.html under the "Permutational invariant Lindblad dynamics" section.
 
 ## Citation
 DOI:10.5281/zenodo.1212802
 and
-N. Shammah, S. Ahmed, N. Lambert, S. De Liberato, and F. Nori, 
-Open quantum systems with local and collective incoherent processes: Efficient numerical simulation using permutational invariance, 
+N. Shammah, S. Ahmed, N. Lambert, S. De Liberato, and F. Nori,
+Open quantum systems with local and collective incoherent processes: Efficient numerical simulation using permutational invariance,
 
 *Phys. Rev. A* **98**, 063815 (2018)
 
@@ -100,7 +100,7 @@ DOI: 10.1103/PhysRevA.98.063815
 https://arxiv.org/abs/1805.05129
 
 ## Disclaimer
-**The `Dicke.liouvillian()` object is not to be used directly to compute its spectral properties. Nonlinear functions, such as the Von Neumann entropy, should be calculated only in the full ($2^N$) basis.**
+**The `Dicke.liouvillian()` object is not to be used directly to compute its spectral properties.**
 
 ## Resources
 Theoretical aspects and applications are in Ref. [1]. Other open-source codes using permutational invariance to study open quantum systems and related research papers can be found in [2-3].
