@@ -54,7 +54,7 @@ If you have any problems installing the tool, please open an issue or write to u
 
 ## Use
 ```
-from piqs import Dicke
+from qutip.piqs import Dicke
 from qutip import steadystate
 
 N = 10
