@@ -11,9 +11,9 @@ In the case where local processes are included in the model of a system's dynami
 Integrated with QuTiP
 ---------------------
 
-A major feature of PIQS is that it allows to build the Liouvillian of the system in an optimal way. It uses Cython to optimize performance and by taking full advangtage of the sparsity of the matrix it can deal with large systems. Since it is compatible with the `quantum object` class of [QuTiP] one can take full advantage of existing features of this excellent open-source library.
+A major feature of PIQS is that it allows to build the Liouvillian of the system in an optimal way. It uses Cython to optimize performance and by taking full advantage of the sparsity of the matrix it can deal with large systems. Since it is compatible with the `quantum object` class of [QuTiP] one can take full advantage of existing features of this excellent open-source library.
 
-PIQS is integrated inside QuTiP, from QuTiP version 4.3.1, as the ``qutip.piqs`` module. A list of tutorials can be found on  the `QuTiP website <www.qutip.org/tutorials#piqs>`_. For issues related to ``qutip.piqs`` open an issue on `QuTiP's Github page <www.github.com/qutip/qutip>`_.
+PIQS is integrated inside QuTiP, from QuTiP version 4.3.1, as the ``qutip.piqs`` module. A list of tutorials can be found on  the `QuTiP website <http://qutip.org/tutorials#piqs>`_. For issues related to ``qutip.piqs`` open an issue on `QuTiP's Github page <https://github.com/qutip/qutip>`_.
 
 A wide range of applications
 ----------------------------
