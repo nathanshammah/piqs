@@ -1,5 +1,7 @@
 # Permutational Invariant Quantum Solver (PIQS) <img src="https://github.com/nathanshammah/piqs/blob/master/doc/piqs_logo.png" width="80" height="80"/>
 
+_PIQS is not actively maintained anymore as an independent package, but it's been ported to QuTiP and you can use its functionalities as qutip.piqs. Find out more in the related QuTiP [documentation](https://qutip.readthedocs.io/en/qutip-5.0.x/guide/guide-piqs.html) and [tutorials](https://qutip.org/qutip-tutorials/#piqs) on the permutational invariant Lindbald solver._
+
 [![Build Status](https://travis-ci.org/nathanshammah/piqs.svg?branch=master)](https://travis-ci.org/nathanshammah/piqs)
 [![DOI](https://zenodo.org/badge/104438298.svg)](https://zenodo.org/badge/latestdoi/104438298)
 [![codecov](https://codecov.io/gh/nathanshammah/piqs/branch/master/graph/badge.svg)](https://codecov.io/gh/nathanshammah/piqs)
